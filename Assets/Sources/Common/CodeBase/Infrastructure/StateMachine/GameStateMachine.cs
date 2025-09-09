@@ -1,16 +1,31 @@
 using System;
 using System.Collections.Generic;
+using Zenject;
 
-namespace Sources.Common.Infrastructure
+namespace Sources.Common.CodeBase.Infrastructure.StateMachine
 {
-    public class GameStateMachine
+    public class GameStateMachine : IGameStateMachine, IInitializable
     {
         private Dictionary<Type, IExitableState> _states;
         private IExitableState _activeState;
+        private GameStateFactory _gameStateFactory;
 
-        public GameStateMachine()
+        public GameStateMachine(GameStateFactory gameStateFactory)
         {
-     
+            _gameStateFactory = gameStateFactory;
+        }
+        
+        public void Initialize()
+        {
+            _states = new Dictionary<Type, IExitableState>()
+            {
+                [typeof(BootstrapState)] = _gameStateFactory.CreateState<BootstrapState>(),
+                [typeof(LoadProgressState)] = _gameStateFactory.CreateState<LoadProgressState>(),
+                [typeof(LoadLevelState)] = _gameStateFactory.CreateState<LoadLevelState>(),
+                [typeof(GameLoopState)] = _gameStateFactory.CreateState<GameLoopState>(),
+            };
+
+            Enter<BootstrapState>();
         }
 
         public void Enter<TState>() where TState : class, IState

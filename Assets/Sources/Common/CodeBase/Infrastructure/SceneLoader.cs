@@ -3,13 +3,13 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Sources.Common.Infrastructure
+namespace Sources.Common.CodeBase.Infrastructure
 {
     public class SceneLoader
     {
-        private readonly ICoroutineRunner _coroutineRunner;
+        private readonly MonoBehaviour _coroutineRunner;
 
-        public SceneLoader(ICoroutineRunner coroutineRunner) => 
+        public SceneLoader(MonoBehaviour coroutineRunner) => 
             _coroutineRunner = coroutineRunner;
 
         public void Load(string name, Action onLoaded = null) =>

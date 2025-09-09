@@ -1,4 +1,4 @@
-namespace Sources.Common.Infrastructure
+namespace Sources.Common.CodeBase.Infrastructure.StateMachine
 {
     public interface IPayloadedState<TPayload> :IExitableState
     {
