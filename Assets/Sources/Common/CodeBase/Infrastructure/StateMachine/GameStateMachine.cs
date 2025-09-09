@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
 using Zenject;
 
 namespace Sources.Common.CodeBase.Infrastructure.StateMachine

@@ -1,4 +1,5 @@
 using Sources.Common.CodeBase.Infrastructure.StateMachine;
+using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
 using Zenject;
 
 namespace Sources.Common.CodeBase.Infrastructure.Installers

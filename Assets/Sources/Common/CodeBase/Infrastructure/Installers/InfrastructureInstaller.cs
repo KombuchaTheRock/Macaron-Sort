@@ -1,4 +1,5 @@
 using Sources.Common.CodeBase.Infrastructure.StateMachine;
+using Sources.Common.CodeBase.Services;
 using Zenject;
 
 namespace Sources.Common.CodeBase.Infrastructure.Installers
@@ -9,6 +10,15 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
         {
             BindGameStateFactory();
             BindSceneLoader();
+            BindGameFactory();
+        }
+
+        private void BindGameFactory()
+        {
+            Container.Bind<IGameFactory>()
+                .To<GameFactory>()
+                .AsSingle()
+                .WithArguments(Container);
         }
 
         private void BindSceneLoader()
