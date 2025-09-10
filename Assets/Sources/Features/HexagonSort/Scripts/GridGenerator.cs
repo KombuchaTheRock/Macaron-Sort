@@ -1,51 +1,49 @@
-using NaughtyAttributes;
+using Sources.Common.CodeBase.Services;
 using UnityEngine;
+using Zenject;
 
 namespace Sources.Features.HexagonSort.Scripts
 {
     public class GridGenerator : MonoBehaviour
     {
-        [SerializeField] private float _cellSize;
-        [SerializeField] private GameObject _hexagonPrefab;
         [SerializeField] private Grid _grid;
-
-        [OnValueChanged("GenerateGrid")]
+        [SerializeField] private float _cellSize;
         [SerializeField] private int _gridSize;
-        
-        private void SetGridCellSize() => 
-            _grid.cellSize = new Vector3(CalculateInradius(_cellSize), _cellSize, 1f);
 
-        private static float CalculateInradius(float circumRadius) => 
-            circumRadius * Mathf.Cos(Mathf.Deg2Rad * 30f);
+        private IGameFactory _factory;
+
+        [Inject]
+        public void Construct(IGameFactory gameFactory)
+        {
+            _factory = gameFactory;
+        }
+
+        private void Start() => 
+            GenerateGrid();
 
         private void GenerateGrid()
         {
-            SetGridCellSize();
-            ClearGrid();
+            _grid.cellSize = new Vector3(CalculateInradius(_cellSize), _cellSize, 1f);
 
             for (int x = -_gridSize; x <= _gridSize; x++)
             {
-                for (int y = -_gridSize; y <= _gridSize; y++)
-                {
-                    Vector3 spawnPosition = _grid.CellToWorld(new Vector3Int(x, y, 0));
+                for (int y = -_gridSize; y <= _gridSize; y++) 
+                    SpawnHexagon(x, y);
+            }
+        }
 
-                    float maxGridRadius = _grid.CellToWorld(new Vector3Int(1, 0, 0)).magnitude * _gridSize;
-                    if (spawnPosition.magnitude > maxGridRadius)
-                        continue;
-                    
-                    Instantiate(_hexagonPrefab, spawnPosition, Quaternion.identity, transform);
-                }
-            }
-        }
-        
-        private void ClearGrid()
+        private void SpawnHexagon(int x, int y)
         {
-            while (transform.childCount > 0)
-            {
-                Transform child = transform.GetChild(0);
-                child.SetParent(null);
-                DestroyImmediate(child.gameObject);
-            }
+            Vector3 spawnPosition = _grid.CellToWorld(new Vector3Int(x, y, 0));
+            float maxGridRadius = _grid.CellToWorld(new Vector3Int(1, 0, 0)).magnitude * _gridSize;
+                    
+            if (spawnPosition.magnitude > maxGridRadius)
+                return;
+
+            _factory.CreateHexagon(spawnPosition, transform);
         }
-    }
+
+        private float CalculateInradius(float circumRadius) =>   //Можно вынести в отдельный класс
+            circumRadius * Mathf.Cos(Mathf.Deg2Rad * 30f);
+      }
 }

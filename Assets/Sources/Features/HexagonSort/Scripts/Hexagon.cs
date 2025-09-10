@@ -6,10 +6,9 @@ namespace Sources.Features.HexagonSort.Scripts
     {
         [SerializeField] private MeshRenderer _meshRenderer;
 
-        public Color Color
-        {
-            get => _meshRenderer.material.color;
-            set => _meshRenderer.material.color = value;
-        }
+        public Color Color => _meshRenderer.material.color;
+
+        public void SetColor(Color color) => 
+            _meshRenderer.material.color = color;
     }
 }
