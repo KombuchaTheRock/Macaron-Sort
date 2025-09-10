@@ -10,5 +10,6 @@ namespace Sources.Common.CodeBase.Services
         GameObject CreateHexagonStack(Vector3 position, Transform parent);
         GridGenerator CreateGridGenerator(GridTemplate template, Vector3 at);
         void CreateInstanceRoot();
+        StackGenerator CreateStackGenerator(HexagonStackTemplate template, string levelName, Vector3 at);
     }
 }

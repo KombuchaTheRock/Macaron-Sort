@@ -7,6 +7,8 @@ namespace Sources.Common.CodeBase.Services
 {
     public class GameFactory : IGameFactory
     {
+        private const string InstanceRootName = "InstanceRoot";
+        
         private Transform _instanceRoot;
 
         private readonly IInstantiator _instantiator;
@@ -21,18 +23,28 @@ namespace Sources.Common.CodeBase.Services
         }
 
         public void CreateInstanceRoot() => 
-            _instanceRoot = new GameObject("InstanceRoot").transform;
+            _instanceRoot = new GameObject(InstanceRootName).transform;
 
+        public StackGenerator CreateStackGenerator(HexagonStackTemplate template, string levelName, Vector3 at)
+        {
+            StackGenerator gridGenerator = Instantiate<StackGenerator>(AssetsPaths.StackGeneratorPrefab, at, _instanceRoot);
+            
+            gridGenerator.Initialize(_staticData.ForHexagonStack(template), 
+                _staticData.ForLevel(levelName).StackSpawnPoints);
+
+            return gridGenerator;
+        }
+        
         public GridGenerator CreateGridGenerator(GridTemplate template, Vector3 at)
         {
-            GridGenerator gridGenerator = Instantiate<GridGenerator>(AssetsPaths.GridGenerator, at, _instanceRoot);
+            GridGenerator gridGenerator = Instantiate<GridGenerator>(AssetsPaths.GridGeneratorPrefab, at, _instanceRoot);
             gridGenerator.Initialize(_staticData.ForGrid(template));
 
             return gridGenerator;
         }
 
         public GameObject CreateHexagonStack(Vector3 position, Transform parent) =>
-            Instantiate(AssetsPaths.HexagonPrefab, position, parent);
+            Instantiate(AssetsPaths.StackPrefab, position, parent);
 
         public Hexagon CreateHexagon(Vector3 position, Transform parent) =>
             Instantiate<Hexagon>(AssetsPaths.HexagonPrefab, position, parent);
