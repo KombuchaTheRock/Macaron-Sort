@@ -8,8 +8,8 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
     {
         public override void InstallBindings()
         {
-            BindGameStates();
             BindGameStateMachine();
+            BindGameStates();
         }
 
         private void BindGameStates()

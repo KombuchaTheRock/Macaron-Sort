@@ -50,7 +50,7 @@ MonoBehaviour:
   - {fileID: 2496615462275280474}
   - {fileID: 2770083740645476306}
   _installerPrefabs: []
-  _parentNewObjectsUnderContext: 1
+  _parentNewObjectsUnderContext: 0
   _editorReflectionBakingCoverageMode: 0
   _buildsReflectionBakingCoverageMode: 0
   _settings:

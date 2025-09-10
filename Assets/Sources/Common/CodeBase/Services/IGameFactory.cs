@@ -1,4 +1,5 @@
-﻿using Sources.Features.HexagonSort.Scripts;
+﻿using Sources.Features.HexagonSort.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.Scripts;
 using UnityEngine;
 
 namespace Sources.Common.CodeBase.Services
@@ -7,5 +8,7 @@ namespace Sources.Common.CodeBase.Services
     {
         Hexagon CreateHexagon(Vector3 position, Transform parent);
         GameObject CreateHexagonStack(Vector3 position, Transform parent);
+        GridGenerator CreateGridGenerator(GridTemplate template, Vector3 at);
+        void CreateInstanceRoot();
     }
 }

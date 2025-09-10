@@ -1,7 +1,7 @@
-namespace Sources.Common.CodeBase.Infrastructure.StateMachine
+namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 {
     public interface IPayloadedState<TPayload> :IExitableState
     {
-        void Enter(TPayload isFreshRestartNeeded);
+        void Enter(TPayload payload);
     }
 }

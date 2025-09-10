@@ -1,17 +1,24 @@
-﻿using System;
-
-namespace Sources.Common.CodeBase.Infrastructure.StateMachine
+﻿namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 {
     public class LoadProgressState : IState
     {
-        public void Exit()
-        {
-            throw new NotImplementedException();
-        }
+        private const string LevelName = "Gameplay";
+        
+        private readonly IGameStateMachine _gameStateMachine;
 
+        public LoadProgressState(IGameStateMachine gameStateMachine)
+        {
+            _gameStateMachine = gameStateMachine;
+        }        
+        
         public void Enter()
         {
-            throw new NotImplementedException();
+            _gameStateMachine.Enter<LoadLevelState, string>(LevelName);
+        }
+
+        public void Exit()
+        {
+            
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Sources.Common.CodeBase.Infrastructure.StateMachine
+﻿using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
+
+namespace Sources.Common.CodeBase.Infrastructure.StateMachine
 {
     public interface IGameStateMachine
     {

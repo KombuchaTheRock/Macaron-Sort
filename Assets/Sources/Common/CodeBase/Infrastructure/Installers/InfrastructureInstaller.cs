@@ -1,4 +1,4 @@
-using Sources.Common.CodeBase.Infrastructure.StateMachine;
+using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
 using Sources.Common.CodeBase.Services;
 using Zenject;
 
@@ -10,6 +10,8 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
         {
             BindGameStateFactory();
             BindSceneLoader();
+            BindResourceLoader();
+            BindStaticDataService();
             BindGameFactory();
         }
 
@@ -31,6 +33,19 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
         private void BindGameStateFactory()
         {
             Container.Bind<GameStateFactory>()
+                .AsSingle();
+        }
+
+        private void BindResourceLoader()
+        {
+            Container.Bind<IResourceLoader>()
+                .To<ResourceLoader>()
+                .AsSingle();
+        }
+
+        private void BindStaticDataService()
+        {
+            Container.BindInterfacesTo<StaticDataService>()
                 .AsSingle();
         }
     }
