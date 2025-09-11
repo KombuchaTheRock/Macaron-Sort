@@ -18,7 +18,6 @@ namespace Sources.Features.Level.Scripts
         private void SaveLevelStaticData()
         {
             LevelName = SceneManager.GetActiveScene().name;
-
             StackSpawnPoints = GetAllTaggedObjectPositions(StackSpawnPositionsTag);
         }
         

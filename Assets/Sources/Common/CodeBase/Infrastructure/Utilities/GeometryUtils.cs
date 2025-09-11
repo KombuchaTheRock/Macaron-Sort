@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Sources.Common.CodeBase.Infrastructure
+namespace Sources.Common.CodeBase.Infrastructure.Utilities
 {
     public static class GeometryUtils
     {

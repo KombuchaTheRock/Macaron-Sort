@@ -1,4 +1,5 @@
-﻿using Sources.Features.HexagonSort.GridGenerator.Scripts;
+﻿using Sources.Common.CodeBase.Paths;
+using Sources.Features.HexagonSort.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.Scripts;
 using UnityEngine;
 using Zenject;
@@ -27,12 +28,12 @@ namespace Sources.Common.CodeBase.Services
 
         public StackGenerator CreateStackGenerator(HexagonStackTemplate template, string levelName, Vector3 at)
         {
-            StackGenerator gridGenerator = Instantiate<StackGenerator>(AssetsPaths.StackGeneratorPrefab, at, _instanceRoot);
+            StackGenerator stackGenerator = Instantiate<StackGenerator>(AssetsPaths.StackGeneratorPrefab, at, _instanceRoot);
             
-            gridGenerator.Initialize(_staticData.ForHexagonStack(template), 
+            stackGenerator.Initialize(_staticData.ForHexagonStack(template), 
                 _staticData.ForLevel(levelName).StackSpawnPoints);
 
-            return gridGenerator;
+            return stackGenerator;
         }
         
         public GridGenerator CreateGridGenerator(GridTemplate template, Vector3 at)

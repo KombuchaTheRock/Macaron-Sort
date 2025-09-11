@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f589d2f97b854231abc6a1df12c5dfef, type: 3}
   m_Name: StackConfig
   m_EditorClassIdentifier: 
-  Template: 0
-  HexagonHeight: 0.2
-  MaxStackSize: 6
+  <Template>k__BackingField: 0
+  HexagonHeight: 0.43
+  MaxStackSize: 8
   MinStackSize: 1
   Colors:
   - {r: 1, g: 0.2216981, b: 0.2216981, a: 0}

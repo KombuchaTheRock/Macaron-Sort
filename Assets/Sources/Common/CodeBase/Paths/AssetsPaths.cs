@@ -1,4 +1,4 @@
-﻿namespace Sources.Common.CodeBase.Services
+﻿namespace Sources.Common.CodeBase.Paths
 {
     public static class AssetsPaths
     {

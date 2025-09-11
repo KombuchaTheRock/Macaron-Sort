@@ -4,7 +4,6 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
     public class BootstrapState : IState
     {
         private const string BootstrapScene = "Bootstrap";
-        private const string GameplayScene = "Gameplay";
         
         private readonly IGameStateMachine _stateMachine;
         private readonly SceneLoader _sceneLoader;

@@ -40,7 +40,7 @@ namespace Sources.Features.HexagonSort.Scripts
             GameObject hexagonStack = _factory.CreateHexagonStack(spawnPosition, transform);
             hexagonStack.name = $"Stack {transform.GetSiblingIndex()}";
 
-            int amount = Random.Range(_minStackSize, _maxStackSize); //Вынести в фабрику
+            int amount = Random.Range(_minStackSize, _maxStackSize);
 
             Color[] randomColors = GetRandomColors();
             int firstColorIndex = Random.Range(0, amount);
