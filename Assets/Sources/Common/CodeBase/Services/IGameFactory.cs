@@ -1,5 +1,7 @@
 ﻿using Sources.Features.HexagonSort.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using Sources.Features.HexagonSort.Scripts;
+using Sources.Features.HexagonSort.StackGenerator.Scripts;
 using UnityEngine;
 
 namespace Sources.Common.CodeBase.Services
@@ -7,9 +9,10 @@ namespace Sources.Common.CodeBase.Services
     public interface IGameFactory
     {
         Hexagon CreateHexagon(Vector3 position, Transform parent);
-        GameObject CreateHexagonStack(Vector3 position, Transform parent);
+        HexagonStack CreateHexagonStack(Vector3 position, Transform parent);
         GridGenerator CreateGridGenerator(GridTemplate template, Vector3 at);
         void CreateInstanceRoot();
         StackGenerator CreateStackGenerator(HexagonStackTemplate template, string levelName, Vector3 at);
+        GridCell CreateGridCell(Vector3 position, Transform parent);
     }
 }

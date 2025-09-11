@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using Sources.Common.CodeBase.Services;
+using Sources.Features.HexagonSort.HexagonTile.Scripts;
+using Sources.Features.HexagonSort.StackGenerator.Scripts;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
@@ -37,7 +39,7 @@ namespace Sources.Features.HexagonSort.Scripts
 
         private void GenerateStack(Vector3 spawnPosition)
         {
-            GameObject hexagonStack = _factory.CreateHexagonStack(spawnPosition, transform);
+            HexagonStack hexagonStack = _factory.CreateHexagonStack(spawnPosition, transform);
             hexagonStack.name = $"Stack {transform.GetSiblingIndex()}";
 
             int amount = Random.Range(_minStackSize, _maxStackSize);
@@ -49,16 +51,19 @@ namespace Sources.Features.HexagonSort.Scripts
                 SpawnHexagon(i, hexagonStack, randomColors, firstColorIndex);
         }
 
-        private void SpawnHexagon(int index, GameObject hexagonStack,
+        private void SpawnHexagon(int index, HexagonStack hexagonStack,
             Color[] randomColors, int firstColorIndex)
         {
             Vector3 hexagonLocalPosition = Vector3.up * index * _hexagonHeight;
             Vector3 spawnPosition = hexagonStack.transform.TransformPoint(hexagonLocalPosition);
 
             Hexagon hexagon = _factory.CreateHexagon(spawnPosition, hexagonStack.transform);
-
+            
             Color color = index <= firstColorIndex ? randomColors[0] : randomColors[1];
-            hexagon.SetColor(color);
+            hexagon.GetComponent<MeshColorSwitcher>().SetColor(color);
+            
+            hexagonStack.Add(hexagon);
+            hexagon.SetStack(hexagonStack);
         }
 
         private Color[] GetRandomColors()

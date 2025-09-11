@@ -1,5 +1,6 @@
 using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
 using Sources.Common.CodeBase.Services;
+using UnityEngine;
 using Zenject;
 
 namespace Sources.Common.CodeBase.Infrastructure.Installers
@@ -13,6 +14,17 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
             BindResourceLoader();
             BindStaticDataService();
             BindGameFactory();
+            BindInputService();
+        }
+
+        private void BindInputService()
+        {
+            if (Application.isEditor)
+                Container.BindInterfacesTo<StandaloneInput>()
+                    .AsSingle();
+            else
+                Container.BindInterfacesTo<MobileInput>()
+                    .AsSingle();
         }
 
         private void BindGameFactory()

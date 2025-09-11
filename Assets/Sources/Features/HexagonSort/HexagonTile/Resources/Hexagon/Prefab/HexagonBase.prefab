@@ -92,7 +92,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5311429736071346933}
-  - component: {fileID: 2486447358939956187}
+  - component: {fileID: 4664112090213929077}
+  - component: {fileID: -533820387564115532}
   m_Layer: 0
   m_Name: HexagonBase
   m_TagString: Untagged
@@ -116,7 +117,29 @@ Transform:
   - {fileID: 2155321690102043122}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2486447358939956187
+--- !u!64 &4664112090213929077
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6381064088991970003}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 2534964839176971238, guid: 8f4691ed86f8065449074e82573eb0ab, type: 3}
+--- !u!114 &-533820387564115532
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -125,7 +148,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6381064088991970003}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed2491b528ddace46842714457b74c04, type: 3}
+  m_Script: {fileID: 11500000, guid: 73fc3ae2f097f6845ac0b00a0a5ba63b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _meshRenderer: {fileID: 5490172489482317631}

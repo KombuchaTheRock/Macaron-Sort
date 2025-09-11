@@ -1,5 +1,6 @@
 using Sources.Common.CodeBase.Infrastructure.Utilities;
 using Sources.Common.CodeBase.Services;
+using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using Sources.Features.HexagonSort.Scripts;
 using UnityEngine;
 using Zenject;
@@ -48,8 +49,8 @@ namespace Sources.Features.HexagonSort.GridGenerator.Scripts
             if (spawnPosition.magnitude > maxGridRadius)
                 return;
 
-            Hexagon hexagon = _factory.CreateHexagon(spawnPosition, transform);
-            hexagon.SetColor(_cellColor);
+            GridCell hexagon = _factory.CreateGridCell(spawnPosition, transform);
+            hexagon.GetComponent<MeshColorSwitcher>().SetColor(_cellColor);
         }
       }
 }

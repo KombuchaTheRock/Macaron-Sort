@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: StackConfig
   m_EditorClassIdentifier: 
   <Template>k__BackingField: 0
-  HexagonHeight: 0.43
+  HexagonHeight: 0.15
   MaxStackSize: 8
   MinStackSize: 1
   Colors:

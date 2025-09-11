@@ -1,6 +1,8 @@
 ﻿using Sources.Common.CodeBase.Paths;
 using Sources.Features.HexagonSort.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using Sources.Features.HexagonSort.Scripts;
+using Sources.Features.HexagonSort.StackGenerator.Scripts;
 using UnityEngine;
 using Zenject;
 
@@ -44,9 +46,13 @@ namespace Sources.Common.CodeBase.Services
             return gridGenerator;
         }
 
-        public GameObject CreateHexagonStack(Vector3 position, Transform parent) =>
-            Instantiate(AssetsPaths.StackPrefab, position, parent);
+        
+        public HexagonStack CreateHexagonStack(Vector3 position, Transform parent) =>
+            Instantiate<HexagonStack>(AssetsPaths.StackPrefab, position, parent);
 
+        public GridCell CreateGridCell(Vector3 position, Transform parent) =>
+            Instantiate<GridCell>(AssetsPaths.GridCellPrefab, position, parent);
+        
         public Hexagon CreateHexagon(Vector3 position, Transform parent) =>
             Instantiate<Hexagon>(AssetsPaths.HexagonPrefab, position, parent);
 
