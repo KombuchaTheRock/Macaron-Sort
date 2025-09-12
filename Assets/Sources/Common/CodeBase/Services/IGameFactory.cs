@@ -1,4 +1,5 @@
-﻿using Sources.Features.HexagonSort.GridGenerator.Scripts;
+﻿using System.Collections.Generic;
+using Sources.Features.HexagonSort.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using Sources.Features.HexagonSort.Scripts;
 using Sources.Features.HexagonSort.StackGenerator.Scripts;
@@ -14,5 +15,7 @@ namespace Sources.Common.CodeBase.Services
         void CreateInstanceRoot();
         StackGenerator CreateStackGenerator(HexagonStackTemplate template, string levelName, Vector3 at);
         GridCell CreateGridCell(Vector3 position, Transform parent);
+        StackGenerator StackGenerator { get; }
+        List<HexagonStack> Stacks { get; }
     }
 }

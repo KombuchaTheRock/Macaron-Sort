@@ -10,10 +10,15 @@ namespace Sources.Features.HexagonSort.StackGenerator.Scripts
         private List<Hexagon> _hexagons = new();
 
         public Hexagon FirstHexagon => _hexagons[^1];
-        
-        public void Add(Hexagon hexagon)
-        {
+        public bool IsPlacedOnGrid { get; private set; }
+
+        public void Add(Hexagon hexagon) => 
             _hexagons.Add(hexagon);
-        }
+
+        public void SetPlacedOnGridTrue() => 
+            IsPlacedOnGrid = true;
+        
+        public void SetPlacedOnGridFalse() => 
+            IsPlacedOnGrid = false;
     }
 }

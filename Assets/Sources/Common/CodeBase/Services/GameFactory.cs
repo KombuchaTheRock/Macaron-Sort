@@ -1,4 +1,5 @@
-﻿using Sources.Common.CodeBase.Paths;
+﻿using System.Collections.Generic;
+using Sources.Common.CodeBase.Paths;
 using Sources.Features.HexagonSort.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using Sources.Features.HexagonSort.Scripts;
@@ -12,6 +13,9 @@ namespace Sources.Common.CodeBase.Services
     {
         private const string InstanceRootName = "InstanceRoot";
         
+        public List<HexagonStack> Stacks { get; private set; }
+        public StackGenerator StackGenerator { get; private set; }
+
         private Transform _instanceRoot;
 
         private readonly IInstantiator _instantiator;
@@ -23,6 +27,8 @@ namespace Sources.Common.CodeBase.Services
             _instantiator = instantiator;
             _resourceLoader = resourceLoader;
             _staticData = staticData;
+            
+            Stacks = new List<HexagonStack>();
         }
 
         public void CreateInstanceRoot() => 
@@ -35,6 +41,8 @@ namespace Sources.Common.CodeBase.Services
             stackGenerator.Initialize(_staticData.ForHexagonStack(template), 
                 _staticData.ForLevel(levelName).StackSpawnPoints);
 
+            StackGenerator = stackGenerator;
+            
             return stackGenerator;
         }
         
@@ -47,8 +55,12 @@ namespace Sources.Common.CodeBase.Services
         }
 
         
-        public HexagonStack CreateHexagonStack(Vector3 position, Transform parent) =>
-            Instantiate<HexagonStack>(AssetsPaths.StackPrefab, position, parent);
+        public HexagonStack CreateHexagonStack(Vector3 position, Transform parent)
+        {
+            HexagonStack hexagonStack = Instantiate<HexagonStack>(AssetsPaths.StackPrefab, position, parent);
+            Stacks.Add(hexagonStack);
+            return hexagonStack;
+        }
 
         public GridCell CreateGridCell(Vector3 position, Transform parent) =>
             Instantiate<GridCell>(AssetsPaths.GridCellPrefab, position, parent);
