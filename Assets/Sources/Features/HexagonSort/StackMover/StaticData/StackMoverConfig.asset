@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b160b360a13549b08c91207ec4ddb0cc, type: 3}
   m_Name: StackMoverConfig
   m_EditorClassIdentifier: 
-  <MaxRaycastDistance>k__BackingField: 0
-  <DragVerticalOffset>k__BackingField: 0
-  <PlaceOffsetAboveGrid>k__BackingField: 0
-  <GroundLayer>k__BackingField: 0
-  <GridLayer>k__BackingField: 0
-  <HexagonLayer>k__BackingField: 0
+  <MaxRaycastDistance>k__BackingField: 300
+  <DragVerticalOffset>k__BackingField: 1
+  <PlaceOffsetAboveGrid>k__BackingField: 0.15
+  <GroundLayer>k__BackingField: 6
+  <GridLayer>k__BackingField: 7
+  <HexagonLayer>k__BackingField: 8

@@ -1,13 +1,11 @@
-using Sources.Features.HexagonSort.GridGenerator.Scripts;
-using Sources.Features.HexagonSort.Scripts;
-using Sources.Features.Level.Scripts;
+using Sources.Common.CodeBase.Infrastructure;
+using Sources.Features.HexagonSort.StackGenerator.Scripts;
 
 namespace Sources.Common.CodeBase.Services
 {
     public interface IStaticDataService
     {
-        GridConfig ForGrid(GridTemplate gridTemplate);
-        HexagonStackConfig ForHexagonStack(HexagonStackTemplate gridTemplate);
-        LevelConfig ForLevel(string levelName);
+        HexagonStackConfig ForHexagonStack(HexagonStackTemplate stackTemplate);
+        GameConfig GameConfig { get; }
     }
 }

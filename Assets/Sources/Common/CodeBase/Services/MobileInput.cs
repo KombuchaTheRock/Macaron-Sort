@@ -25,7 +25,12 @@ namespace Sources.Common.CodeBase.Services
             Touch touch = Input.GetTouch(0);
             CursorPosition = touch.position;
 
-            switch (touch.phase)
+            SwitchTouchTo(touch.phase);
+        }
+
+        private void SwitchTouchTo(TouchPhase phase)
+        {
+            switch (phase)
             {
                 case TouchPhase.Began:
                     CursorDown?.Invoke();

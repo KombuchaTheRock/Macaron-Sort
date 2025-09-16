@@ -1,5 +1,7 @@
 using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
 using Sources.Common.CodeBase.Services;
+using Sources.Features.HexagonSort.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.StackGenerator.Scripts;
 using UnityEngine;
 using Zenject;
 
@@ -15,6 +17,20 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
             BindStaticDataService();
             BindGameFactory();
             BindInputService();
+            BindStackGenerator();
+            BindGridGenerator();
+        }
+
+        private void BindGridGenerator()
+        {
+            Container.BindInterfacesTo<GridGenerator>()
+                .AsSingle();
+        }
+
+        private void BindStackGenerator()
+        {
+            Container.BindInterfacesTo<StackGenerator>()
+                .AsSingle();
         }
 
         private void BindInputService()

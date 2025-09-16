@@ -2,7 +2,6 @@
 using Sources.Common.CodeBase.Paths;
 using Sources.Features.HexagonSort.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
-using Sources.Features.HexagonSort.Scripts;
 using Sources.Features.HexagonSort.StackGenerator.Scripts;
 using UnityEngine;
 using Zenject;
@@ -11,7 +10,9 @@ namespace Sources.Common.CodeBase.Services
 {
     public class GameFactory : IGameFactory
     {
-        private const string InstanceRootName = "InstanceRoot";
+        private const string InstanceRootName = "GameFactoryRoot";
+        private const string GridRootName = "Grid";
+        private const string StacksRootName = "Stacks";
         
         public List<HexagonStack> Stacks { get; private set; }
         public StackGenerator StackGenerator { get; private set; }
@@ -32,41 +33,51 @@ namespace Sources.Common.CodeBase.Services
         }
 
         public void CreateInstanceRoot() => 
-            _instanceRoot = new GameObject(InstanceRootName).transform;
+            _instanceRoot = CreateRootObject(InstanceRootName);
 
-        public StackGenerator CreateStackGenerator(HexagonStackTemplate template, string levelName, Vector3 at)
+        public Transform CreateGridRoot()
         {
-            StackGenerator stackGenerator = Instantiate<StackGenerator>(AssetsPaths.StackGeneratorPrefab, at, _instanceRoot);
+            Transform rootObject = CreateRootObject(GridRootName);
+            rootObject.SetParent(_instanceRoot);
             
-            stackGenerator.Initialize(_staticData.ForHexagonStack(template), 
-                _staticData.ForLevel(levelName).StackSpawnPoints);
-
-            StackGenerator = stackGenerator;
-            
-            return stackGenerator;
-        }
-        
-        public GridGenerator CreateGridGenerator(GridTemplate template, Vector3 at)
-        {
-            GridGenerator gridGenerator = Instantiate<GridGenerator>(AssetsPaths.GridGeneratorPrefab, at, _instanceRoot);
-            gridGenerator.Initialize(_staticData.ForGrid(template));
-
-            return gridGenerator;
+            return rootObject;
         }
 
-        
+        public Transform CreateStacksRoot()
+        {
+            Transform rootObject = CreateRootObject(StacksRootName);
+            rootObject.SetParent(_instanceRoot);
+            
+            return rootObject;
+        }
+
         public HexagonStack CreateHexagonStack(Vector3 position, Transform parent)
         {
             HexagonStack hexagonStack = Instantiate<HexagonStack>(AssetsPaths.StackPrefab, position, parent);
+            
             Stacks.Add(hexagonStack);
             return hexagonStack;
         }
 
-        public GridCell CreateGridCell(Vector3 position, Transform parent) =>
-            Instantiate<GridCell>(AssetsPaths.GridCellPrefab, position, parent);
-        
-        public Hexagon CreateHexagon(Vector3 position, Transform parent) =>
-            Instantiate<Hexagon>(AssetsPaths.HexagonPrefab, position, parent);
+        public GridCell CreateGridCell(Vector3 position, Transform parent, Color normalColor, Color highlightColor)
+        {
+            GridCell gridCell = Instantiate<GridCell>(AssetsPaths.GridCellPrefab, position, parent);
+            gridCell.SetColors(normalColor, highlightColor);
+            gridCell.GetComponent<MeshColor>().Set(normalColor);
+            
+            return gridCell;
+        }
+
+        public Hexagon CreateHexagon(Vector3 position, Transform parent, Color color)
+        {
+            Hexagon hexagon = Instantiate<Hexagon>(AssetsPaths.HexagonPrefab, position, parent);
+            hexagon.GetComponent<MeshColor>().Set(color);
+            
+            return hexagon;
+        }
+
+        private Transform CreateRootObject(string rootObjectName) => 
+            new GameObject(rootObjectName).transform;
 
         private GameObject Instantiate(string assetPath, Vector3 at, Transform parent = null)
         {

@@ -1,7 +1,6 @@
 ﻿using Sources.Common.CodeBase.Services;
 using Sources.Features.HexagonSort.GridGenerator.Scripts;
-using Sources.Features.HexagonSort.Scripts;
-using UnityEngine;
+using Sources.Features.HexagonSort.StackGenerator.Scripts;
 
 namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 {
@@ -10,13 +9,17 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private readonly IGameStateMachine _stateMachine;
         private readonly SceneLoader _sceneLoader;
         private readonly IGameFactory _factory;
+        private readonly IStackGenerator _stackGenerator;
+        private readonly IGridGenerator _gridGenerator;
         private string _currentLevelName;
 
-        public LoadLevelState(IGameStateMachine stateMachine, SceneLoader sceneLoader, IGameFactory factory)
+        public LoadLevelState(IGameStateMachine stateMachine, SceneLoader sceneLoader, IGameFactory factory, IStackGenerator stackGenerator, IGridGenerator gridGenerator)
         {
             _stateMachine = stateMachine;
             _sceneLoader = sceneLoader;
             _factory = factory;
+            _stackGenerator = stackGenerator;
+            _gridGenerator = gridGenerator;
         }
 
         public void Enter(string levelName)
@@ -36,12 +39,8 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         {
             _factory.CreateInstanceRoot();
 
-            GridGenerator gridGenerator = _factory.CreateGridGenerator(GridTemplate.Default, Vector3.zero);
-            gridGenerator.GenerateGrid();
-
-            StackGenerator stackGenerator =
-                _factory.CreateStackGenerator(HexagonStackTemplate.Default, _currentLevelName, Vector3.zero);
-            stackGenerator.GenerateStacks();
+            _gridGenerator.GenerateGrid();
+            _stackGenerator.GenerateStacks();
         }
 
         public void Exit()

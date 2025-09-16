@@ -1,9 +1,5 @@
-﻿using DG.Tweening;
-using DG.Tweening.Core;
-using DG.Tweening.Plugins.Options;
-using Sources.Common.CodeBase.Services;
+﻿using Sources.Common.CodeBase.Services;
 using Sources.Features.HexagonSort.GridGenerator.Scripts;
-using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using Sources.Features.HexagonSort.StackGenerator.Scripts;
 using UnityEngine;
 using Zenject;
@@ -12,171 +8,89 @@ namespace Sources.Features.HexagonSort.StackMover.Scripts
 {
     public class StackMover : MonoBehaviour
     {
-        private const string HexagonLayerName = "Hexagon";
-        private const string HexagonGridLayerName = "Grid";
-        private const string GroundLayerName = "Ground";
-        private const float MaxRaycastDistance = 300;
-
-        [SerializeField] private float _dragVerticalOffset = 1f;
-        [SerializeField] private float _placeOffsetAboveGrid = 0.15f;
-
-        private int _groundLayer;
-        private int _gridLayer;
-        private LayerMask _hexagonLayerMask;
-        private LayerMask _draggingLayerMask;
-
+        [SerializeField] private Vector3 _draggingOffset;
+        
         private HexagonStack _currentStack;
-        private HexagonStack _droppedStack;
-        private GridCell _gridCellUnderCursor;
         private Vector3 _currentStackInitialPosition;
-        private Vector3 _hitPosition;
 
         private IInputService _input;
-
-        private TweenerCore<Vector3, Vector3, VectorOptions> _transitionToInitialAnim;
+        private IStaticDataService _staticData;
+        
+        private StackSelection _selection;
+        private StackDragging _dragging;
+        private StackPlacement _placement;
 
         [Inject]
-        public void Construct(IInputService inputService)
+        public void Construct(IInputService inputService, IStaticDataService staticData)
         {
             _input = inputService;
+            _staticData = staticData;
             _input.CursorDown += OnCursorDown;
             _input.CursorUp += OnCursorUp;
-
-            Initialize();
         }
 
-        private void Initialize()
-        {
-            _groundLayer = LayerMask.NameToLayer(GroundLayerName);
-            _gridLayer = LayerMask.NameToLayer(HexagonGridLayerName);
+        private void Start() => 
+            InitializeServices();
 
-            _hexagonLayerMask = 1 << LayerMask.NameToLayer(HexagonLayerName);
-            _draggingLayerMask = (1 << _groundLayer) | (1 << _gridLayer);
-        }
-
-        private void OnDestroy()
+        private void InitializeServices()
         {
-            _input.CursorDown -= OnCursorDown;
-            _input.CursorUp -= OnCursorUp;
+            StackMoverConfig config = _staticData.GameConfig.StackMoverConfig;
+            
+            _selection = new StackSelection(config.MaxRaycastDistance, config.HexagonLayer);
+            _dragging = new StackDragging(config.MaxRaycastDistance,
+                config.DragVerticalOffset,
+                config.GridLayer,
+                config.GroundLayer);
+            _placement = new StackPlacement(config.PlaceOffsetAboveGrid);
         }
 
         private void Update()
         {
-            if (_input.IsCursorHold == false || _currentStack == null)
-                return;
-
-            if (Physics.Raycast(GetClickedRay(), out RaycastHit hit, MaxRaycastDistance, _draggingLayerMask))
-                DragStack(hit);
+            if (_input.IsCursorHold && _currentStack != null)
+            {
+                Ray draggingRay = GetClickedRay();
+                draggingRay.origin += _draggingOffset;
+                
+                _dragging.Drag(_currentStack, draggingRay);
+            }
         }
 
         private void OnCursorUp()
         {
             if (_currentStack == null)
                 return;
-            
-            if (_gridCellUnderCursor?.IsOccupied == false)
-            {
-                _gridCellUnderCursor.SetStack(_currentStack);
-                _currentStack.SetPlacedOnGridTrue();
 
-                _currentStack.transform.position =
-                    _gridCellUnderCursor.transform.position + Vector3.up * _placeOffsetAboveGrid;
-            }
+            GridCell targetCell = _dragging.GetTargetCell();
+            
+            if (targetCell?.IsOccupied == false)
+                _placement.PlaceOnGrid(_currentStack, targetCell);
             else
-                MoveCurrentStackToInitialPosition();
+                _placement.ReturnToInitialPosition(_currentStack, _currentStackInitialPosition, 4);
 
             _currentStack = null;
+            _dragging.ResetCell();
+            _selection.ResetSelection();
         }
 
         private void OnCursorDown()
         {
-            if (Physics.Raycast(GetClickedRay(), out RaycastHit hit, MaxRaycastDistance, _hexagonLayerMask))
-                SelectStack(hit);
-        }
-
-        private void DragStack(RaycastHit hit)
-        {
-            if (hit.collider == null)
-                return;
-
-            _hitPosition = hit.point;
-            int layer = hit.collider.gameObject.layer;
-
-            Vector3 targetPosition = hit.point + Vector3.up * _dragVerticalOffset;
-            MoveStackToTarget(targetPosition);
-
-            if (layer == _groundLayer)
+            if (_selection.TrySelectStack(GetClickedRay(), out HexagonStack stack))
             {
-                _gridCellUnderCursor = null;
-                _currentStack.SetPlacedOnGridFalse();
+                _currentStack = stack;
+                _currentStackInitialPosition = stack.transform.position;
             }
-            else if (layer == _gridLayer)
-            {
-                _gridCellUnderCursor = hit.collider.GetComponent<GridCell>();
-                SnappingToGrid(_gridCellUnderCursor);
-            }
-        }
-
-        private void SnappingToGrid(GridCell gridCell)
-        {
-            if (gridCell.IsOccupied)
-                return;
-
-            Vector3 targetPosition = gridCell.transform.position + Vector3.up * _dragVerticalOffset;
-            _currentStack.transform.position = Vector3.Lerp(_currentStack.transform.position, targetPosition,
-                Time.deltaTime * 30f);
-        }
-
-        private void MoveCurrentStackToInitialPosition()
-        {
-            float transitionDuration = (_currentStack.transform.position - _currentStackInitialPosition).magnitude / 5;
-
-            _transitionToInitialAnim?.Complete();
-
-            _transitionToInitialAnim = _currentStack.transform
-                .DOMove(_currentStackInitialPosition, transitionDuration)
-                .SetEase(Ease.OutBounce)
-                .Play()
-                .OnComplete(OnComplete)
-                .SetLink(_currentStack.gameObject);
-
-            _droppedStack = _currentStack;
-            return;
-
-            void OnComplete() =>
-                _droppedStack = null;
-        }//Вынести
-
-        private void SelectStack(RaycastHit hit)
-        {
-            if (hit.collider == null)
-                return;
-
-            Hexagon hexagon = hit.collider.GetComponent<Hexagon>();
-
-            if (hexagon.Stack.IsPlacedOnGrid || hexagon.Stack == _droppedStack)
-                return;
-
-            _currentStack = hexagon.Stack;
-            _currentStackInitialPosition = _currentStack.transform.position;
-        }
-
-        private void MoveStackToTarget(Vector3 targetPosition)
-        {
-            _currentStack.transform.position =
-                Vector3.MoveTowards(_currentStack.transform.position, targetPosition, Time.deltaTime * 30f);
         }
 
         private Ray GetClickedRay() =>
             Camera.main.ScreenPointToRay(_input.CursorPosition);
 
-        private void OnDrawGizmos()
+        private void OnDestroy() => 
+            UnsubscribeFromInput();
+
+        private void UnsubscribeFromInput()
         {
-            if (_currentStack != null)
-            {
-                Gizmos.color = Color.green;
-                Gizmos.DrawSphere(_hitPosition, 0.05f);
-            }
-        }//Вынести
+            _input.CursorDown -= OnCursorDown;
+            _input.CursorUp -= OnCursorUp;
+        }
     }
 }
