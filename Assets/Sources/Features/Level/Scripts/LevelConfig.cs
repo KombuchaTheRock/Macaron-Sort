@@ -6,13 +6,13 @@ using UnityEngine.SceneManagement;
 
 namespace Sources.Features.Level.Scripts
 {
-    [CreateAssetMenu(menuName = "Level/LevelStaticData", fileName = "LevelStaticData", order = 0)]
+    [CreateAssetMenu(menuName = "StaticData/LevelConfig", fileName = "LevelConfig", order = 0)]
     public class LevelConfig : ScriptableObject
     {
         private const string StackSpawnPositionsTag = "StackPosition";
         
-        public string LevelName;
-        public List<Vector3> StackSpawnPoints;
+        [field: SerializeField] public string LevelName {get; private set; }
+        [field: SerializeField] public List<Vector3> StackSpawnPoints {get; private set; }
         
         [Button("Save LevelStaticData")]
         private void SaveLevelStaticData()

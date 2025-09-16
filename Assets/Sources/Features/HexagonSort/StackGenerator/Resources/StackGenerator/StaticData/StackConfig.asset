@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: StackConfig
   m_EditorClassIdentifier: 
   <Template>k__BackingField: 0
-  HexagonHeight: 0.15
-  MaxStackSize: 8
-  MinStackSize: 1
-  Colors:
-  - {r: 0.9764706, g: 0.21960784, b: 0.15294118, a: 0}
-  - {r: 0.08627451, g: 0.76862746, b: 0.49803922, a: 0}
-  - {r: 1, g: 0.6156863, b: 0.13725491, a: 0}
+  <HexagonHeight>k__BackingField: 0.15
+  <MaxStackSize>k__BackingField: 7
+  <MinStackSize>k__BackingField: 3
+  <Colors>k__BackingField:
+  - {r: 1, g: 0.33490568, b: 0.33490568, a: 0}
+  - {r: 0.9803406, g: 1, b: 0.13679248, a: 0}
+  - {r: 0.38061213, g: 0.28773582, b: 1, a: 0}
