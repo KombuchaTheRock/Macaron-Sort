@@ -1,29 +1,35 @@
 using System.Collections.Generic;
 using Sources.Common.CodeBase.Services;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
-using Sources.Features.HexagonSort.StackGenerator.Scripts;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
 
-namespace Sources.Features.HexagonSort.Scripts
+namespace Sources.Features.HexagonSort.StackGenerator.Scripts
 {
-    public class StackGenerator : MonoBehaviour
+    public class StackGenerator : IStackGenerator, IInitializable
     {
         private float _hexagonHeight;
         private int _minStackSize;
         private int _maxStackSize;
         private Color[] _colors;
         private List<Vector3> _spawnPositions;
+        private Transform _stacksRoot;
 
-        private IGameFactory _factory;
+        private readonly IGameFactory _factory;
+        private readonly IStaticDataService _staticData;
 
-        [Inject]
-        public void Construct(IGameFactory gameFactory) =>
-            _factory = gameFactory;
-
-        public void Initialize(HexagonStackConfig stackConfig, List<Vector3> spawnPositions)
+        public StackGenerator(IGameFactory gameFactory, IStaticDataService staticData)
         {
+            _factory = gameFactory;
+            _staticData = staticData;
+        }
+
+        public void Initialize()
+        {
+            HexagonStackConfig stackConfig = _staticData.ForHexagonStack(HexagonStackTemplate.Default);
+            List<Vector3> spawnPositions = _staticData.GameConfig.LevelConfig.StackSpawnPoints;
+
             _spawnPositions = spawnPositions;
             _hexagonHeight = stackConfig.HexagonHeight;
             _minStackSize = stackConfig.MinStackSize;
@@ -33,20 +39,22 @@ namespace Sources.Features.HexagonSort.Scripts
 
         public void GenerateStacks()
         {
+            _stacksRoot = _factory.CreateStacksRoot();
+
             foreach (Vector3 position in _spawnPositions)
                 GenerateStack(position);
         }
 
         private void GenerateStack(Vector3 spawnPosition)
         {
-            HexagonStack hexagonStack = _factory.CreateHexagonStack(spawnPosition, transform);
-            hexagonStack.name = $"Stack {transform.GetSiblingIndex()}";
+            HexagonStack hexagonStack = _factory.CreateHexagonStack(spawnPosition, _stacksRoot);
+            hexagonStack.name = $"Stack";
 
             int amount = Random.Range(_minStackSize, _maxStackSize);
 
             Color[] randomColors = GetRandomColors();
             int firstColorIndex = Random.Range(0, amount);
-            
+
             for (int i = 0; i < amount; i++)
                 SpawnHexagon(i, hexagonStack, randomColors, firstColorIndex);
         }
@@ -57,21 +65,19 @@ namespace Sources.Features.HexagonSort.Scripts
             Vector3 hexagonLocalPosition = Vector3.up * index * _hexagonHeight;
             Vector3 spawnPosition = hexagonStack.transform.TransformPoint(hexagonLocalPosition);
 
-            Hexagon hexagon = _factory.CreateHexagon(spawnPosition, hexagonStack.transform);
-            
             Color color = index <= firstColorIndex ? randomColors[0] : randomColors[1];
-            hexagon.GetComponent<MeshColorSwitcher>().SetColor(color);
-            
+            Hexagon hexagon = _factory.CreateHexagon(spawnPosition, hexagonStack.transform, color);
+
             hexagonStack.Add(hexagon);
             hexagon.SetStack(hexagonStack);
         }
 
         private Color[] GetRandomColors()
         {
-           Color firstColor = _colors[Random.Range(0, _colors.Length)];
-           Color secondColor = _colors[Random.Range(0, _colors.Length)];
-           
-           return new[] { firstColor, secondColor };
+            Color firstColor = _colors[Random.Range(0, _colors.Length)];
+            Color secondColor = _colors[Random.Range(0, _colors.Length)];
+
+            return new[] { firstColor, secondColor };
         }
     }
 }
