@@ -2,14 +2,13 @@
 
 namespace Sources.Features.HexagonSort.GridGenerator.Scripts
 {
-    [CreateAssetMenu(menuName = "HexagonSort/GridConfig", fileName = "GridConfig", order = 0)]
+    [CreateAssetMenu(menuName = "StaticData/GridConfig", fileName = "GridConfig", order = 0)]
     public class GridConfig : ScriptableObject
     {
-        public GridTemplate Template;
-        [Space]
-        public Grid Grid;
-        public Color GridColor;
-        public float CellSize;
-        public int GridRadius;
+        [field: Space (5), SerializeField] public Grid Grid { get; private set; }
+        [field: SerializeField] public Color CellColor { get; private set; }
+        [field: SerializeField] public Color CellHighlightColor { get; set; }
+        [field: SerializeField] public float CellSize { get; private set; }
+        [field: SerializeField] public int GridRadius { get; private set; }
     }
 }

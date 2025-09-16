@@ -1,56 +1,63 @@
 using Sources.Common.CodeBase.Infrastructure.Utilities;
 using Sources.Common.CodeBase.Services;
-using Sources.Features.HexagonSort.HexagonTile.Scripts;
-using Sources.Features.HexagonSort.Scripts;
 using UnityEngine;
 using Zenject;
 
 namespace Sources.Features.HexagonSort.GridGenerator.Scripts
 {
-    public class GridGenerator : MonoBehaviour
+    public class GridGenerator : IGridGenerator, IInitializable
     {
         private Grid _grid;
-        private Color _cellColor;
+        private Color _normalCellColor;
+        private Color _highlightCellColor;
         private int _gridSize;
         private float _cellSize;
-        
-        private IGameFactory _factory;
+        private Transform _gridRoot;
 
-        [Inject]
-        public void Construct(IGameFactory gameFactory) => 
-            _factory = gameFactory;
+        private readonly IGameFactory _factory;
+        private readonly IStaticDataService _staticData;
 
-        public void Initialize(GridConfig gridConfig)
+        public GridGenerator(IGameFactory gameFactory, IStaticDataService staticData)
         {
-            _cellColor = gridConfig.GridColor;
+            _factory = gameFactory;
+            _staticData = staticData;
+        }
+
+        public void Initialize()
+        {
+            GridConfig gridConfig = _staticData.GameConfig.GridConfig;
+            
+            _normalCellColor = gridConfig.CellColor;
             _grid = gridConfig.Grid;
             _cellSize = gridConfig.CellSize;
             _gridSize = gridConfig.GridRadius;
+            _highlightCellColor = gridConfig.CellHighlightColor;
         }
-        
+
         public void GenerateGrid()
         {
-            float inradius = GeometryUtils.InradiusFromCircumradius(_cellSize);
+            _gridRoot = _factory.CreateGridRoot();
+            
+            float inradius = GeometryUtils.InradiusFromOutRadius(_cellSize);
             _grid.cellSize = new Vector3(inradius, _cellSize, 1f);
             _grid.cellSwizzle = GridLayout.CellSwizzle.XZY;
+
+            int negativeGridSize = -_gridSize;
             
-            for (int x = -_gridSize; x <= _gridSize; x++)
+            for (int x = negativeGridSize; x <= _gridSize; x++)
             {
-                for (int y = -_gridSize; y <= _gridSize; y++) 
-                    SpawnHexagon(x, y);
+                for (int y = negativeGridSize; y <= _gridSize; y++)
+                    SpawnGridCell(x, y);
             }
         }
 
-        private void SpawnHexagon(int x, int y)
+        private void SpawnGridCell(int x, int y)
         {
             Vector3 spawnPosition = _grid.CellToWorld(new Vector3Int(x, y, 0));
             float maxGridRadius = _grid.CellToWorld(new Vector3Int(1, 0, 0)).magnitude * _gridSize;
-                    
-            if (spawnPosition.magnitude > maxGridRadius)
-                return;
 
-            GridCell hexagon = _factory.CreateGridCell(spawnPosition, transform);
-            hexagon.GetComponent<MeshColorSwitcher>().SetColor(_cellColor);
+            if (spawnPosition.magnitude <= maxGridRadius)
+                _factory.CreateGridCell(spawnPosition, _gridRoot, _normalCellColor, _highlightCellColor);
         }
-      }
+    }
 }
