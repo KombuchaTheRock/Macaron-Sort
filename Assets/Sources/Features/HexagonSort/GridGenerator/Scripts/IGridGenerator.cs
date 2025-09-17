@@ -1,7 +1,9 @@
-﻿namespace Sources.Features.HexagonSort.GridGenerator.Scripts
+﻿using UnityEngine;
+
+namespace Sources.Features.HexagonSort.GridGenerator.Scripts
 {
     public interface IGridGenerator
     {
-        void GenerateGrid();
+        public void GenerateGrid(Grid grid, int gridSize, CellConfig cellConfig);
     }
 }

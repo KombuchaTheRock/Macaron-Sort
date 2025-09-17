@@ -8,21 +8,23 @@ namespace Sources.Features.HexagonSort.StackMover.Scripts
 {
     public class StackMovement : MonoBehaviour
     {
-        private float _movementSpeed = 30f;
         private TweenerCore<Vector3, Vector3, VectorOptions> _transitionToInitialAnim;
 
-        public bool CanMove { get; set; }
+        public bool CanMove { get; private set; } = true;
 
-        private void Awake() =>
+        public void EnableMovement() => 
             CanMove = true;
 
-        public void FollowingTarget(Vector3 target)
+        public void DisableMovement() => 
+            CanMove = false;
+
+        public void FollowingTarget(Vector3 target, float speed)
         {
             if (CanMove == false)
                 return;
 
             transform.position =
-                Vector3.MoveTowards(transform.position, target, _movementSpeed * Time.deltaTime);
+                Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
         }
 
         public void MoveToTarget(Vector3 targetPosition, float speed, Action onComplete = null)
@@ -34,11 +36,18 @@ namespace Sources.Features.HexagonSort.StackMover.Scripts
 
             _transitionToInitialAnim?.Complete();
 
+            void OnCompleteAction()
+            {
+                CanMove = true;
+                onComplete?.Invoke();
+            }
+            
+            CanMove = false;
             _transitionToInitialAnim = transform
                 .DOMove(targetPosition, transitionDuration)
-                .SetEase(Ease.OutBounce)
+                .SetEase(Ease.OutQuad)
                 .Play()
-                .OnComplete(() => onComplete?.Invoke())
+                .OnComplete(OnCompleteAction)
                 .SetLink(gameObject);
         }
     }

@@ -62,8 +62,7 @@ namespace Sources.Common.CodeBase.Services
         public GridCell CreateGridCell(Vector3 position, Transform parent, Color normalColor, Color highlightColor)
         {
             GridCell gridCell = Instantiate<GridCell>(AssetsPaths.GridCellPrefab, position, parent);
-            gridCell.SetColors(normalColor, highlightColor);
-            gridCell.GetComponent<MeshColor>().Set(normalColor);
+            gridCell.InitializeColors(normalColor, highlightColor);
             
             return gridCell;
         }

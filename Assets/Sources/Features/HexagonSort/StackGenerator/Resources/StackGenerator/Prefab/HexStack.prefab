@@ -11,7 +11,9 @@ GameObject:
   - component: {fileID: 6576534650306805449}
   - component: {fileID: -2177616891294617507}
   - component: {fileID: -6636090706746761247}
-  m_Layer: 0
+  - component: {fileID: 787492034219709581}
+  - component: {fileID: 1618368408797566345}
+  m_Layer: 8
   m_Name: HexStack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58,3 +60,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c47aedaee4542e885ff801aab1b2f4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &787492034219709581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2211511333245147791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9764c298a1e5b6242951f44067ca3a80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!64 &1618368408797566345
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2211511333245147791}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 2534964839176971238, guid: 8f4691ed86f8065449074e82573eb0ab, type: 3}

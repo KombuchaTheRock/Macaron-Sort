@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f9d3da5981c476298ed1ceec7db46aa, type: 3}
   m_Name: GridConfig
   m_EditorClassIdentifier: 
+  <CellConfig>k__BackingField: {fileID: 11400000, guid: d95a3725a29ca934bbc76ac883360841, type: 2}
   <Grid>k__BackingField: {fileID: 1862200089603849181, guid: f96682e4bf432bf46897bd1332d9bcf2, type: 3}
-  <CellColor>k__BackingField: {r: 0.1792453, g: 0.1792453, b: 0.1792453, a: 0}
-  <CellHighlightColor>k__BackingField: {r: 1, g: 0.1273585, b: 0.1273585, a: 0}
-  <CellSize>k__BackingField: 1
-  <GridRadius>k__BackingField: 2
+  <Size>k__BackingField: 2

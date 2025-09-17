@@ -5,59 +5,38 @@ using Zenject;
 
 namespace Sources.Features.HexagonSort.GridGenerator.Scripts
 {
-    public class GridGenerator : IGridGenerator, IInitializable
+    public class GridGenerator : IGridGenerator
     {
-        private Grid _grid;
-        private Color _normalCellColor;
-        private Color _highlightCellColor;
-        private int _gridSize;
-        private float _cellSize;
+        private readonly IGameFactory _factory;
         private Transform _gridRoot;
 
-        private readonly IGameFactory _factory;
-        private readonly IStaticDataService _staticData;
-
-        public GridGenerator(IGameFactory gameFactory, IStaticDataService staticData)
-        {
+        public GridGenerator(IGameFactory gameFactory) => 
             _factory = gameFactory;
-            _staticData = staticData;
-        }
 
-        public void Initialize()
-        {
-            GridConfig gridConfig = _staticData.GameConfig.GridConfig;
-            
-            _normalCellColor = gridConfig.CellColor;
-            _grid = gridConfig.Grid;
-            _cellSize = gridConfig.CellSize;
-            _gridSize = gridConfig.GridRadius;
-            _highlightCellColor = gridConfig.CellHighlightColor;
-        }
-
-        public void GenerateGrid()
+        public void GenerateGrid(Grid grid, int gridSize, CellConfig cellConfig)
         {
             _gridRoot = _factory.CreateGridRoot();
             
-            float inradius = GeometryUtils.InradiusFromOutRadius(_cellSize);
-            _grid.cellSize = new Vector3(inradius, _cellSize, 1f);
-            _grid.cellSwizzle = GridLayout.CellSwizzle.XZY;
+            float inradius = GeometryUtils.InradiusFromOutRadius(cellConfig.CellSize);
+            grid.cellSize = new Vector3(inradius, cellConfig.CellSize, 1f);
+            grid.cellSwizzle = GridLayout.CellSwizzle.XZY;
 
-            int negativeGridSize = -_gridSize;
+            int negativeGridSize = -gridSize;
             
-            for (int x = negativeGridSize; x <= _gridSize; x++)
+            for (int x = negativeGridSize; x <= gridSize; x++)
             {
-                for (int y = negativeGridSize; y <= _gridSize; y++)
-                    SpawnGridCell(x, y);
+                for (int y = negativeGridSize; y <= gridSize; y++)
+                    SpawnGridCell(x, y, cellConfig.CellColor, cellConfig.CellHighlightColor, grid, gridSize);
             }
         }
 
-        private void SpawnGridCell(int x, int y)
+        private void SpawnGridCell(int x, int y, Color normalColor, Color highlightColor, Grid grid, int gridSize)
         {
-            Vector3 spawnPosition = _grid.CellToWorld(new Vector3Int(x, y, 0));
-            float maxGridRadius = _grid.CellToWorld(new Vector3Int(1, 0, 0)).magnitude * _gridSize;
-
+            Vector3 spawnPosition = grid.CellToWorld(new Vector3Int(x, y, 0));
+            float maxGridRadius = grid.CellToWorld(Vector3Int.right).magnitude * gridSize;
+            
             if (spawnPosition.magnitude <= maxGridRadius)
-                _factory.CreateGridCell(spawnPosition, _gridRoot, _normalCellColor, _highlightCellColor);
+                _factory.CreateGridCell(spawnPosition, _gridRoot, normalColor, highlightColor);
         }
     }
 }

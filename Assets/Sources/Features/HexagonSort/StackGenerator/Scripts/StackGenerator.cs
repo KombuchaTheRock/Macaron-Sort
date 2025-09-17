@@ -7,75 +7,68 @@ using Random = UnityEngine.Random;
 
 namespace Sources.Features.HexagonSort.StackGenerator.Scripts
 {
-    public class StackGenerator : IStackGenerator, IInitializable
+    public class StackGenerator : IStackGenerator
     {
-        private float _hexagonHeight;
-        private int _minStackSize;
-        private int _maxStackSize;
-        private Color[] _colors;
-        private List<Vector3> _spawnPositions;
         private Transform _stacksRoot;
+        private float _currentStackHeight;
 
         private readonly IGameFactory _factory;
-        private readonly IStaticDataService _staticData;
 
-        public StackGenerator(IGameFactory gameFactory, IStaticDataService staticData)
-        {
+        public StackGenerator(IGameFactory gameFactory) => 
             _factory = gameFactory;
-            _staticData = staticData;
-        }
 
-        public void Initialize()
-        {
-            HexagonStackConfig stackConfig = _staticData.ForHexagonStack(HexagonStackTemplate.Default);
-            List<Vector3> spawnPositions = _staticData.GameConfig.LevelConfig.StackSpawnPoints;
-
-            _spawnPositions = spawnPositions;
-            _hexagonHeight = stackConfig.HexagonHeight;
-            _minStackSize = stackConfig.MinStackSize;
-            _maxStackSize = stackConfig.MaxStackSize;
-            _colors = stackConfig.Colors;
-        }
-
-        public void GenerateStacks()
+        public void GenerateStacks(Vector3[] spawnPositions, int minStackSize, int maxStackSize, float hexagonHeight,
+            Color[] colors)
         {
             _stacksRoot = _factory.CreateStacksRoot();
 
-            foreach (Vector3 position in _spawnPositions)
-                GenerateStack(position);
+            foreach (Vector3 position in spawnPositions)
+                GenerateStack(position, minStackSize, maxStackSize, hexagonHeight, colors);
         }
 
-        private void GenerateStack(Vector3 spawnPosition)
+        private void GenerateStack(Vector3 spawnPosition, int minStackSize, int maxStackSize, float hexagonHeight,
+            Color[] colors)
         {
             HexagonStack hexagonStack = _factory.CreateHexagonStack(spawnPosition, _stacksRoot);
             hexagonStack.name = $"Stack";
 
-            int amount = Random.Range(_minStackSize, _maxStackSize);
+            int amount = Random.Range(minStackSize, maxStackSize);
 
-            Color[] randomColors = GetRandomColors();
+            Color[] randomColors = GetRandomColors(colors);
             int firstColorIndex = Random.Range(0, amount);
 
-            for (int i = 0; i < amount; i++)
-                SpawnHexagon(i, hexagonStack, randomColors, firstColorIndex);
+            for (int i = 0; i <= amount; i++)
+                SpawnHexagon(i, hexagonStack, randomColors, firstColorIndex, hexagonHeight);
+
+            SetStackColliderHeight(hexagonStack, amount, hexagonHeight);
         }
 
         private void SpawnHexagon(int index, HexagonStack hexagonStack,
-            Color[] randomColors, int firstColorIndex)
+            Color[] randomColors, int firstColorIndex, float hexagonHeight)
         {
-            Vector3 hexagonLocalPosition = Vector3.up * index * _hexagonHeight;
+            Vector3 hexagonLocalPosition = Vector3.up * index * hexagonHeight;
             Vector3 spawnPosition = hexagonStack.transform.TransformPoint(hexagonLocalPosition);
 
             Color color = index <= firstColorIndex ? randomColors[0] : randomColors[1];
             Hexagon hexagon = _factory.CreateHexagon(spawnPosition, hexagonStack.transform, color);
 
             hexagonStack.Add(hexagon);
-            hexagon.SetStack(hexagonStack);
         }
 
-        private Color[] GetRandomColors()
+        private void SetStackColliderHeight(HexagonStack hexagonStack, int amount, float hexagonHeight)
         {
-            Color firstColor = _colors[Random.Range(0, _colors.Length)];
-            Color secondColor = _colors[Random.Range(0, _colors.Length)];
+            ColliderHeight colliderHeight = hexagonStack.GetComponent<ColliderHeight>();
+
+            float stackHeight = amount * hexagonHeight;
+            float stackColliderHeightMultiplier = stackHeight / colliderHeight.OriginalHeight;
+
+            colliderHeight.SetHeight(stackColliderHeightMultiplier);
+        }
+
+        private Color[] GetRandomColors(Color[] colors)
+        {
+            Color firstColor = colors[Random.Range(0, colors.Length)];
+            Color secondColor = colors[Random.Range(0, colors.Length)];
 
             return new[] { firstColor, secondColor };
         }

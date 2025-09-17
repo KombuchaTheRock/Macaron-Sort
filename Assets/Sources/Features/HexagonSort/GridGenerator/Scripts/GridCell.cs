@@ -15,9 +15,9 @@ namespace Sources.Features.HexagonSort.GridGenerator.Scripts
         public bool IsOccupied => _stack != null;
 
         private void Start() => 
-            UnHighlight();
+            DisableHighlight();
 
-        public void SetColors(Color normal, Color highlight)
+        public void InitializeColors(Color normal, Color highlight)
         {
             _highlight = highlight;
             _normal = normal;
@@ -26,10 +26,10 @@ namespace Sources.Features.HexagonSort.GridGenerator.Scripts
         public void SetStack(HexagonStack stack) =>
             _stack = stack;
 
-        public void Highlight() =>
+        public void EnableHighlight() =>
             _meshColor.Set(_highlight);
 
-        public void UnHighlight() =>
+        public void DisableHighlight() =>
             _meshColor.Set(_normal);
     }
 }

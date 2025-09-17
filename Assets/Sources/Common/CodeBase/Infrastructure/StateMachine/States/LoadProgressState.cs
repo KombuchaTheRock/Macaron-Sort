@@ -2,8 +2,6 @@
 {
     public class LoadProgressState : IState
     {
-        private const string LevelName = "Gameplay";
-        
         private readonly IGameStateMachine _gameStateMachine;
 
         public LoadProgressState(IGameStateMachine gameStateMachine)
@@ -13,7 +11,7 @@
         
         public void Enter()
         {
-            _gameStateMachine.Enter<LoadLevelState, string>(LevelName);
+            _gameStateMachine.Enter<LoadLevelState, string>(SceneNames.Gameplay);
         }
 
         public void Exit()
