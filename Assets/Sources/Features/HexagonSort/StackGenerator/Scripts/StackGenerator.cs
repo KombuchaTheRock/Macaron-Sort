@@ -1,14 +1,14 @@
-using System.Collections.Generic;
 using Sources.Common.CodeBase.Services;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using UnityEngine;
-using Zenject;
 using Random = UnityEngine.Random;
 
 namespace Sources.Features.HexagonSort.StackGenerator.Scripts
 {
     public class StackGenerator : IStackGenerator
     {
+        private const string HexagonStackName = "Stack";
+        
         private Transform _stacksRoot;
         private float _currentStackHeight;
 
@@ -30,7 +30,7 @@ namespace Sources.Features.HexagonSort.StackGenerator.Scripts
             Color[] colors)
         {
             HexagonStack hexagonStack = _factory.CreateHexagonStack(spawnPosition, _stacksRoot);
-            hexagonStack.name = $"Stack";
+            hexagonStack.name = HexagonStackName;
 
             int amount = Random.Range(minStackSize, maxStackSize);
 
@@ -57,12 +57,12 @@ namespace Sources.Features.HexagonSort.StackGenerator.Scripts
 
         private void SetStackColliderHeight(HexagonStack hexagonStack, int amount, float hexagonHeight)
         {
-            ColliderHeight colliderHeight = hexagonStack.GetComponent<ColliderHeight>();
+            HexagonStackCollider hexagonStackCollider = hexagonStack.GetComponent<HexagonStackCollider>();
 
-            float stackHeight = amount * hexagonHeight;
-            float stackColliderHeightMultiplier = stackHeight / colliderHeight.OriginalHeight;
+            float stackHeight = (amount + 1) * hexagonHeight;
+            float stackColliderHeightMultiplier = stackHeight / hexagonStackCollider.OriginalHeight;
 
-            colliderHeight.SetHeight(stackColliderHeightMultiplier);
+            hexagonStackCollider.SetHeight(stackColliderHeightMultiplier);
         }
 
         private Color[] GetRandomColors(Color[] colors)

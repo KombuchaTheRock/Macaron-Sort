@@ -10,7 +10,7 @@ namespace Sources.Features.HexagonSort.StackMover.Scripts
     {
         private readonly IStaticDataService _staticData;
         private StackMoverConfig _config;
-
+        
         public StackPlacementLogic(IStaticDataService staticData) => 
             _staticData = staticData;
 
@@ -24,6 +24,7 @@ namespace Sources.Features.HexagonSort.StackMover.Scripts
             stack.DisableMovement();
         
             stack.transform.position = cell.transform.position + Vector3.up * _config.PlaceOffsetAboveGrid;
+            stack.transform.parent = cell.transform;
         }
 
         public void ReturnToInitialPosition(HexagonStack stack, Vector3 initialPosition) => 

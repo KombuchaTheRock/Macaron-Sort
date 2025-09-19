@@ -45,25 +45,12 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _factory.CreateInstanceRoot();
 
             GenerateGrid();
-            GenerateStacks();
         }
 
         private void GenerateGrid()
         {
             GridConfig gridConfig = _staticData.GameConfig.GridConfig;
             _gridGenerator.GenerateGrid(gridConfig.Grid, gridConfig.Size, gridConfig.CellConfig);
-        }
-
-        private void GenerateStacks()
-        {
-            HexagonStackConfig stackConfig = _staticData.ForHexagonStack(HexagonStackTemplate.Default);
-            Vector3[] stackSpawnPositions = _staticData.GameConfig.LevelConfig.StackSpawnPoints.ToArray();
-            
-            _stackGenerator.GenerateStacks(stackSpawnPositions,
-                stackConfig.MinStackSize,
-                stackConfig.MaxStackSize,
-                stackConfig.HexagonHeight,
-                stackConfig.Colors);
         }
 
         public void Exit()

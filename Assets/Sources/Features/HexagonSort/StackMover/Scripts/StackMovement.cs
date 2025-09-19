@@ -12,10 +12,10 @@ namespace Sources.Features.HexagonSort.StackMover.Scripts
 
         public bool CanMove { get; private set; } = true;
 
-        public void EnableMovement() => 
+        public void EnableMovement() =>
             CanMove = true;
 
-        public void DisableMovement() => 
+        public void DisableMovement() =>
             CanMove = false;
 
         public void FollowingTarget(Vector3 target, float speed)
@@ -33,22 +33,27 @@ namespace Sources.Features.HexagonSort.StackMover.Scripts
                 return;
 
             float transitionDuration = (transform.position - targetPosition).magnitude / speed;
-
             _transitionToInitialAnim?.Complete();
 
-            void OnCompleteAction()
-            {
-                CanMove = true;
-                onComplete?.Invoke();
-            }
-            
-            CanMove = false;
-            _transitionToInitialAnim = transform
+            DisableMovement();
+            _transitionToInitialAnim = TransitionToInitialAnim(targetPosition, onComplete, transitionDuration);
+        }
+
+        private TweenerCore<Vector3, Vector3, VectorOptions> TransitionToInitialAnim(Vector3 targetPosition,
+            Action onComplete, float transitionDuration)
+        {
+            return transform
                 .DOMove(targetPosition, transitionDuration)
                 .SetEase(Ease.OutQuad)
                 .Play()
-                .OnComplete(OnCompleteAction)
+                .OnComplete(() => FinishMoveToTarget(onComplete))
                 .SetLink(gameObject);
+        }
+
+        private void FinishMoveToTarget(Action onComplete)
+        {
+            EnableMovement();
+            onComplete?.Invoke();
         }
     }
 }

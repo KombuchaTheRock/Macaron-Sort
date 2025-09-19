@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: -2177616891294617507}
   - component: {fileID: -6636090706746761247}
   - component: {fileID: 787492034219709581}
-  - component: {fileID: 1618368408797566345}
   m_Layer: 8
   m_Name: HexStack
   m_TagString: Untagged
@@ -32,7 +31,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1967877591615898907}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &-2177616891294617507
@@ -72,13 +72,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9764c298a1e5b6242951f44067ca3a80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!64 &1618368408797566345
+  _meshCollider: {fileID: 3709685844033322053}
+--- !u!1 &8419360275531494983
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1967877591615898907}
+  - component: {fileID: 3709685844033322053}
+  m_Layer: 8
+  m_Name: Collider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1967877591615898907
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8419360275531494983}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6576534650306805449}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &3709685844033322053
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2211511333245147791}
+  m_GameObject: {fileID: 8419360275531494983}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2

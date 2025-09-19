@@ -3,6 +3,7 @@ using Sources.Common.CodeBase.Paths;
 using Sources.Features.HexagonSort.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using Sources.Features.HexagonSort.StackGenerator.Scripts;
+using Sources.Features.HexagonSort.StackMover.Scripts;
 using UnityEngine;
 using Zenject;
 
@@ -15,7 +16,6 @@ namespace Sources.Common.CodeBase.Services
         private const string StacksRootName = "Stacks";
         
         public List<HexagonStack> Stacks { get; private set; }
-        public StackGenerator StackGenerator { get; private set; }
 
         private Transform _instanceRoot;
 
@@ -37,11 +37,13 @@ namespace Sources.Common.CodeBase.Services
 
         public Transform CreateGridRoot()
         {
-            Transform rootObject = CreateRootObject(GridRootName);
-            rootObject.SetParent(_instanceRoot);
+            Transform gridRoot = Instantiate<Transform>(AssetsPaths.GridRootPrefab, Vector3.zero, _instanceRoot);;
             
-            return rootObject;
+            return gridRoot;
         }
+
+        public StackMover CreateStackMover() => 
+            Instantiate<StackMover>(AssetsPaths.StackMoverPrefab, Vector3.zero, _instanceRoot);
 
         public Transform CreateStacksRoot()
         {

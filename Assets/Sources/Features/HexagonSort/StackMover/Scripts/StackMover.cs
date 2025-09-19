@@ -1,4 +1,5 @@
-﻿using Sources.Common.CodeBase.Services;
+﻿using System;
+using Sources.Common.CodeBase.Services;
 using Sources.Features.HexagonSort.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.StackGenerator.Scripts;
 using UnityEngine;
@@ -8,6 +9,8 @@ namespace Sources.Features.HexagonSort.StackMover.Scripts
 {
     public class StackMover : MonoBehaviour
     {
+        public event Action StackPlaced;
+        
         private HexagonStack _currentStack;
         private Vector3 _currentStackInitialPosition;
 
@@ -15,10 +18,14 @@ namespace Sources.Features.HexagonSort.StackMover.Scripts
         private IStackDraggingLogic _draggingLogic;
         private IStackSelectionLogic _selectionLogic;
         private IStackPlacementLogic _placementLogic;
+        
+        private bool CanDrag => _input.IsCursorHold && _currentStack != null;
 
         [Inject]
         public void Construct(IInputService inputService,
-            IStackDraggingLogic draggingLogic, IStackSelectionLogic selectionLogic, IStackPlacementLogic placementLogic)
+            IStackDraggingLogic draggingLogic,
+            IStackSelectionLogic selectionLogic,
+            IStackPlacementLogic placementLogic)
         {
             _input = inputService;
             _draggingLogic = draggingLogic;
@@ -31,7 +38,7 @@ namespace Sources.Features.HexagonSort.StackMover.Scripts
 
         private void Update()
         {
-            if (_input.IsCursorHold && _currentStack != null)
+            if (CanDrag)
                 _draggingLogic.Drag(_currentStack, GetClickedRay());
         }
 
@@ -43,7 +50,10 @@ namespace Sources.Features.HexagonSort.StackMover.Scripts
             GridCell targetCell = _draggingLogic.GetTargetCell();
 
             if (targetCell?.IsOccupied == false)
+            {
                 _placementLogic.PlaceOnGrid(_currentStack, targetCell);
+                StackPlaced?.Invoke();
+            }
             else
                 _placementLogic.ReturnToInitialPosition(_currentStack, _currentStackInitialPosition);
 

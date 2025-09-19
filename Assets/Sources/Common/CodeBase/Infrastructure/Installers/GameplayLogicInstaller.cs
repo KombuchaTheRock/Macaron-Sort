@@ -12,16 +12,22 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
             BindStackPlacementLogic();
         }
 
-        private void BindStackPlacementLogic() =>
+        private void BindStackPlacementLogic()
+        {
             Container.BindInterfacesTo<StackPlacementLogic>()
                 .AsSingle();
+        }
 
-        private void BindStackDraggingLogic() =>
+        private void BindStackDraggingLogic()
+        {
             Container.BindInterfacesTo<StackDraggingLogic>()
                 .AsSingle();
+        }
 
-        private void BindStackSelectionLogic() =>
+        private void BindStackSelectionLogic()
+        {
             Container.BindInterfacesTo<StackSelectionLogic>()
                 .AsSingle();
+        }
     }
 }

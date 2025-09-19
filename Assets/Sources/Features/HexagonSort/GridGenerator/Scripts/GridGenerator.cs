@@ -1,7 +1,6 @@
 using Sources.Common.CodeBase.Infrastructure.Utilities;
 using Sources.Common.CodeBase.Services;
 using UnityEngine;
-using Zenject;
 
 namespace Sources.Features.HexagonSort.GridGenerator.Scripts
 {
