@@ -6,7 +6,7 @@ namespace Sources.Features.HexagonSort.Grid.GridGenerator.Scripts
     public class GridCell : MonoBehaviour
     {
         [SerializeField] private MeshColor _meshColor;
-        
+
         private HexagonStack.StackGenerator.Scripts.HexagonStack _stack;
         private Color[] _normal;
         private Color _highlight;
@@ -23,9 +23,12 @@ namespace Sources.Features.HexagonSort.Grid.GridGenerator.Scripts
             _highlight = highlight;
             _normal = _meshColor.Colors;
         }
-        
+
         public void SetStack(HexagonStack.StackGenerator.Scripts.HexagonStack stack) =>
             _stack = stack;
+
+        public void RemoveStack() =>
+            _stack = null;
 
         public void EnableHighlight()
         {

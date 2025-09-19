@@ -17,6 +17,7 @@ namespace Sources.Features.HexagonSort.HexagonStack.StackGenerator.Scripts
 
         private readonly IGameFactory _factory;
         private readonly ICoroutineRunner _coroutineRunner;
+        private Coroutine _stackGenerateRoutine;
 
         public StackGenerator(IGameFactory gameFactory, ICoroutineRunner coroutineRunner)
         {
@@ -28,8 +29,11 @@ namespace Sources.Features.HexagonSort.HexagonStack.StackGenerator.Scripts
             Color[] colors, float delayBetweenStacks = 0)
         {
             _stacksRoot ??= _factory.CreateStacksRoot();
+
+            if (_stackGenerateRoutine != null) 
+                _coroutineRunner.StopCoroutine(_stackGenerateRoutine);
             
-            _coroutineRunner.StartCoroutine(GenerateStacksRoutine(spawnPositions, minStackSize, maxStackSize,
+            _stackGenerateRoutine = _coroutineRunner.StartCoroutine(GenerateStacksRoutine(spawnPositions, minStackSize, maxStackSize,
                 hexagonHeight, colors, delayBetweenStacks));
         }
 

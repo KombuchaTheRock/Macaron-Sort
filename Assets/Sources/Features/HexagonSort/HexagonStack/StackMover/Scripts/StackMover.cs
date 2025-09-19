@@ -13,7 +13,6 @@ namespace Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts
         public event Action StackPlaced;
         
         private StackGenerator.Scripts.HexagonStack _currentStack;
-        private Vector3 _currentStackInitialPosition;
 
         private IInputService _input;
         private IStackDraggingLogic _draggingLogic;
@@ -56,7 +55,7 @@ namespace Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts
                 StackPlaced?.Invoke();
             }
             else
-                _placementLogic.ReturnToInitialPosition(_currentStack, _currentStackInitialPosition);
+                _placementLogic.ReturnToInitialPosition(_currentStack, _currentStack.InitialPosition);
 
             _currentStack = null;
             
@@ -71,7 +70,6 @@ namespace Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts
             if (_selectionLogic.TrySelectStack(GetClickedRay(), out StackGenerator.Scripts.HexagonStack stack))
             {
                 _currentStack = stack;
-                _currentStackInitialPosition = stack.transform.position;
                 
                 DragStarted?.Invoke();
             }

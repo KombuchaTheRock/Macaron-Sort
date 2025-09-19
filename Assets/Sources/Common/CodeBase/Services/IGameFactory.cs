@@ -17,6 +17,7 @@ namespace Sources.Common.CodeBase.Services
         List<HexagonStack> Stacks { get; }
         StackMover StackMover { get; }
         GridRotator GridRotator { get; }
+        List<GridCell> GridCells { get; }
         Transform CreateGridRoot();
         Transform CreateStacksRoot();
         StackMover CreateStackMover();

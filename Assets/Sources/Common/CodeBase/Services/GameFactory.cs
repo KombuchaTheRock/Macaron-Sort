@@ -19,6 +19,7 @@ namespace Sources.Common.CodeBase.Services
         public StackMover StackMover { get; private set; }
         public GridRotator GridRotator { get; private set; }
         public List<HexagonStack> Stacks { get; private set; }
+        public List<GridCell> GridCells { get; private set; }
 
         private Transform _instanceRoot;
 
@@ -33,6 +34,7 @@ namespace Sources.Common.CodeBase.Services
             _staticData = staticData;
             
             Stacks = new List<HexagonStack>();
+            GridCells = new List<GridCell>();
         }
 
         public void CreateInstanceRoot() => 
@@ -67,6 +69,7 @@ namespace Sources.Common.CodeBase.Services
         public HexagonStack CreateHexagonStack(Vector3 position, Transform parent)
         {
             HexagonStack hexagonStack = Instantiate<HexagonStack>(AssetsPaths.StackPrefab, position, parent);
+            hexagonStack.SetInitialPosition(position);
             
             Stacks.Add(hexagonStack);
             return hexagonStack;
@@ -77,6 +80,7 @@ namespace Sources.Common.CodeBase.Services
             GridCell gridCell = Instantiate<GridCell>(AssetsPaths.GridCellPrefab, position, parent);
             gridCell.InitializeColors(normalColor, highlightColor);
             
+            GridCells.Add(gridCell);
             return gridCell;
         }
 

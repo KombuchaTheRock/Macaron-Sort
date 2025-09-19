@@ -19,6 +19,19 @@ namespace Sources.Features.HexagonSort.Grid.Scripts
         public event Action<float> SnapToNextAngle;
         public event Action<float> ReturnToPreviousAngle;
 
+        public float CurrentAngle => _currentAngle;
+        
+        public float CurrenAngleDifference
+        {
+            get
+            {
+                float targetSnapAngle = FindClosestSnapAngle();
+                float angleDiff = GetAngleDifference(targetSnapAngle);
+            
+                return angleDiff;    
+            }
+        }
+
         public RotationWithSnappingLogic(float rotationSensitivity, float snapAngle = 60f,
             float snapThreshold = 15f)
         {
@@ -46,8 +59,8 @@ namespace Sources.Features.HexagonSort.Grid.Scripts
         private void FreeRotation(Vector2 cursorPosition)
         {
             Vector2 delta = cursorPosition - _previousCursorPosition;
-            float angleDelta = delta.x * _rotationSensitivity;
-
+            float angleDelta = delta.x * _rotationSensitivity * Time.fixedDeltaTime;
+            
             _currentAngle += angleDelta;
             _currentAngle = NormalizeAngle(_currentAngle);
 
@@ -56,13 +69,12 @@ namespace Sources.Features.HexagonSort.Grid.Scripts
             OnAngleChanged?.Invoke(_currentAngle);
         }
 
-
         private void Snapping()
         {
             _isRotating = false;
 
             float targetSnapAngle = FindClosestSnapAngle();
-            float angleDiff = Mathf.Abs(Mathf.DeltaAngle(_currentAngle, targetSnapAngle));
+            float angleDiff = GetAngleDifference(targetSnapAngle);
 
             if (angleDiff <= _snapThreshold)
             {
@@ -74,6 +86,11 @@ namespace Sources.Features.HexagonSort.Grid.Scripts
                 _currentAngle = _previousAngle;
                 ReturnToPreviousAngle?.Invoke(_currentAngle);
             }
+        }
+
+        private float GetAngleDifference(float targetSnapAngle)
+        {
+            return Mathf.Abs(Mathf.DeltaAngle(_currentAngle, targetSnapAngle));
         }
 
         private float FindClosestSnapAngle()

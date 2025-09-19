@@ -18,6 +18,21 @@ namespace Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts
         public void DisableMovement() =>
             CanMove = false;
 
+        public void StartAnimation(Vector3 initialPosition)
+        {
+            if (CanMove == false)
+                return;
+            
+            Vector3 pointOutsideScreen = Camera.main.ViewportToWorldPoint(new Vector3(1.1f, 0.5f, 0));
+            Vector3 startPosition = new(pointOutsideScreen.x, transform.position.y, pointOutsideScreen.z);
+            
+            transform.DOMove(initialPosition, 0.5f)
+                .From(startPosition)
+                .Play()
+                .OnComplete(() => FinishMoveAnimation())
+                .SetLink(gameObject);
+        }
+        
         public void FollowingTarget(Vector3 target, float speed)
         {
             if (CanMove == false)
@@ -46,11 +61,11 @@ namespace Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts
                 .DOMove(targetPosition, transitionDuration)
                 .SetEase(Ease.OutQuad)
                 .Play()
-                .OnComplete(() => FinishMoveToTarget(onComplete))
+                .OnComplete(() => FinishMoveAnimation(onComplete))
                 .SetLink(gameObject);
         }
 
-        private void FinishMoveToTarget(Action onComplete)
+        private void FinishMoveAnimation(Action onComplete = null)
         {
             EnableMovement();
             onComplete?.Invoke();
