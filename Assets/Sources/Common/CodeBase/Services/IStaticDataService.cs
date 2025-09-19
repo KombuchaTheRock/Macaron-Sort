@@ -1,5 +1,5 @@
 using Sources.Common.CodeBase.Infrastructure;
-using Sources.Features.HexagonSort.StackGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonStack.StackGenerator.Scripts;
 
 namespace Sources.Common.CodeBase.Services
 {

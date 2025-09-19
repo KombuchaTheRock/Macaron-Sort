@@ -1,6 +1,6 @@
 ﻿using Sources.Common.CodeBase.Services;
-using Sources.Features.HexagonSort.GridGenerator.Scripts;
-using Sources.Features.HexagonSort.StackGenerator.Scripts;
+using Sources.Features.HexagonSort.Grid.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonStack.StackGenerator.Scripts;
 using UnityEngine;
 
 namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States

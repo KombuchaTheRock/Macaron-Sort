@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using Sources.Common.CodeBase.Paths;
-using Sources.Features.HexagonSort.GridGenerator.Scripts;
-using Sources.Features.HexagonSort.HexagonTile.Scripts;
-using Sources.Features.HexagonSort.StackGenerator.Scripts;
-using Sources.Features.HexagonSort.StackMover.Scripts;
+using Sources.Features.HexagonSort.Grid.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.Grid.Scripts;
+using Sources.Features.HexagonSort.HexagonStack.HexagonTile.Scripts;
+using Sources.Features.HexagonSort.HexagonStack.StackGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts;
 using UnityEngine;
 using Zenject;
 
@@ -12,9 +13,11 @@ namespace Sources.Common.CodeBase.Services
     public class GameFactory : IGameFactory
     {
         private const string InstanceRootName = "GameFactoryRoot";
-        private const string GridRootName = "Grid";
         private const string StacksRootName = "Stacks";
         
+        
+        public StackMover StackMover { get; private set; }
+        public GridRotator GridRotator { get; private set; }
         public List<HexagonStack> Stacks { get; private set; }
 
         private Transform _instanceRoot;
@@ -37,13 +40,21 @@ namespace Sources.Common.CodeBase.Services
 
         public Transform CreateGridRoot()
         {
-            Transform gridRoot = Instantiate<Transform>(AssetsPaths.GridRootPrefab, Vector3.zero, _instanceRoot);;
+            GridRotator gridRotator = Instantiate<GridRotator>(AssetsPaths.GridRootPrefab, Vector3.zero, _instanceRoot);;
+            gridRotator.Initialize(_staticData.GameConfig.GridRotation);
             
-            return gridRoot;
+            GridRotator = gridRotator;
+            
+            return gridRotator.transform;
         }
 
-        public StackMover CreateStackMover() => 
-            Instantiate<StackMover>(AssetsPaths.StackMoverPrefab, Vector3.zero, _instanceRoot);
+        public StackMover CreateStackMover()
+        {
+            StackMover stackMover = Instantiate<StackMover>(AssetsPaths.StackMoverPrefab, Vector3.zero, _instanceRoot);
+            StackMover = stackMover;
+            
+            return stackMover;
+        }
 
         public Transform CreateStacksRoot()
         {

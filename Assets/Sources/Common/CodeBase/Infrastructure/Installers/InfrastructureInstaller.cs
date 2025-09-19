@@ -1,7 +1,7 @@
 using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
 using Sources.Common.CodeBase.Services;
-using Sources.Features.HexagonSort.GridGenerator.Scripts;
-using Sources.Features.HexagonSort.StackGenerator.Scripts;
+using Sources.Features.HexagonSort.Grid.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonStack.StackGenerator.Scripts;
 using UnityEngine;
 using Zenject;
 
@@ -29,8 +29,11 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
 
         private void BindStackGenerator()
         {
+            ICoroutineRunner coroutineRunner = CreateCoroutineRunner();
+            
             Container.BindInterfacesTo<StackGenerator>()
-                .AsSingle();
+                .AsSingle()
+                .WithArguments(coroutineRunner);
         }
 
         private void BindInputService()
@@ -75,6 +78,13 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
         {
             Container.BindInterfacesTo<StaticDataService>()
                 .AsSingle();
+        }
+        
+        private ICoroutineRunner CreateCoroutineRunner()
+        {
+            GameObject go = new("CoroutineRunner");
+            DontDestroyOnLoad(go);
+            return go.AddComponent<CoroutineRunner>();
         }
     }
 }
