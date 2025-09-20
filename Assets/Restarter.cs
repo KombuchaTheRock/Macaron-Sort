@@ -1,6 +1,6 @@
 using Sources.Common.CodeBase.Services;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
-using Sources.Features.HexagonSort.HexagonStack.StackGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using UnityEngine;
 using Zenject;
 
@@ -39,8 +39,7 @@ public class Restarter : MonoBehaviour
         _stackGenerator.GenerateStacks(stackSpawnPositions,
             stackConfig.MinStackSize,
             stackConfig.MaxStackSize,
-            stackConfig.HexagonHeight,
-            stackConfig.Colors,
+            stackConfig.OffsetBetweenTiles,
             0.2f);
     }
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Sources.Features.HexagonSort.HexagonStack.Scripts
+namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
 {
     public class HexagonStackCollider : MonoBehaviour
     {

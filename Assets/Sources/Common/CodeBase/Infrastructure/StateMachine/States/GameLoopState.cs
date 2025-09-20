@@ -1,6 +1,7 @@
 ﻿using Sources.Common.CodeBase.Services;
-using Sources.Features.HexagonSort.HexagonStack.StackGenerator.Scripts;
-using Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts;
+using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using UnityEngine;
 
 namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
@@ -50,7 +51,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private void OnDragStarted() =>
             _factory.GridRotator.enabled = false;
 
-        private void OnStackPlaced(Vector2Int position)
+        private void OnStackPlaced(GridCell cell)
         {
             _stacksOnGridCount++;
 
@@ -69,8 +70,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _stackGenerator.GenerateStacks(stackSpawnPositions,
                 stackConfig.MinStackSize,
                 stackConfig.MaxStackSize,
-                stackConfig.HexagonHeight,
-                stackConfig.Colors,
+                stackConfig.OffsetBetweenTiles,
                 0.2f);
         }
     }

@@ -4,13 +4,13 @@ using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using UnityEngine;
 using Zenject;
 
-namespace Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts
+namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 {
     public class StackMover : MonoBehaviour
     {
         public event Action DragStarted;
         public event Action DragFinished;
-        public event Action<Vector2Int> StackPlaced;
+        public event Action<GridCell> StackPlaced;
         
         private StackGenerator.Scripts.HexagonStack _currentStack;
 
@@ -52,7 +52,7 @@ namespace Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts
             if (targetCell?.IsOccupied == false)
             {
                 _placementLogic.PlaceOnGrid(_currentStack, targetCell);
-                StackPlaced?.Invoke(targetCell.PositionOnGrid);
+                StackPlaced?.Invoke(targetCell);
             }
             else
                 _placementLogic.ReturnToInitialPosition(_currentStack, _currentStack.InitialPosition);

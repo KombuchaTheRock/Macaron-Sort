@@ -13,10 +13,6 @@ MonoBehaviour:
   m_Name: StackConfig
   m_EditorClassIdentifier: 
   <Template>k__BackingField: 0
-  <HexagonHeight>k__BackingField: 0.15
+  <OffsetBetweenTiles>k__BackingField: 0.15
   <MaxStackSize>k__BackingField: 7
   <MinStackSize>k__BackingField: 3
-  <Colors>k__BackingField:
-  - {r: 0.08627451, g: 0.76862746, b: 0.49803922, a: 0}
-  - {r: 1, g: 0.8392157, b: 0.3529412, a: 0}
-  - {r: 0.9764706, g: 0.21960784, b: 0.15294118, a: 0}

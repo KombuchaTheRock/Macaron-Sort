@@ -1,18 +1,21 @@
+using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using UnityEngine;
+using Color = UnityEngine.Color;
 
 namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
 {
     public class GridCell : MonoBehaviour
     {
         [SerializeField] private MeshColor _meshColor;
-        
-        private HexagonStack.StackGenerator.Scripts.HexagonStack _stack;
+
         private Color[] _normal;
         private Color _highlight;
 
         public Vector2Int PositionOnGrid { get; private set; }
-        public bool IsOccupied => _stack != null;
+        public HexagonStack Stack { get; private set; }
+
+        public bool IsOccupied => Stack != null;
 
         private void Start() => 
             DisableHighlight();
@@ -26,11 +29,11 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
         public void InitializeGridPosition(Vector2Int gridPosition) =>
         PositionOnGrid = gridPosition;
         
-        public void SetStack(HexagonStack.StackGenerator.Scripts.HexagonStack stack) =>
-            _stack = stack;
+        public void SetStack(HexagonStack stack) =>
+            Stack = stack;
 
         public void RemoveStack() =>
-            _stack = null;
+            Stack = null;
 
         public void EnableHighlight()
         {

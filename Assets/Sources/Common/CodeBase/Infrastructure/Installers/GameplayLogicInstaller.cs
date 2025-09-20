@@ -1,4 +1,4 @@
-using Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using Zenject;
 
 namespace Sources.Common.CodeBase.Infrastructure.Installers

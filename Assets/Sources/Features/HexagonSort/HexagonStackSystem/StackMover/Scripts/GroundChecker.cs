@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts
+namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 {
     public class GroundChecker
     {

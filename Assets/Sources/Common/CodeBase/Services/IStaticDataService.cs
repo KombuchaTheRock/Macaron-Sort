@@ -1,5 +1,6 @@
 using Sources.Common.CodeBase.Infrastructure;
-using Sources.Features.HexagonSort.HexagonStack.StackGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonTile.Scripts;
 
 namespace Sources.Common.CodeBase.Services
 {
@@ -7,5 +8,6 @@ namespace Sources.Common.CodeBase.Services
     {
         HexagonStackConfig ForHexagonStack(HexagonStackTemplate stackTemplate);
         GameConfig GameConfig { get; }
+        HexagonTileConfig ForHexagonTle(HexagonTileType tileType);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using NaughtyAttributes;
 using UnityEngine;
 
-namespace Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts
+namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 {
     [CreateAssetMenu(menuName = "StaticData/StackMoverConfig", fileName = "StackMoverConfig", order = 0)]
     public class StackMoverConfig : ScriptableObject

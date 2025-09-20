@@ -2,7 +2,7 @@
 using UnityEngine;
 using Zenject;
 
-namespace Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts
+namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 {
     public class StackSelectionLogic : IStackSelectionLogic, IInitializable
     {

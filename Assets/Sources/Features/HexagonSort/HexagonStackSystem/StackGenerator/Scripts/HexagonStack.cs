@@ -1,0 +1,72 @@
+﻿using System;
+using System.Collections.Generic;
+using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
+using Sources.Features.HexagonSort.HexagonTile.Scripts;
+using UnityEngine;
+
+namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
+{
+    public class HexagonStack : MonoBehaviour
+    {
+        [SerializeField] private StackMovement _movement;
+        [SerializeField] private HexagonStackCollider _collider;
+
+        public IReadOnlyList<Hexagon> Hexagons => _hexagons;
+        public float OffsetBetweenTiles { get; private set; }
+        public Vector3 InitialPosition { get; private set; }
+        public HexagonTileType TopHexagon => _hexagons[^1].TileType;
+        public bool CanMove => _movement.CanMove;
+
+        private List<Hexagon> _hexagons = new();
+
+        private void Awake() =>
+            _movement.StartAnimation(transform.position);
+
+        public void SetInitialPosition(Vector3 position) =>
+            InitialPosition = position;
+
+        public void SetOffsetBetweenTiles(float offset) =>
+        OffsetBetweenTiles = offset;
+        
+        public void DisableMovement() =>
+            _movement.DisableMovement();
+
+        public void EnableMovement() =>
+            _movement.EnableMovement();
+
+        public void FollowingTarget(Vector3 target, float speed) =>
+            _movement.FollowingTarget(target, speed);
+
+        public void MoveToTarget(Vector3 targetPosition, float speed, Action onComplete = null) =>
+            _movement.MoveToTarget(targetPosition, speed, onComplete);
+
+        public void Add(Hexagon hexagon)
+        {
+            _hexagons.Add(hexagon);
+            ChangeColliderSize(hexagon.Height);
+        }
+
+        private void ChangeColliderSize(float hexagonHeight)
+        {
+            float stackHeight = _hexagons.Count * (hexagonHeight + (OffsetBetweenTiles - hexagonHeight));
+            float stackColliderHeightMultiplier = stackHeight / _collider.OriginalHeight;
+
+            _collider.SetHeight(stackColliderHeightMultiplier);
+        }
+
+        public bool Contains(Hexagon hexagon) =>
+            _hexagons.Contains(hexagon);
+
+        public void Remove(Hexagon hexagon)
+        {
+            _hexagons.Remove(hexagon);
+            ChangeColliderSize(hexagon.Height);
+            if (_hexagons.Count == 0)
+            {
+                Debug.Log("Destroy");
+                Destroy(gameObject);
+            }
+        }
+    }
+}

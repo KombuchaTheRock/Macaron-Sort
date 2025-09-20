@@ -2,8 +2,8 @@
 using Sources.Common.CodeBase.Paths;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
-using Sources.Features.HexagonSort.HexagonStack.StackGenerator.Scripts;
-using Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using UnityEngine;
 using Zenject;
@@ -77,10 +77,11 @@ namespace Sources.Common.CodeBase.Services
             return rootObject;
         }
 
-        public HexagonStack CreateHexagonStack(Vector3 position, Transform parent)
+        public HexagonStack CreateHexagonStack(Vector3 position, Transform parent, float offsetBetweenTiles)
         {
             HexagonStack hexagonStack = Instantiate<HexagonStack>(AssetsPaths.StackPrefab, position, parent);
             hexagonStack.SetInitialPosition(position);
+            hexagonStack.SetOffsetBetweenTiles(offsetBetweenTiles);
             
             Stacks.Add(hexagonStack);
             return hexagonStack;
@@ -98,7 +99,8 @@ namespace Sources.Common.CodeBase.Services
 
         public Hexagon CreateHexagon(Vector3 position, HexagonTileType tileType, Transform parent)
         {
-            Hexagon hexagon = Instantiate<Hexagon>(AssetsPaths.HexagonPrefab, position, parent);
+            Hexagon hexagonPrefab = _staticData.ForHexagonTle(tileType).HexagonPrefab;
+            Hexagon hexagon = Instantiate<Hexagon>(hexagonPrefab.gameObject, position, parent);
             hexagon.SetTileType(tileType);
             
             return hexagon;
@@ -107,16 +109,16 @@ namespace Sources.Common.CodeBase.Services
         private Transform CreateRootObject(string rootObjectName) => 
             new GameObject(rootObjectName).transform;
 
-        private GameObject Instantiate(string assetPath, Vector3 at, Transform parent = null)
-        {
-            GameObject prefab = _resourceLoader.LoadAsset<GameObject>(assetPath);
-            return _instantiator.InstantiatePrefab(prefab, at, Quaternion.identity, parent);
-        }
+        private GameObject Instantiate(GameObject prefab, Vector3 at, Transform parent = null) => 
+            _instantiator.InstantiatePrefab(prefab, at, Quaternion.identity, parent);
 
         private T Instantiate<T>(string assetPath, Vector3 at, Transform parent = null) where T : Component
         {
             GameObject prefab = _resourceLoader.LoadAsset<GameObject>(assetPath);
             return _instantiator.InstantiatePrefabForComponent<T>(prefab, at, Quaternion.identity, parent);
         }
+        
+        private T Instantiate<T>(GameObject prefab, Vector3 at, Transform parent = null) where T : Component => 
+            _instantiator.InstantiatePrefabForComponent<T>(prefab, at, Quaternion.identity, parent);
     }
 }

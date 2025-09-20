@@ -2,7 +2,7 @@
 using System.Linq;
 using Sources.Common.CodeBase.Infrastructure;
 using Sources.Common.CodeBase.Paths;
-using Sources.Features.HexagonSort.HexagonStack.StackGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using Zenject;
 
@@ -36,7 +36,7 @@ namespace Sources.Common.CodeBase.Services
         public HexagonStackConfig ForHexagonStack(HexagonStackTemplate gridTemplate) =>
             _stackStaticData.GetValueOrDefault(gridTemplate);
         
-        public HexagonTileConfig ForHexagonStack(HexagonTileType tileType) =>
+        public HexagonTileConfig ForHexagonTle(HexagonTileType tileType) =>
             _hexagonTileStaticData.GetValueOrDefault(tileType);
     }
 }
