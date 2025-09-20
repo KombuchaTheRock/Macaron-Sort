@@ -1,6 +1,6 @@
 using NaughtyAttributes;
-using Sources.Features.HexagonSort.Grid.GridGenerator.Scripts;
-using Sources.Features.HexagonSort.Grid.Scripts;
+using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts;
 using Sources.Features.Level.Scripts;
 using UnityEngine;

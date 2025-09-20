@@ -1,6 +1,8 @@
 ﻿using Sources.Common.CodeBase.Services;
-using Sources.Features.HexagonSort.Grid.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStack.StackGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts;
 using UnityEngine;
 
 namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
@@ -44,13 +46,18 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         {
             _factory.CreateInstanceRoot();
 
-            GenerateGrid();
+            
+            HexagonGrid hexagonGrid = GenerateGrid();
+            StackMover stackMover = _factory.CreateStackMover();
+            _factory.CreateMergeSystem(stackMover, hexagonGrid);
         }
 
-        private void GenerateGrid()
+        private HexagonGrid GenerateGrid()
         {
             GridConfig gridConfig = _staticData.GameConfig.GridConfig;
-            _gridGenerator.GenerateGrid(gridConfig.Grid, gridConfig.Size, gridConfig.CellConfig);
+            HexagonGrid hexagonGrid = _gridGenerator.GenerateGrid(gridConfig.Grid, gridConfig.Size, gridConfig.CellConfig);
+            
+            return hexagonGrid;
         }
 
         public void Exit()

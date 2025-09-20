@@ -27,7 +27,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 
         public void Enter()
         {
-            _stackMover = _factory.CreateStackMover();
+            _stackMover = _factory.StackMover;
 
             _stackMover.StackPlaced += OnStackPlaced;
             _stackMover.DragStarted += OnDragStarted;
@@ -50,7 +50,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private void OnDragStarted() =>
             _factory.GridRotator.enabled = false;
 
-        private void OnStackPlaced()
+        private void OnStackPlaced(Vector2Int position)
         {
             _stacksOnGridCount++;
 

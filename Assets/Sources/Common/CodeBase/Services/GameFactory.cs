@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using Sources.Common.CodeBase.Paths;
-using Sources.Features.HexagonSort.Grid.GridGenerator.Scripts;
-using Sources.Features.HexagonSort.Grid.Scripts;
-using Sources.Features.HexagonSort.HexagonStack.HexagonTile.Scripts;
+using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStack.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts;
+using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using UnityEngine;
 using Zenject;
 
@@ -40,16 +40,27 @@ namespace Sources.Common.CodeBase.Services
         public void CreateInstanceRoot() => 
             _instanceRoot = CreateRootObject(InstanceRootName);
 
-        public Transform CreateGridRoot()
+        public HexagonGrid CreateHexagonGrid(Grid grid)
         {
             GridRotator gridRotator = Instantiate<GridRotator>(AssetsPaths.GridRootPrefab, Vector3.zero, _instanceRoot);;
             gridRotator.Initialize(_staticData.GameConfig.GridRotation);
-            
+            gridRotator.gameObject.name = "Grid";
             GridRotator = gridRotator;
             
-            return gridRotator.transform;
+            HexagonGrid hexagonGrid = gridRotator.GetComponent<HexagonGrid>();
+            hexagonGrid.Initialize(grid);
+            
+            return hexagonGrid;
         }
 
+        public MergeSystem CreateMergeSystem(StackMover stackMover, HexagonGrid hexagonGrid)
+        {
+            MergeSystem mergeSystem = Instantiate<MergeSystem>(AssetsPaths.MergeSystemPrefab, Vector3.zero, _instanceRoot);
+            mergeSystem.Initialize(stackMover, hexagonGrid);
+            
+            return mergeSystem;
+        }
+        
         public StackMover CreateStackMover()
         {
             StackMover stackMover = Instantiate<StackMover>(AssetsPaths.StackMoverPrefab, Vector3.zero, _instanceRoot);
@@ -75,19 +86,20 @@ namespace Sources.Common.CodeBase.Services
             return hexagonStack;
         }
 
-        public GridCell CreateGridCell(Vector3 position, Transform parent, Color normalColor, Color highlightColor)
+        public GridCell CreateGridCell(Vector3 position, Vector2Int positionOnGrid, Transform parent, Color normalColor, Color highlightColor)
         {
             GridCell gridCell = Instantiate<GridCell>(AssetsPaths.GridCellPrefab, position, parent);
             gridCell.InitializeColors(normalColor, highlightColor);
+            gridCell.InitializeGridPosition(positionOnGrid);
             
             GridCells.Add(gridCell);
             return gridCell;
         }
 
-        public Hexagon CreateHexagon(Vector3 position, Transform parent, Color color)
+        public Hexagon CreateHexagon(Vector3 position, HexagonTileType tileType, Transform parent)
         {
             Hexagon hexagon = Instantiate<Hexagon>(AssetsPaths.HexagonPrefab, position, parent);
-            hexagon.GetComponent<MeshColor>().Set(color);
+            hexagon.SetTileType(tileType);
             
             return hexagon;
         }

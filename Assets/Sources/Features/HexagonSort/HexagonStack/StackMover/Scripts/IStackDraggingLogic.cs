@@ -1,4 +1,4 @@
-﻿using Sources.Features.HexagonSort.Grid.GridGenerator.Scripts;
+﻿using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using UnityEngine;
 
 namespace Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts

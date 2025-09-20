@@ -1,6 +1,6 @@
 ﻿using System;
 using Sources.Common.CodeBase.Services;
-using Sources.Features.HexagonSort.Grid.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using UnityEngine;
 using Zenject;
 
@@ -10,7 +10,7 @@ namespace Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts
     {
         public event Action DragStarted;
         public event Action DragFinished;
-        public event Action StackPlaced;
+        public event Action<Vector2Int> StackPlaced;
         
         private StackGenerator.Scripts.HexagonStack _currentStack;
 
@@ -52,7 +52,7 @@ namespace Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts
             if (targetCell?.IsOccupied == false)
             {
                 _placementLogic.PlaceOnGrid(_currentStack, targetCell);
-                StackPlaced?.Invoke();
+                StackPlaced?.Invoke(targetCell.PositionOnGrid);
             }
             else
                 _placementLogic.ReturnToInitialPosition(_currentStack, _currentStack.InitialPosition);

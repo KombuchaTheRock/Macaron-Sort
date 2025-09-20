@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sources.Features.HexagonSort.HexagonStack.HexagonTile.Scripts;
 using Sources.Features.HexagonSort.HexagonStack.StackMover.Scripts;
+using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using UnityEngine;
 
 namespace Sources.Features.HexagonSort.HexagonStack.StackGenerator.Scripts
