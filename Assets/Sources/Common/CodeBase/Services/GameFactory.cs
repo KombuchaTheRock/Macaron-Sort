@@ -5,6 +5,7 @@ using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
+using Sources.Features.HexagonSort.Merge.Scripts;
 using UnityEngine;
 using Zenject;
 
