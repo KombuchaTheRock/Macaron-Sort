@@ -4,7 +4,6 @@ using System.Linq;
 using Sources.Common.CodeBase.Infrastructure;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
-using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using UnityEngine;
@@ -13,6 +12,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 {
     public class MergeSystem : MonoBehaviour, ICoroutineRunner
     {
+        private List<GridCell> _updatedCells  = new();
         private StackMover _stackMover;
         private StackMergeLogic _mergeLogic;
 
@@ -21,61 +21,79 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             _stackMover = stackMover;
             _stackMover.StackPlaced += OnStackPlaced;
 
-            _mergeLogic = new StackMergeLogic(hexagonGrid);
+            _mergeLogic = new StackMergeLogic(hexagonGrid, this);
         }
 
         private void OnDestroy() =>
             _stackMover.StackPlaced -= OnStackPlaced;
 
-        private void OnStackPlaced(GridCell cell)
-        {
+        private void OnStackPlaced(GridCell cell) => 
             StartCoroutine(StackPlacedRoutine(cell));
-        }
 
         private IEnumerator StackPlacedRoutine(GridCell cell)
         {
-            HexagonStack placedStack = cell.Stack;
-            List<GridCell> neighboursCells = _mergeLogic.GetNeighbourCells(cell.PositionOnGrid, placedStack.TopHexagon);
+           _updatedCells.Add(cell);
+
+           while (_updatedCells.Count > 0)
+               yield return CheckForMergeRoutine(_updatedCells.First());
+        }
+
+        private IEnumerator CheckForMergeRoutine(GridCell cell)
+        {
+            _updatedCells.Remove(cell);
+
+            if (cell.IsOccupied == false)
+                yield break;
+
+            HexagonTileType topHexagonType = cell.Stack.TopHexagon;
+            
+            List<GridCell> neighboursCells = _mergeLogic.GetSimilarNeighbourCells(cell.PositionOnGrid, topHexagonType);
 
             if (neighboursCells.Count <= 0)
                 yield break;
 
-            SortedSet<StackWithPriority> prioritizedStacks =
-                GetNeighbourStacksPriority(placedStack.TopHexagon, neighboursCells);
+            SortedSet<StackMergeCandidate> prioritizedStacks =
+                GetStacksPriority(cell, neighboursCells);
+
+            while (prioritizedStacks.Count > 0)
+            {
+                if (GetStacksForMerge(prioritizedStacks, out StackMergeCandidate sourceStack, out StackMergeCandidate targetStack))
+                {
+                    _updatedCells.Add(sourceStack.Cell);
+                    _updatedCells.Add(targetStack.Cell);
+                
+                    List<Hexagon> hexagonsForMerge = _mergeLogic.GetHexagonsToMerge(topHexagonType, sourceStack.Stack);
+                    _mergeLogic.RemoveHexagonsFromStack(sourceStack.Stack, hexagonsForMerge);
             
-            prioritizedStacks.Add(GetStackPriority(placedStack, placedStack.TopHexagon));
-
-            if (GetStacksForMerge(prioritizedStacks, out HexagonStack stackFrom, out HexagonStack stackTo) == false)
-                yield break;
-
-            List<Hexagon> hexagonsForMerge = _mergeLogic.GetHexagonsToMerge(placedStack.TopHexagon, stackFrom);
-            _mergeLogic.RemoveHexagonsFromStack(stackFrom, hexagonsForMerge);
-
-            yield return StartCoroutine(_mergeLogic.MergeRoutine(stackTo, hexagonsForMerge,
-                () => StartCoroutine(_mergeLogic.CheckStackForComplete(placedStack))));
+                    yield return StartCoroutine(_mergeLogic.MergeRoutine(targetStack, hexagonsForMerge));
+                }
+            }
         }
 
-        private bool GetStacksForMerge(SortedSet<StackWithPriority> prioritizedStacks, out HexagonStack sourceStack,
-            out HexagonStack targetStack)
+        private bool GetStacksForMerge(SortedSet<StackMergeCandidate> prioritizedStacks, out StackMergeCandidate sourceStack,
+            out StackMergeCandidate targetStack)
         {
             SeparateStacksByType(prioritizedStacks,
-                out SortedSet<StackWithPriority> monoStacks,
-                out SortedSet<StackWithPriority> diversityStacks);
+                out SortedSet<StackMergeCandidate> monoStacks,
+                out SortedSet<StackMergeCandidate> diversityStacks);
 
             sourceStack = DetermineSourceStack(monoStacks, diversityStacks);
             targetStack = DetermineTargetStack(monoStacks, diversityStacks);
+            
+            prioritizedStacks.Remove(sourceStack);
+            prioritizedStacks.Remove(targetStack);
 
             return sourceStack != null && targetStack != null;
         }
 
-        private void SeparateStacksByType(SortedSet<StackWithPriority> allStacks,
-            out SortedSet<StackWithPriority> monoTypes,
-            out SortedSet<StackWithPriority> diversityTypes)
+        private void SeparateStacksByType(SortedSet<StackMergeCandidate> allStacks,
+            out SortedSet<StackMergeCandidate> monoTypes,
+            out SortedSet<StackMergeCandidate> diversityTypes)
         {
-            monoTypes = new SortedSet<StackWithPriority>();
-            diversityTypes = new SortedSet<StackWithPriority>();
+            monoTypes = new SortedSet<StackMergeCandidate>();
+            diversityTypes = new SortedSet<StackMergeCandidate>();
 
-            foreach (StackWithPriority stack in allStacks)
+            foreach (StackMergeCandidate stack in allStacks)
             {
                 if (stack.IsMonoType)
                     monoTypes.Add(stack);
@@ -84,8 +102,8 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             }
         }
 
-        private HexagonStack DetermineSourceStack(SortedSet<StackWithPriority> monoTypes,
-            SortedSet<StackWithPriority> diversityTypes)
+        private StackMergeCandidate DetermineSourceStack(SortedSet<StackMergeCandidate> monoTypes,
+            SortedSet<StackMergeCandidate> diversityTypes)
         {
             bool hasBothTypes = monoTypes.Count > 0 && diversityTypes.Count > 0;
             bool hasOnlyMonoTypes = monoTypes.Count > 0;
@@ -95,48 +113,51 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
                 : GetHighestPriorityStack(diversityTypes);
         }
 
-        private HexagonStack DetermineTargetStack(SortedSet<StackWithPriority> monoTypes, 
-            SortedSet<StackWithPriority> diversityTypes)
+        private StackMergeCandidate DetermineTargetStack(SortedSet<StackMergeCandidate> monoTypes, 
+            SortedSet<StackMergeCandidate> diversityTypes)
         {
             return monoTypes.Count > 0 ? GetHighestPriorityStack(monoTypes) 
                 : GetLowestPriorityStack(diversityTypes);
         }
         
-        private HexagonStack GetHighestPriorityStack(SortedSet<StackWithPriority> stacks) => 
+        private StackMergeCandidate GetHighestPriorityStack(SortedSet<StackMergeCandidate> stacks) => 
             ExtractStackFromSet(stacks, takeFirst: true);
 
-        private HexagonStack GetLowestPriorityStack(SortedSet<StackWithPriority> stacks) => 
+        private StackMergeCandidate GetLowestPriorityStack(SortedSet<StackMergeCandidate> stacks) => 
             ExtractStackFromSet(stacks, takeFirst: false);
 
-        private HexagonStack ExtractStackFromSet(SortedSet<StackWithPriority> stacks, bool takeFirst)
+        private StackMergeCandidate ExtractStackFromSet(SortedSet<StackMergeCandidate> stacks, bool takeFirst)
         {
             if (stacks.Count == 0) return null;
     
-            StackWithPriority stackWithPriority = takeFirst ? stacks.First() : stacks.Last();
-            stacks.Remove(stackWithPriority);
+            StackMergeCandidate stackMergeCandidate = takeFirst ? stacks.First() : stacks.Last();
+            stacks.Remove(stackMergeCandidate);
     
-            return stackWithPriority.Stack;
+            return stackMergeCandidate;
         }
         
-        private SortedSet<StackWithPriority> GetNeighbourStacksPriority(HexagonTileType topTile,
+        private SortedSet<StackMergeCandidate> GetStacksPriority(GridCell filledCell,
             List<GridCell> neighboursCells)
         {
-            SortedSet<StackWithPriority> stacksPriority = new();
+            SortedSet<StackMergeCandidate> stacksPriority = new();
 
             foreach (GridCell cell in neighboursCells)
             {
-                StackWithPriority withPriority = GetStackPriority(cell.Stack, topTile);
-                stacksPriority.Add(withPriority);
+                StackMergeCandidate stack = GetMergeCandidate(cell, filledCell.Stack.TopHexagon);
+                stacksPriority.Add(stack);
             }
 
+            StackMergeCandidate placedStackPriority = GetMergeCandidate(filledCell, filledCell.Stack.TopHexagon);
+            stacksPriority.Add(placedStackPriority);
+            
             return stacksPriority;
         }
 
-        private StackWithPriority GetStackPriority(HexagonStack stack, HexagonTileType topTile)
+        private StackMergeCandidate GetMergeCandidate(GridCell cell, HexagonTileType topTile)
         {
-            int sameHexagonCount = _mergeLogic.GetSimilarHexagons(stack, topTile, out bool isMonotype).Count;
+            int sameHexagonCount = _mergeLogic.GetSimilarHexagons(cell.Stack, topTile, out bool isMonoType).Count;
 
-            return new StackWithPriority(sameHexagonCount, stack, isMonotype);
+            return new StackMergeCandidate(sameHexagonCount, cell.Stack, isMonoType, cell);
         }
     }
 }

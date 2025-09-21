@@ -15,7 +15,19 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
         public IReadOnlyList<Hexagon> Hexagons => _hexagons;
         public float OffsetBetweenTiles { get; private set; }
         public Vector3 InitialPosition { get; private set; }
-        public HexagonTileType TopHexagon => _hexagons[^1].TileType;
+        
+        public HexagonTileType TopHexagon
+        {
+            get
+            {
+                if (Hexagons == null || Hexagons.Count == 0)
+                {
+                    Debug.LogWarning("No Hexagons found");                    
+                }
+            
+                return Hexagons[^1].TileType;
+            }
+        }
         public bool CanMove => _movement.CanMove;
 
         private List<Hexagon> _hexagons = new();
@@ -62,9 +74,10 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
         {
             _hexagons.Remove(hexagon);
             ChangeColliderSize(hexagon.Height);
-            if (_hexagons.Count == 0)
+
+            if (_hexagons.Count <= 0)
             {
-                Debug.Log("Destroy");
+                Debug.Log("HexagonStack destroyed");
                 Destroy(gameObject);
             }
         }

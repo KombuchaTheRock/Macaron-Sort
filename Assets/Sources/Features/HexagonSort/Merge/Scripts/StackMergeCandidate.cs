@@ -1,27 +1,30 @@
 ﻿using System;
+using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 
 namespace Sources.Features.HexagonSort.Merge.Scripts
 {
-    public class StackWithPriority : IComparable<StackWithPriority>
+    public class StackMergeCandidate : IComparable<StackMergeCandidate>
     {
         public HexagonStack Stack { get; private set; }
         public bool IsMonoType { get; private set; }
         public int SameHexagonCount { get; private set; }
-
+        public GridCell Cell { get; private set; }
+        
         private static int _nextId = 1;
         private readonly int _uniqueId;
 
-        public StackWithPriority(int sameHexagonCount, HexagonStack stack, bool isMonoType)
+        public StackMergeCandidate(int sameHexagonCount, HexagonStack stack, bool isMonoType, GridCell cell)
         {
             _uniqueId = _nextId++;
 
+            Cell = cell;
             SameHexagonCount = sameHexagonCount;
             Stack = stack;
             IsMonoType = isMonoType;
         }
 
-        public int CompareTo(StackWithPriority other)
+        public int CompareTo(StackMergeCandidate other)
         {
             if (ReferenceEquals(this, other))
                 return 0;

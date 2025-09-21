@@ -40,11 +40,15 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
         };
 
         private Coroutine _mergeRoutine;
+        private ICoroutineRunner _coroutineRunner;
 
-        public StackMergeLogic(HexagonGrid hexagonGrid) => 
+        public StackMergeLogic(HexagonGrid hexagonGrid, ICoroutineRunner coroutineRunner)
+        {
+            _coroutineRunner = coroutineRunner;
             _hexagonGrid = hexagonGrid;
-        
-        public List<GridCell> GetNeighbourCells(Vector2Int centerPosition, HexagonTileType topHexagonType)
+        }
+
+        public List<GridCell> GetSimilarNeighbourCells(Vector2Int centerPosition, HexagonTileType topHexagonType)
         {
             List<GridCell> result = new();
             Vector2Int[] neighbours = centerPosition.y % 2 == 0 ? _neighboursEvenRow : _neighboursOddRow;
@@ -90,10 +94,10 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             }
         }
 
-        public IEnumerator MergeRoutine(HexagonStack stack, List<Hexagon> hexagonForMerge, Action onMergeComplete)
+        public IEnumerator MergeRoutine(StackMergeCandidate mergeCandidate, List<Hexagon> hexagonForMerge)
         {
-            float offsetBetweenTiles = stack.OffsetBetweenTiles;
-            float initialY = (stack.Hexagons.Count + 1) * offsetBetweenTiles;
+            float offsetBetweenTiles = mergeCandidate.Stack.OffsetBetweenTiles;
+            float initialY = (mergeCandidate.Stack.Hexagons.Count + 1) * offsetBetweenTiles;
 
             for (int i = 0; i < hexagonForMerge.Count; i++)
             {
@@ -101,26 +105,26 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
                 float targetY = initialY + i * offsetBetweenTiles;
 
-                stack.Add(hexagon);
-                hexagon.SetParent(stack.transform);
+                mergeCandidate.Stack.Add(hexagon);
+                hexagon.SetParent(mergeCandidate.Stack.transform);
 
-                Tween mergeAnim = HexagonMergeAnimation(stack, targetY, hexagon, 0.1f);
+                Tween mergeAnim = HexagonMergeAnimation(mergeCandidate.Stack, targetY, hexagon, 0.1f);
                 mergeAnim.Play();
                 
                 yield return new WaitForSeconds(mergeAnim.Duration());
             }
 
-            onMergeComplete?.Invoke();
+            yield return _coroutineRunner.StartCoroutine(CheckStackForComplete(mergeCandidate));
         }
 
-        public IEnumerator CheckStackForComplete(HexagonStack stack)
+        private IEnumerator CheckStackForComplete(StackMergeCandidate mergeCandidate)
         {
-            if (stack.Hexagons.Count < HexagonsCountForComplete)
+            if (mergeCandidate.Stack.Hexagons.Count < HexagonsCountForComplete)
                 yield break;
 
-            List<Hexagon> similarHexagons = GetSimilarHexagons(stack, stack.TopHexagon, out bool isMonotype);
+            List<Hexagon> similarHexagons = GetSimilarHexagons(mergeCandidate.Stack, mergeCandidate.Stack.TopHexagon, out bool isMonoType);
 
-            if (isMonotype == false || similarHexagons.Count < HexagonsCountForComplete)
+            if (isMonoType == false || similarHexagons.Count < HexagonsCountForComplete)
                 yield break;
 
             while (similarHexagons.Count > 0)
@@ -128,11 +132,13 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
                 HexagonDeleteAnimation(similarHexagons[0]);
 
                 yield return new WaitForSeconds(0.1f);
-
-                stack.Remove(similarHexagons[0]);
+                
+                mergeCandidate.Stack.Remove(similarHexagons[0]);
                 Object.Destroy(similarHexagons[0].gameObject);
                 similarHexagons.RemoveAt(0);
             }
+
+            mergeCandidate.Cell.SetStack(null);
         }
 
         public List<Hexagon> GetSimilarHexagons(HexagonStack stack, HexagonTileType sample, out bool isMonoType)
