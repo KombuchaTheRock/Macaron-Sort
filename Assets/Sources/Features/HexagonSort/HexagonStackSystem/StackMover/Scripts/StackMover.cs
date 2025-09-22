@@ -14,8 +14,8 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 
         private StackGenerator.Scripts.HexagonStack _currentStack;
 
-        public int StacksOnGridCount { get; private set; }
-
+        public int StacksOnGridCount { get; private set; } 
+        
         private IInputService _input;
         private IStackDraggingLogic _draggingLogic;
         private IStackSelectionLogic _selectionLogic;
@@ -59,8 +59,9 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
             if (targetCell?.IsOccupied == false)
             {
                 _placementLogic.PlaceOnGrid(_currentStack, targetCell);
+                ++StacksOnGridCount;
+                
                 StackPlaced?.Invoke(targetCell);
-                StacksOnGridCount++;
             }
             else
                 _placementLogic.ReturnToInitialPosition(_currentStack, _currentStack.InitialPosition);

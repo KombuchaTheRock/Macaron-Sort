@@ -1,11 +1,14 @@
+using System;
 using Sources.Common.CodeBase.Services;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
+using TMPro;
 using UnityEngine;
 using Zenject;
 
 public class Restarter : MonoBehaviour
 {
+    [SerializeField] private TextMeshProUGUI _debugText;
     private IGameFactory _factory;
     private IStackGenerator _stackGenerator;
     private IStaticDataService _staticData;
@@ -20,19 +23,22 @@ public class Restarter : MonoBehaviour
 
     public void Restart()
     {
+        Debug.Log("Restart called");
+
         if (_factory.StackMover.IsDragging || _factory.MergeSystem.IsMerging)
             return;
-        
+
         _factory.StackMover.ResetStacksOnGridCount();
-        
+
         foreach (GridCell gridCell in _factory.GridCells)
             gridCell.RemoveStack();
 
         foreach (HexagonStack stack in _factory.Stacks)
-            Destroy(stack.gameObject);
+            if (stack != null)
+                Destroy(stack.gameObject);
 
         _factory.Stacks.Clear();
-        
+
         GenerateStacks();
     }
 

@@ -16,7 +16,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private int _stacksAmount;
         private StackMover _stackMover;
         private MergeSystem _mergeSystem;
-        
+
         public GameLoopState(IGameFactory factory, IStackGenerator stackGenerator, IStaticDataService staticData)
         {
             _stackGenerator = stackGenerator;
@@ -28,14 +28,14 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         {
             _stackMover = _factory.StackMover;
             _mergeSystem = _factory.MergeSystem;
-            
+
             _stackMover.StackPlaced += OnStackPlaced;
             _stackMover.DragStarted += OnDragStarted;
             _stackMover.DragFinished += OnDragFinished;
 
             _mergeSystem.MergeStarted += OnMergeStarted;
             _mergeSystem.MergeFinished += OnMergeFinished;
-            
+
             GenerateStacks();
             _stacksAmount = _staticData.GameConfig.LevelConfig.StackSpawnPoints.Count;
         }
@@ -45,15 +45,15 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _stackMover.StackPlaced -= OnStackPlaced;
             _stackMover.DragStarted -= OnDragStarted;
             _stackMover.DragFinished -= OnDragFinished;
-            
+
             _mergeSystem.MergeStarted -= OnMergeStarted;
             _mergeSystem.MergeFinished -= OnMergeFinished;
         }
 
-        private void OnMergeStarted() => 
+        private void OnMergeStarted() =>
             UpdateGridRotationEnabled();
 
-        private void OnMergeFinished() => 
+        private void OnMergeFinished() =>
             UpdateGridRotationEnabled();
 
         private void OnDragFinished() =>
@@ -64,6 +64,8 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 
         private void OnStackPlaced(GridCell cell)
         {
+            Debug.Log("Stack amount " + _stacksAmount + "\tStackOnGrid" + _stackMover.StacksOnGridCount);
+
             if (_stackMover.StacksOnGridCount >= _stacksAmount)
             {
                 GenerateStacks();
