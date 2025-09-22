@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
@@ -94,10 +95,45 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             }
         }
 
+        public Coroutine CheckStackForComplete(StackMergeCandidate mergeCandidate) =>
+            _coroutineRunner.StartCoroutine(CheckStackForCompleteRoutine(mergeCandidate));
+
+        private IEnumerator CheckStackForCompleteRoutine(StackMergeCandidate mergeCandidate)
+        {
+            Tween deleteAnimation = null;
+
+            if (mergeCandidate.Stack.Hexagons.Count < HexagonsCountForComplete)
+                yield break;
+
+            List<Hexagon> similarHexagons = GetSimilarHexagons(mergeCandidate.Stack, mergeCandidate.Stack.TopHexagon,
+                out bool isMonoType);
+
+            if (isMonoType == false || similarHexagons.Count < HexagonsCountForComplete)
+                yield break;
+
+            float delay = 0;
+            
+            while (similarHexagons.Count > 0)
+            {
+                deleteAnimation = HexagonDeleteAnimation(similarHexagons.First(), delay, 0.2f);
+                deleteAnimation.Play();
+
+                delay += 0.01f;
+                
+                similarHexagons.RemoveAt(0);
+            }
+
+            yield return deleteAnimation.WaitForCompletion();
+
+            mergeCandidate.Cell.SetStack(null);
+            DeleteStack(mergeCandidate);
+        }
+
         public IEnumerator MergeRoutine(StackMergeCandidate mergeCandidate, List<Hexagon> hexagonForMerge)
         {
             float offsetBetweenTiles = mergeCandidate.Stack.OffsetBetweenTiles;
-            float initialY = (mergeCandidate.Stack.Hexagons.Count + 1) * offsetBetweenTiles;
+            float initialY = mergeCandidate.Stack.Hexagons[^1].transform.position.y + offsetBetweenTiles;
+            Tween currentAnimation = null;
 
             for (int i = 0; i < hexagonForMerge.Count; i++)
             {
@@ -108,38 +144,16 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
                 mergeCandidate.Stack.Add(hexagon);
                 hexagon.SetParent(mergeCandidate.Stack.transform);
 
-                Tween mergeAnim = HexagonMergeAnimation(mergeCandidate.Stack, targetY, hexagon, 0.1f);
-                mergeAnim.Play();
-                
-                yield return new WaitForSeconds(mergeAnim.Duration());
+                float duration = 0.2f;
+                currentAnimation = HexagonMergeAnimation(mergeCandidate.Stack, targetY, hexagon, duration);
+                currentAnimation.Play();
             }
 
-            yield return _coroutineRunner.StartCoroutine(CheckStackForComplete(mergeCandidate));
+            yield return currentAnimation.WaitForCompletion();
         }
 
-        private IEnumerator CheckStackForComplete(StackMergeCandidate mergeCandidate)
-        {
-            if (mergeCandidate.Stack.Hexagons.Count < HexagonsCountForComplete)
-                yield break;
-
-            List<Hexagon> similarHexagons = GetSimilarHexagons(mergeCandidate.Stack, mergeCandidate.Stack.TopHexagon, out bool isMonoType);
-
-            if (isMonoType == false || similarHexagons.Count < HexagonsCountForComplete)
-                yield break;
-
-            while (similarHexagons.Count > 0)
-            {
-                HexagonDeleteAnimation(similarHexagons[0]);
-
-                yield return new WaitForSeconds(0.1f);
-                
-                mergeCandidate.Stack.Remove(similarHexagons[0]);
-                Object.Destroy(similarHexagons[0].gameObject);
-                similarHexagons.RemoveAt(0);
-            }
-
-            mergeCandidate.Cell.SetStack(null);
-        }
+        private void DeleteStack(StackMergeCandidate mergeCandidate) => 
+            Object.Destroy(mergeCandidate.Stack.gameObject);
 
         public List<Hexagon> GetSimilarHexagons(HexagonStack stack, HexagonTileType sample, out bool isMonoType)
         {
@@ -161,18 +175,42 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
             return similarHexagons;
         }
-        
-        private TweenerCore<Vector3, Vector3, VectorOptions> HexagonMergeAnimation(HexagonStack stack, float targetY, Hexagon hexagon, float duration)
+
+        private Tween HexagonMergeAnimation(HexagonStack stack, float targetY,
+            Hexagon hexagon, float duration)
         {
             Vector3 targetPosition = new(stack.transform.position.x, targetY, stack.transform.position.z);
+            Vector3 movementDirection = targetPosition - hexagon.transform.position;
 
-            return hexagon.transform.DOMove(targetPosition, duration);
+            float delay = hexagon.transform.GetSiblingIndex() * 0.02f;
+
+            Vector3 horizontalDir = new Vector3(movementDirection.x, 0f, movementDirection.z).normalized;
+            Vector3 rotationAxis = Vector3.Cross(Vector3.up, horizontalDir);
+
+            Quaternion currentRotation = hexagon.transform.rotation;
+            Quaternion targetRotation = Quaternion.AngleAxis(-180, rotationAxis) * currentRotation;
+
+            Sequence sequence = DOTween.Sequence();
+
+            sequence.Append(hexagon.transform.DORotateQuaternion(targetRotation, duration)
+                .SetEase(Ease.InOutSine)
+                .SetDelay(delay));
+
+            sequence.Join(hexagon.transform.DOJump(targetPosition, 0.5f, 1, duration)
+                .SetEase(Ease.InOutSine)
+                .SetDelay(delay));
+
+            sequence.SetLink(hexagon.gameObject);
+
+            return sequence;
         }
-        
-        private void HexagonDeleteAnimation(Hexagon hexagon)
+
+        private TweenerCore<Vector3, Vector3, VectorOptions> HexagonDeleteAnimation(Hexagon hexagon, float delay,
+            float duration)
         {
-            hexagon.transform.DOScale(0f, 0.2f)
-                .Play()
+            return hexagon.transform.DOScale(0f, duration)
+                .SetEase(Ease.InBack)
+                .SetDelay(delay)
                 .SetLink(hexagon.gameObject);
         }
     }

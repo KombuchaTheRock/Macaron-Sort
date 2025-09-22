@@ -5,6 +5,8 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 {
     public class RotationWithSnappingLogic
     {
+        private const float RotationDirection = -1;
+        
         private readonly float _snapAngle;
         private readonly float _snapThreshold;
 
@@ -20,17 +22,6 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         public event Action<float> ReturnToPreviousAngle;
 
         public float CurrentAngle => _currentAngle;
-        
-        public float CurrenAngleDifference
-        {
-            get
-            {
-                float targetSnapAngle = FindClosestSnapAngle();
-                float angleDiff = GetAngleDifference(targetSnapAngle);
-            
-                return angleDiff;    
-            }
-        }
 
         public RotationWithSnappingLogic(float rotationSensitivity, float snapAngle = 60f,
             float snapThreshold = 15f)
@@ -59,7 +50,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         private void FreeRotation(Vector2 cursorPosition)
         {
             Vector2 delta = cursorPosition - _previousCursorPosition;
-            float angleDelta = delta.x * _rotationSensitivity * Time.fixedDeltaTime;
+            float angleDelta = delta.x * _rotationSensitivity * Time.fixedDeltaTime * RotationDirection;
             
             _currentAngle += angleDelta;
             _currentAngle = NormalizeAngle(_currentAngle);

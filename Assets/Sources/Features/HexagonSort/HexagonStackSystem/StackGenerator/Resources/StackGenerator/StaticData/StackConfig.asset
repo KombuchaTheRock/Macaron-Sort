@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: StackConfig
   m_EditorClassIdentifier: 
   <Template>k__BackingField: 0
-  <OffsetBetweenTiles>k__BackingField: 0.15
+  <OffsetBetweenTiles>k__BackingField: 0.22
   <MaxStackSize>k__BackingField: 7
   <MinStackSize>k__BackingField: 3

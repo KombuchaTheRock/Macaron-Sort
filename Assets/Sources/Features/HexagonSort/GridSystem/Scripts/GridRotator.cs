@@ -8,6 +8,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
     {
         private IInputService _input;
 
+        [SerializeField] private LayerMask _groundLayerMask;
         private RotationWithSnappingLogic _rotation;
         private GridRotationConfig _config;
         private float _targetAngle;
@@ -145,9 +146,15 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         private bool IsAngleReached() =>
             Mathf.Abs(Mathf.DeltaAngle(_currentVisualAngle, _targetAngle)) < 0.1f;
 
-        private void OnDisable() =>
+        private void OnDisable()
+        {
             ApplyTargetAngleRotation();
+            transform.localScale = Vector3.one;
+        }
 
+        private Ray GetClickedRay() =>
+            Camera.main.ScreenPointToRay(_input.CursorPosition);
+        
         private void OnDestroy()
         {
             UnsubscribeFromRotationLogic();

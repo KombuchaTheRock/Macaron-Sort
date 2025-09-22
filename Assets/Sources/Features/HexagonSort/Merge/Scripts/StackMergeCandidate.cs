@@ -6,20 +6,21 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 {
     public class StackMergeCandidate : IComparable<StackMergeCandidate>
     {
-        public HexagonStack Stack { get; private set; }
-        public bool IsMonoType { get; private set; }
-        public int SameHexagonCount { get; private set; }
-        public GridCell Cell { get; private set; }
-        
         private static int _nextId = 1;
+        
+        private int _sameHexagonCount;
         private readonly int _uniqueId;
+        
+        public HexagonStack Stack { get; private set; }
+        public GridCell Cell { get; private set; }
+        public bool IsMonoType { get; private set; }
 
         public StackMergeCandidate(int sameHexagonCount, HexagonStack stack, bool isMonoType, GridCell cell)
         {
             _uniqueId = _nextId++;
-
+            _sameHexagonCount = sameHexagonCount;
+            
             Cell = cell;
-            SameHexagonCount = sameHexagonCount;
             Stack = stack;
             IsMonoType = isMonoType;
         }
@@ -35,7 +36,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             if (IsMonoType && other.IsMonoType == false) return -1;
             if (IsMonoType == false && other.IsMonoType) return 1;
 
-            int hexagonCountCompression = other.SameHexagonCount.CompareTo(SameHexagonCount);
+            int hexagonCountCompression = other._sameHexagonCount.CompareTo(_sameHexagonCount);
             if (hexagonCountCompression != 0) return hexagonCountCompression;
 
             return _uniqueId.CompareTo(other._uniqueId);

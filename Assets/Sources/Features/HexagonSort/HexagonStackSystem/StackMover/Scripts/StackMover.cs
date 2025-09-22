@@ -11,14 +11,18 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
         public event Action DragStarted;
         public event Action DragFinished;
         public event Action<GridCell> StackPlaced;
-        
+
         private StackGenerator.Scripts.HexagonStack _currentStack;
+
+        public int StacksOnGridCount { get; private set; }
 
         private IInputService _input;
         private IStackDraggingLogic _draggingLogic;
         private IStackSelectionLogic _selectionLogic;
         private IStackPlacementLogic _placementLogic;
-        
+
+        public bool IsDragging { get; private set; }
+
         private bool CanDrag => _input.IsCursorHold && _currentStack != null;
 
         [Inject]
@@ -31,14 +35,17 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
             _draggingLogic = draggingLogic;
             _selectionLogic = selectionLogic;
             _placementLogic = placementLogic;
-            
+
             _input.CursorDown += OnCursorDown;
             _input.CursorUp += OnCursorUp;
         }
 
+        public void ResetStacksOnGridCount() => 
+            StacksOnGridCount = 0;
+
         private void Update()
         {
-            if (CanDrag) 
+            if (CanDrag)
                 _draggingLogic.Drag(_currentStack, GetClickedRay());
         }
 
@@ -53,15 +60,17 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
             {
                 _placementLogic.PlaceOnGrid(_currentStack, targetCell);
                 StackPlaced?.Invoke(targetCell);
+                StacksOnGridCount++;
             }
             else
                 _placementLogic.ReturnToInitialPosition(_currentStack, _currentStack.InitialPosition);
 
             _currentStack = null;
-            
+
             _draggingLogic.ResetCell();
             _selectionLogic.ResetSelection();
-            
+
+            IsDragging = false;
             DragFinished?.Invoke();
         }
 
@@ -70,7 +79,8 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
             if (_selectionLogic.TrySelectStack(GetClickedRay(), out StackGenerator.Scripts.HexagonStack stack))
             {
                 _currentStack = stack;
-                
+
+                IsDragging = true;
                 DragStarted?.Invoke();
             }
         }

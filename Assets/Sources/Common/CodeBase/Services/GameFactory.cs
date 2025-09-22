@@ -16,7 +16,7 @@ namespace Sources.Common.CodeBase.Services
         private const string InstanceRootName = "GameFactoryRoot";
         private const string StacksRootName = "Stacks";
         
-        
+        public MergeSystem MergeSystem { get; private set; }
         public StackMover StackMover { get; private set; }
         public GridRotator GridRotator { get; private set; }
         public List<HexagonStack> Stacks { get; private set; }
@@ -58,6 +58,7 @@ namespace Sources.Common.CodeBase.Services
         {
             MergeSystem mergeSystem = Instantiate<MergeSystem>(AssetsPaths.MergeSystemPrefab, Vector3.zero, _instanceRoot);
             mergeSystem.Initialize(stackMover, hexagonGrid);
+            MergeSystem = mergeSystem;
             
             return mergeSystem;
         }

@@ -19,6 +19,7 @@ namespace Sources.Common.CodeBase.Services
         StackMover StackMover { get; }
         GridRotator GridRotator { get; }
         List<GridCell> GridCells { get; }
+        MergeSystem MergeSystem { get; }
         HexagonGrid CreateHexagonGrid(Grid grid);
         Transform CreateStacksRoot();
         StackMover CreateStackMover();

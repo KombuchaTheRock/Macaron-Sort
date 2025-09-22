@@ -2,6 +2,7 @@
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
+using Sources.Features.HexagonSort.Merge.Scripts;
 using UnityEngine;
 
 namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
@@ -13,27 +14,28 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private readonly IStackGenerator _stackGenerator;
 
         private int _stacksAmount;
-        private int _stacksOnGridCount;
         private StackMover _stackMover;
-
+        private MergeSystem _mergeSystem;
+        
         public GameLoopState(IGameFactory factory, IStackGenerator stackGenerator, IStaticDataService staticData)
         {
             _stackGenerator = stackGenerator;
             _factory = factory;
             _staticData = staticData;
         }
-        
-        public void Dispose() =>
-            Exit();
 
         public void Enter()
         {
             _stackMover = _factory.StackMover;
-
+            _mergeSystem = _factory.MergeSystem;
+            
             _stackMover.StackPlaced += OnStackPlaced;
             _stackMover.DragStarted += OnDragStarted;
             _stackMover.DragFinished += OnDragFinished;
 
+            _mergeSystem.MergeStarted += OnMergeStarted;
+            _mergeSystem.MergeFinished += OnMergeFinished;
+            
             GenerateStacks();
             _stacksAmount = _staticData.GameConfig.LevelConfig.StackSpawnPoints.Count;
         }
@@ -43,23 +45,38 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _stackMover.StackPlaced -= OnStackPlaced;
             _stackMover.DragStarted -= OnDragStarted;
             _stackMover.DragFinished -= OnDragFinished;
+            
+            _mergeSystem.MergeStarted -= OnMergeStarted;
+            _mergeSystem.MergeFinished -= OnMergeFinished;
         }
 
+        private void OnMergeStarted() => 
+            UpdateGridRotationEnabled();
+
+        private void OnMergeFinished() => 
+            UpdateGridRotationEnabled();
+
         private void OnDragFinished() =>
-            _factory.GridRotator.enabled = true;
+            UpdateGridRotationEnabled();
 
         private void OnDragStarted() =>
-            _factory.GridRotator.enabled = false;
+            UpdateGridRotationEnabled();
 
         private void OnStackPlaced(GridCell cell)
         {
-            _stacksOnGridCount++;
-
-            if (_stacksOnGridCount >= _stacksAmount)
+            if (_stackMover.StacksOnGridCount >= _stacksAmount)
             {
                 GenerateStacks();
-                _stacksOnGridCount = 0;
+                _stackMover.ResetStacksOnGridCount();
             }
+        }
+
+        private void UpdateGridRotationEnabled()
+        {
+            if (_stackMover.IsDragging || _mergeSystem.IsMerging)
+                _factory.GridRotator.enabled = false;
+            else
+                _factory.GridRotator.enabled = true;
         }
 
         private void GenerateStacks()

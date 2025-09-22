@@ -48,13 +48,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3202074439633571907, guid: 79da14cba2f73f8479eb6be8fa182473, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: c4c118b0842772c46bf3bca5fc420471, type: 2}
     - target: {fileID: 6364192593211271540, guid: 79da14cba2f73f8479eb6be8fa182473, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: c4c118b0842772c46bf3bca5fc420471, type: 2}
     - target: {fileID: 7194588124379325638, guid: 79da14cba2f73f8479eb6be8fa182473, type: 3}
       propertyPath: m_Name
-      value: YellowTile 1
+      value: GreenTile
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

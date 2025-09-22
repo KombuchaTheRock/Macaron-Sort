@@ -16,18 +16,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
         public float OffsetBetweenTiles { get; private set; }
         public Vector3 InitialPosition { get; private set; }
         
-        public HexagonTileType TopHexagon
-        {
-            get
-            {
-                if (Hexagons == null || Hexagons.Count == 0)
-                {
-                    Debug.LogWarning("No Hexagons found");                    
-                }
-            
-                return Hexagons[^1].TileType;
-            }
-        }
+        public HexagonTileType TopHexagon => Hexagons[^1].TileType;
         public bool CanMove => _movement.CanMove;
 
         private List<Hexagon> _hexagons = new();
@@ -53,18 +42,19 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
         public void MoveToTarget(Vector3 targetPosition, float speed, Action onComplete = null) =>
             _movement.MoveToTarget(targetPosition, speed, onComplete);
 
-        public void Add(Hexagon hexagon)
-        {
-            _hexagons.Add(hexagon);
-            ChangeColliderSize(hexagon.Height);
-        }
-
         private void ChangeColliderSize(float hexagonHeight)
         {
             float stackHeight = _hexagons.Count * (hexagonHeight + (OffsetBetweenTiles - hexagonHeight));
             float stackColliderHeightMultiplier = stackHeight / _collider.OriginalHeight;
 
             _collider.SetHeight(stackColliderHeightMultiplier);
+        }
+
+        public void Add(Hexagon hexagon)
+        {
+            hexagon.transform.rotation = transform.rotation;
+            _hexagons.Add(hexagon);
+            ChangeColliderSize(hexagon.Height);
         }
 
         public bool Contains(Hexagon hexagon) =>
@@ -75,11 +65,8 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
             _hexagons.Remove(hexagon);
             ChangeColliderSize(hexagon.Height);
 
-            if (_hexagons.Count <= 0)
-            {
-                Debug.Log("HexagonStack destroyed");
+            if (_hexagons.Count <= 0) 
                 Destroy(gameObject);
-            }
         }
     }
 }
