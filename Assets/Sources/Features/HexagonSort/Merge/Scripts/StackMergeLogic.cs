@@ -112,14 +112,14 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
                 yield break;
 
             float delay = 0;
-            
+
             while (similarHexagons.Count > 0)
             {
                 deleteAnimation = HexagonDeleteAnimation(similarHexagons.First(), delay, 0.2f);
                 deleteAnimation.Play();
 
-                delay += 0.01f;
-                
+                delay += 0.02f;
+
                 similarHexagons.RemoveAt(0);
             }
 
@@ -133,7 +133,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
         {
             float offsetBetweenTiles = mergeCandidate.Stack.OffsetBetweenTiles;
             float initialY = mergeCandidate.Stack.Hexagons[^1].transform.position.y + offsetBetweenTiles;
-            Tween currentAnimation = null;
+            Tween mergeTween = null;
 
             for (int i = 0; i < hexagonForMerge.Count; i++)
             {
@@ -144,15 +144,15 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
                 mergeCandidate.Stack.Add(hexagon);
                 hexagon.SetParent(mergeCandidate.Stack.transform);
 
-                float duration = 0.2f;
-                currentAnimation = HexagonMergeAnimation(mergeCandidate.Stack, targetY, hexagon, duration);
-                currentAnimation.Play();
+                float duration = 0.4f;
+                mergeTween = HexagonMergeAnimation(mergeCandidate.Stack, targetY, hexagon, duration);
+                mergeTween.Play();
             }
 
-            yield return currentAnimation.WaitForCompletion();
+            yield return mergeTween.WaitForCompletion();
         }
 
-        private void DeleteStack(StackMergeCandidate mergeCandidate) => 
+        private void DeleteStack(StackMergeCandidate mergeCandidate) =>
             Object.Destroy(mergeCandidate.Stack.gameObject);
 
         public List<Hexagon> GetSimilarHexagons(HexagonStack stack, HexagonTileType sample, out bool isMonoType)
@@ -179,10 +179,12 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
         private Tween HexagonMergeAnimation(HexagonStack stack, float targetY,
             Hexagon hexagon, float duration)
         {
+            Quaternion hexagonInitialRotation = hexagon.transform.rotation;
+            
             Vector3 targetPosition = new(stack.transform.position.x, targetY, stack.transform.position.z);
             Vector3 movementDirection = targetPosition - hexagon.transform.position;
 
-            float delay = hexagon.transform.GetSiblingIndex() * 0.02f;
+            float delay = hexagon.transform.GetSiblingIndex() * 0.04f;
 
             Vector3 horizontalDir = new Vector3(movementDirection.x, 0f, movementDirection.z).normalized;
             Vector3 rotationAxis = Vector3.Cross(Vector3.up, horizontalDir);
@@ -191,16 +193,16 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             Quaternion targetRotation = Quaternion.AngleAxis(-180, rotationAxis) * currentRotation;
 
             Sequence sequence = DOTween.Sequence();
+            sequence.SetDelay(delay);
 
             sequence.Append(hexagon.transform.DORotateQuaternion(targetRotation, duration)
-                .SetEase(Ease.InOutSine)
-                .SetDelay(delay));
+                .SetEase(Ease.InOutSine));
 
-            sequence.Join(hexagon.transform.DOJump(targetPosition, 0.5f, 1, duration)
-                .SetEase(Ease.InOutSine)
-                .SetDelay(delay));
+            sequence.Join(hexagon.transform.DOJump(targetPosition, 0.75f, 1, duration)
+                .SetEase(Ease.InOutSine));
 
-            sequence.SetLink(hexagon.gameObject);
+            sequence.SetLink(hexagon.gameObject)
+                .OnComplete(() => hexagon.transform.rotation = hexagonInitialRotation);
 
             return sequence;
         }

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: StackMoverConfig
   m_EditorClassIdentifier: 
   <MaxRaycastDistance>k__BackingField: 300
-  <DraggingVerticalOffset>k__BackingField: 1
-  <DraggingHorizontalOffset>k__BackingField: 1
+  <DraggingVerticalOffset>k__BackingField: 2.2
+  <DraggingHorizontalOffset>k__BackingField: 0.25
   <DraggingSpeed>k__BackingField: 30
   <ToInitialPositionSpeed>k__BackingField: 6
   <PlaceOffsetAboveGrid>k__BackingField: 0.15

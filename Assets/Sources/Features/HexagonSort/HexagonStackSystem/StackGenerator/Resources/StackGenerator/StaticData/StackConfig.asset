@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Template>k__BackingField: 0
   <OffsetBetweenTiles>k__BackingField: 0.22
-  <MaxStackSize>k__BackingField: 7
-  <MinStackSize>k__BackingField: 3
+  <MaxStackSize>k__BackingField: 4
+  <MinStackSize>k__BackingField: 1

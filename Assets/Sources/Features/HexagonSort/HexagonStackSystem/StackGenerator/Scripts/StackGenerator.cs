@@ -57,7 +57,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
             HexagonTileType[] randomTiles = GetRandomTiles();
             int firstTileIndex = Random.Range(0, amount);
 
-            for (int i = 0; i <= amount; i++)
+            for (int i = 0; i < amount; i++)
                 SpawnHexagon(i, hexagonStack, randomTiles, firstTileIndex, offsetBetweenTiles);
         }
 
