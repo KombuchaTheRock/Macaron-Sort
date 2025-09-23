@@ -1,5 +1,6 @@
 ﻿using Sources.Common.CodeBase.Services;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using UnityEngine;
 using Zenject;
 
@@ -16,7 +17,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
         public void Initialize() => 
             _config = _staticData.GameConfig.StackMoverConfig;
 
-        public void PlaceOnGrid(StackGenerator.Scripts.HexagonStack stack, GridCell cell)
+        public void PlaceOnGrid(HexagonStack stack, GridCell cell)
         {
             cell.SetStack(stack);
             cell.DisableHighlight();
@@ -26,7 +27,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
             stack.transform.parent = cell.transform;
         }
 
-        public void ReturnToInitialPosition(StackGenerator.Scripts.HexagonStack stack, Vector3 initialPosition) => 
+        public void ReturnToInitialPosition(HexagonStack stack, Vector3 initialPosition) => 
             stack.MoveToTarget(initialPosition, _config.ToInitialPositionSpeed);
     }
 }

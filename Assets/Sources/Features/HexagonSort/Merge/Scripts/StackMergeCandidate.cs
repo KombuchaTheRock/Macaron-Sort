@@ -1,5 +1,6 @@
 ﻿using System;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 
 namespace Sources.Features.HexagonSort.Merge.Scripts

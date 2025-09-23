@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
@@ -24,5 +25,6 @@ namespace Sources.Common.CodeBase.Services
         Transform CreateStacksRoot();
         StackMover CreateStackMover();
         MergeSystem CreateMergeSystem(StackMover stackMover, HexagonGrid hexagonGrid);
+        GameObject CreateHUD();
     }
 }

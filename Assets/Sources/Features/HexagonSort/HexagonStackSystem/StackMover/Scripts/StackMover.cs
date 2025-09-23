@@ -1,6 +1,7 @@
 ﻿using System;
 using Sources.Common.CodeBase.Services;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using UnityEngine;
 using Zenject;
 
@@ -12,7 +13,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
         public event Action DragFinished;
         public event Action<GridCell> StackPlaced;
 
-        private StackGenerator.Scripts.HexagonStack _currentStack;
+        private HexagonStack _currentStack;
 
         public int StacksOnGridCount { get; private set; } 
         
@@ -77,7 +78,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 
         private void OnCursorDown()
         {
-            if (_selectionLogic.TrySelectStack(GetClickedRay(), out StackGenerator.Scripts.HexagonStack stack))
+            if (_selectionLogic.TrySelectStack(GetClickedRay(), out HexagonStack stack))
             {
                 _currentStack = stack;
 

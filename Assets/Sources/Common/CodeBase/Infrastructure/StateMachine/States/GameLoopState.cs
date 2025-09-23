@@ -1,5 +1,7 @@
 ﻿using Sources.Common.CodeBase.Services;
+using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
@@ -11,17 +13,20 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
     {
         private readonly IGameFactory _factory;
         private readonly IStaticDataService _staticData;
+        private readonly IPlayerProgress _playerProgress;
         private readonly IStackGenerator _stackGenerator;
 
         private int _stacksAmount;
         private StackMover _stackMover;
         private MergeSystem _mergeSystem;
 
-        public GameLoopState(IGameFactory factory, IStackGenerator stackGenerator, IStaticDataService staticData)
+        public GameLoopState(IGameFactory factory, IStackGenerator stackGenerator, 
+            IStaticDataService staticData, IPlayerProgress playerProgress)
         {
             _stackGenerator = stackGenerator;
             _factory = factory;
             _staticData = staticData;
+            _playerProgress = playerProgress;
         }
 
         public void Enter()
@@ -35,10 +40,14 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 
             _mergeSystem.MergeStarted += OnMergeStarted;
             _mergeSystem.MergeFinished += OnMergeFinished;
+            _mergeSystem.StackCompleted += OnStackCompleted;
 
             GenerateStacks();
             _stacksAmount = _staticData.GameConfig.LevelConfig.StackSpawnPoints.Count;
         }
+
+        private void OnStackCompleted(int score) => 
+            _playerProgress.Progress.ScoreData.AddScore(score);
 
         public void Exit()
         {

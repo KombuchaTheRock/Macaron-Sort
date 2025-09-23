@@ -8,6 +8,7 @@ using DG.Tweening.Plugins.Options;
 using Sources.Common.CodeBase.Infrastructure;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using UnityEngine;
@@ -17,6 +18,8 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 {
     public class StackMergeLogic
     {
+        public event Action<int> StackCompleted;
+        
         private const int HexagonsCountForComplete = 10;
         private readonly HexagonGrid _hexagonGrid;
 
@@ -124,14 +127,26 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             }
 
             yield return deleteAnimation.WaitForCompletion();
+            
+            CompleteStack(mergeCandidate);
+        }
 
+        private void CompleteStack(StackMergeCandidate mergeCandidate)
+        {
+            int score = 0;
+
+            foreach (Hexagon hexagon in mergeCandidate.Stack.Hexagons) 
+                score += hexagon.Score;
+            
             mergeCandidate.Cell.SetStack(null);
-            DeleteStack(mergeCandidate);
+            Object.Destroy(mergeCandidate.Stack.gameObject);
+            
+            StackCompleted?.Invoke(score);
         }
 
         public IEnumerator MergeRoutine(StackMergeCandidate mergeCandidate, List<Hexagon> hexagonForMerge)
         {
-            mergeCandidate.Stack.HideDisplayedSize();
+            //mergeCandidate.Stack.HideDisplayedSize();
             
             float offsetBetweenTiles = mergeCandidate.Stack.OffsetBetweenTiles;
             float initialY = mergeCandidate.Stack.Hexagons[^1].transform.position.y + offsetBetweenTiles;
@@ -153,11 +168,8 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
             yield return mergeTween.WaitForCompletion();
             
-            mergeCandidate.Stack.UpdateStackSizeDisplay();
+           mergeCandidate.Stack.ShowDisplayedSize();
         }
-
-        private void DeleteStack(StackMergeCandidate mergeCandidate) =>
-            Object.Destroy(mergeCandidate.Stack.gameObject);
 
         public List<Hexagon> GetSimilarHexagons(HexagonStack stack, HexagonTileType sample, out bool isMonoType)
         {

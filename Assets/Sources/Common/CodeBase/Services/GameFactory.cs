@@ -2,7 +2,7 @@
 using Sources.Common.CodeBase.Paths;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
-using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
@@ -15,59 +15,63 @@ namespace Sources.Common.CodeBase.Services
     {
         private const string InstanceRootName = "GameFactoryRoot";
         private const string StacksRootName = "Stacks";
-        
+
+        private readonly IInstantiator _instantiator;
+        private readonly IResourceLoader _resourceLoader;
+        private readonly IStaticDataService _staticData;
+        private Transform _instanceRoot;
+
         public MergeSystem MergeSystem { get; private set; }
         public StackMover StackMover { get; private set; }
         public GridRotator GridRotator { get; private set; }
         public List<HexagonStack> Stacks { get; private set; }
         public List<GridCell> GridCells { get; private set; }
 
-        private Transform _instanceRoot;
-
-        private readonly IInstantiator _instantiator;
-        private readonly IResourceLoader _resourceLoader;
-        private readonly IStaticDataService _staticData;
-
         public GameFactory(IInstantiator instantiator, IResourceLoader resourceLoader, IStaticDataService staticData)
         {
             _instantiator = instantiator;
             _resourceLoader = resourceLoader;
             _staticData = staticData;
-            
+
             Stacks = new List<HexagonStack>();
             GridCells = new List<GridCell>();
         }
 
-        public void CreateInstanceRoot() => 
+        public void CreateInstanceRoot() =>
             _instanceRoot = CreateRootObject(InstanceRootName);
+
+        public GameObject CreateHUD() => 
+            Instantiate(AssetsPaths.HUD, Vector3.zero, _instanceRoot);
 
         public HexagonGrid CreateHexagonGrid(Grid grid)
         {
-            GridRotator gridRotator = Instantiate<GridRotator>(AssetsPaths.GridRootPrefab, Vector3.zero, _instanceRoot);;
+            GridRotator gridRotator = Instantiate<GridRotator>(AssetsPaths.GridRootPrefab, Vector3.zero, _instanceRoot);
+            ;
             gridRotator.Initialize(_staticData.GameConfig.GridRotation);
             gridRotator.gameObject.name = "Grid";
             GridRotator = gridRotator;
-            
+
             HexagonGrid hexagonGrid = gridRotator.GetComponent<HexagonGrid>();
             hexagonGrid.Initialize(grid);
-            
+
             return hexagonGrid;
         }
 
         public MergeSystem CreateMergeSystem(StackMover stackMover, HexagonGrid hexagonGrid)
         {
-            MergeSystem mergeSystem = Instantiate<MergeSystem>(AssetsPaths.MergeSystemPrefab, Vector3.zero, _instanceRoot);
+            MergeSystem mergeSystem =
+                Instantiate<MergeSystem>(AssetsPaths.MergeSystemPrefab, Vector3.zero, _instanceRoot);
             mergeSystem.Initialize(stackMover, hexagonGrid);
             MergeSystem = mergeSystem;
-            
+
             return mergeSystem;
         }
-        
+
         public StackMover CreateStackMover()
         {
             StackMover stackMover = Instantiate<StackMover>(AssetsPaths.StackMoverPrefab, Vector3.zero, _instanceRoot);
             StackMover = stackMover;
-            
+
             return stackMover;
         }
 
@@ -75,7 +79,7 @@ namespace Sources.Common.CodeBase.Services
         {
             Transform rootObject = CreateRootObject(StacksRootName);
             rootObject.SetParent(_instanceRoot);
-            
+
             return rootObject;
         }
 
@@ -84,43 +88,53 @@ namespace Sources.Common.CodeBase.Services
             HexagonStack hexagonStack = Instantiate<HexagonStack>(AssetsPaths.StackPrefab, position, parent);
             hexagonStack.SetInitialPosition(position);
             hexagonStack.SetOffsetBetweenTiles(offsetBetweenTiles);
-            
+
             Stacks.Add(hexagonStack);
             return hexagonStack;
         }
 
-        public GridCell CreateGridCell(Vector3 position, Vector2Int positionOnGrid, Transform parent, Color normalColor, Color highlightColor)
+        public GridCell CreateGridCell(Vector3 position, Vector2Int positionOnGrid, Transform parent, Color normalColor,
+            Color highlightColor)
         {
             GridCell gridCell = Instantiate<GridCell>(AssetsPaths.GridCellPrefab, position, parent);
             gridCell.InitializeColors(normalColor, highlightColor);
             gridCell.InitializeGridPosition(positionOnGrid);
-            
+
             GridCells.Add(gridCell);
             return gridCell;
         }
 
         public Hexagon CreateHexagon(Vector3 position, HexagonTileType tileType, Transform parent)
         {
-            Hexagon hexagonPrefab = _staticData.ForHexagonTle(tileType).HexagonPrefab;
+            HexagonTileData hexagonTileData = _staticData.ForHexagonTle(tileType);
+            Hexagon hexagonPrefab = hexagonTileData.HexagonPrefab;
             Hexagon hexagon = Instantiate<Hexagon>(hexagonPrefab.gameObject, position, parent);
-            hexagon.SetTileType(tileType);
-            
+
+            hexagon.Initialize(tileType, hexagonTileData.ScoreAmount);
+
             return hexagon;
         }
 
-        private Transform CreateRootObject(string rootObjectName) => 
+        private Transform CreateRootObject(string rootObjectName) =>
             new GameObject(rootObjectName).transform;
 
-        private GameObject Instantiate(GameObject prefab, Vector3 at, Transform parent = null) => 
+        private GameObject Instantiate(GameObject prefab, Vector3 at, Transform parent = null) =>
             _instantiator.InstantiatePrefab(prefab, at, Quaternion.identity, parent);
+
+        private GameObject Instantiate(string assetPath, Vector3 at, Transform parent = null)
+        {
+            GameObject prefab = _resourceLoader.LoadAsset<GameObject>(assetPath);
+            
+            return _instantiator.InstantiatePrefab(prefab, at, Quaternion.identity, parent);
+        }
 
         private T Instantiate<T>(string assetPath, Vector3 at, Transform parent = null) where T : Component
         {
             GameObject prefab = _resourceLoader.LoadAsset<GameObject>(assetPath);
             return _instantiator.InstantiatePrefabForComponent<T>(prefab, at, Quaternion.identity, parent);
         }
-        
-        private T Instantiate<T>(GameObject prefab, Vector3 at, Transform parent = null) where T : Component => 
+
+        private T Instantiate<T>(GameObject prefab, Vector3 at, Transform parent = null) where T : Component =>
             _instantiator.InstantiatePrefabForComponent<T>(prefab, at, Quaternion.identity, parent);
     }
 }

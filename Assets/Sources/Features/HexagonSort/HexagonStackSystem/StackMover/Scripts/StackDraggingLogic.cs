@@ -1,5 +1,6 @@
 ﻿using Sources.Common.CodeBase.Services;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using UnityEngine;
 using Zenject;
 
@@ -29,7 +30,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
             _groundChecker = new GroundChecker(_config.MaxRaycastDistance, _draggingLayerMask);
         }
 
-        public void Drag(StackGenerator.Scripts.HexagonStack stack, Ray ray)
+        public void Drag(HexagonStack stack, Ray ray)
         {
             ray.origin += _dragHorizontalOffset;
             

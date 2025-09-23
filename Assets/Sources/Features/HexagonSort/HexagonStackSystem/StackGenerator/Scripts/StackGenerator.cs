@@ -1,6 +1,7 @@
 using System.Collections;
 using Sources.Common.CodeBase.Infrastructure;
 using Sources.Common.CodeBase.Services;
+using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -56,7 +57,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
             for (int i = 0; i < amount; i++)
                 SpawnHexagon(i, hexagonStack, randomTiles, stackConfig.OffsetBetweenTiles);
             
-            hexagonStack.UpdateStackSizeDisplay();
+            hexagonStack.ShowDisplayedSize();
         }
 
         private void SpawnHexagon(int index, HexagonStack hexagonStack,

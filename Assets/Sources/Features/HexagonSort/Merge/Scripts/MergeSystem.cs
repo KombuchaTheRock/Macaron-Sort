@@ -13,6 +13,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 {
     public class MergeSystem : MonoBehaviour, ICoroutineRunner
     {
+        public event Action<int> StackCompleted;
         public event Action MergeStarted;
         public event Action MergeFinished;
         
@@ -29,10 +30,17 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             _stackMover.StackPlaced += OnStackPlaced;
 
             _mergeLogic = new StackMergeLogic(hexagonGrid, this);
+            _mergeLogic.StackCompleted += OnStackCompleted;
         }
 
-        private void OnDestroy() =>
+        private void OnStackCompleted(int score) => 
+            StackCompleted?.Invoke(score);
+
+        private void OnDestroy()
+        {
             _stackMover.StackPlaced -= OnStackPlaced;
+            _mergeLogic.StackCompleted -= OnStackCompleted;
+        }
 
         private void OnStackPlaced(GridCell cell)
         {

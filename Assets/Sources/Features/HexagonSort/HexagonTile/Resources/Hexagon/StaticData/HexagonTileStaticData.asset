@@ -15,13 +15,19 @@ MonoBehaviour:
   <Configs>k__BackingField:
   - TileType: 0
     HexagonPrefab: {fileID: 450927700611805717, guid: 86b28dcaf6cc86c42baea23ca900b8e3, type: 3}
+    ScoreAmount: 1
   - TileType: 1
     HexagonPrefab: {fileID: 450927700611805717, guid: 8b50e144101021047b4523abaf0a9015, type: 3}
+    ScoreAmount: 1
   - TileType: 2
     HexagonPrefab: {fileID: 450927700611805717, guid: 0af643538d9213a46a8c095db9a2422f, type: 3}
+    ScoreAmount: 1
   - TileType: 5
     HexagonPrefab: {fileID: 450927700611805717, guid: 4a7c4988409089446973355ad30e7f07, type: 3}
+    ScoreAmount: 1
   - TileType: 3
     HexagonPrefab: {fileID: 450927700611805717, guid: 561297de6441b2b4face773467d68012, type: 3}
+    ScoreAmount: 1
   - TileType: 4
     HexagonPrefab: {fileID: 450927700611805717, guid: 0547dd53203602544be58a65132a14da, type: 3}
+    ScoreAmount: 1

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
+namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
 {
     [CreateAssetMenu(menuName = "Hexagon/HexagonStackConfig", fileName = "HexagonStackConfig", order = 0)]
     public class HexagonStackConfig : ScriptableObject

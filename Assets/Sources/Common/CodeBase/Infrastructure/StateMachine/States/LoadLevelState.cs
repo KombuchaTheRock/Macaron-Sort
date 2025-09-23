@@ -46,10 +46,11 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         {
             _factory.CreateInstanceRoot();
 
-            
             HexagonGrid hexagonGrid = GenerateGrid();
             StackMover stackMover = _factory.CreateStackMover();
+            
             _factory.CreateMergeSystem(stackMover, hexagonGrid);
+            _factory.CreateHUD();
         }
 
         private HexagonGrid GenerateGrid()

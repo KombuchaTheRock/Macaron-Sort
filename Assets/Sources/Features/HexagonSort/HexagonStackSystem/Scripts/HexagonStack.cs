@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using UnityEngine;
 
-namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
+namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
 {
     public class HexagonStack : MonoBehaviour
     {
+        public event Action SizeChanged;
+        
         [SerializeField] private StackMovement _movement;
         [SerializeField] private HexagonStackCollider _collider;
         [SerializeField] private StackSizeViewer _stackSizeViewer;
@@ -27,13 +28,10 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
             _stackSizeViewer.Initialize(this);
             _movement.StartAnimation(transform.position);
         }
-        
-        public void UpdateStackSizeDisplay()
-        {
-            _stackSizeViewer.Show();
-            _stackSizeViewer.UpdateStackSize();
-        }
 
+        public void ShowDisplayedSize() => 
+            _stackSizeViewer.Show();
+        
         public void HideDisplayedSize() => 
             _stackSizeViewer.Hide();
 
@@ -57,6 +55,8 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
             hexagon.transform.rotation = transform.rotation;
             _hexagons.Add(hexagon);
             ChangeColliderSize(hexagon.Height);
+            
+            SizeChanged?.Invoke();
         }
 
         public bool Contains(Hexagon hexagon) =>
@@ -66,6 +66,8 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
         {
             _hexagons.Remove(hexagon);
             ChangeColliderSize(hexagon.Height);
+            
+            SizeChanged?.Invoke();
             
             if (_hexagons.Count <= 0) 
                 Destroy(gameObject);

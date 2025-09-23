@@ -1,6 +1,6 @@
-using System;
 using Sources.Common.CodeBase.Services;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using TMPro;
 using UnityEngine;
@@ -23,8 +23,6 @@ public class Restarter : MonoBehaviour
 
     public void Restart()
     {
-        Debug.Log("Restart called");
-
         if (_factory.StackMover.IsDragging || _factory.MergeSystem.IsMerging)
             return;
 

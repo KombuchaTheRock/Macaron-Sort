@@ -1,5 +1,6 @@
 using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
 using Sources.Common.CodeBase.Services;
+using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using UnityEngine;
@@ -19,6 +20,14 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
             BindInputService();
             BindStackGenerator();
             BindGridGenerator();
+            BindPlayerProgress();
+        }
+
+        private void BindPlayerProgress()
+        {
+            Container.Bind<IPlayerProgress>()
+                .To<PlayerProgress>()
+                .AsSingle();
         }
 
         private void BindGridGenerator()

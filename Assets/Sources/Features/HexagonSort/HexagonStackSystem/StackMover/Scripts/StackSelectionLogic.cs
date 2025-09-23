@@ -1,4 +1,5 @@
 ﻿using Sources.Common.CodeBase.Services;
+using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using UnityEngine;
 using Zenject;
 
@@ -20,13 +21,13 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
             _stackLayerMask = 1 << _config.StackLayer;
         }
 
-        public StackGenerator.Scripts.HexagonStack SelectedStack { get; private set; }
+        public HexagonStack SelectedStack { get; private set; }
 
-        public bool TrySelectStack(Ray ray, out StackGenerator.Scripts.HexagonStack stack)
+        public bool TrySelectStack(Ray ray, out HexagonStack stack)
         {
             if (Physics.Raycast(ray, out RaycastHit hit, _config.MaxRaycastDistance, _stackLayerMask))
             {
-                stack = hit.collider.GetComponentInParent<StackGenerator.Scripts.HexagonStack>();
+                stack = hit.collider.GetComponentInParent<HexagonStack>();
                 
                 if (stack.CanMove)
                 {
