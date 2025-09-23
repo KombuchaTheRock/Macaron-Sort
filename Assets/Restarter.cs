@@ -48,9 +48,7 @@ public class Restarter : MonoBehaviour
         Vector3[] stackSpawnPositions = _staticData.GameConfig.LevelConfig.StackSpawnPoints.ToArray();
 
         _stackGenerator.GenerateStacks(stackSpawnPositions,
-            stackConfig.MinStackSize,
-            stackConfig.MaxStackSize,
-            stackConfig.OffsetBetweenTiles,
+            stackConfig,
             0.2f);
     }
 }

@@ -68,7 +68,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             if (cell.IsOccupied == false)
                 yield break;
 
-            HexagonTileType topHexagonType = cell.Stack.TopHexagon;
+            HexagonTileType topHexagonType = cell.Stack.TopHexagon.TileType;
             List<GridCell> neighboursCells = _mergeLogic.GetSimilarNeighbourCells(cell.PositionOnGrid, topHexagonType);
 
             if (neighboursCells.Count <= 0)
@@ -132,7 +132,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
             foreach (GridCell cell in neighboursCells)
             {
-                StackMergeCandidate stack = GetMergeCandidate(cell, filledCell.Stack.TopHexagon);
+                StackMergeCandidate stack = GetMergeCandidate(cell, filledCell.Stack.TopHexagon.TileType);
                 stacksPriority.Add(stack);
             }
 

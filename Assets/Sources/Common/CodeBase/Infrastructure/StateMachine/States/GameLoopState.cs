@@ -64,8 +64,6 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 
         private void OnStackPlaced(GridCell cell)
         {
-            Debug.Log("Stack amount " + _stacksAmount + "\tStackOnGrid" + _stackMover.StacksOnGridCount);
-
             if (_stackMover.StacksOnGridCount >= _stacksAmount)
             {
                 GenerateStacks();
@@ -87,9 +85,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             Vector3[] stackSpawnPositions = _staticData.GameConfig.LevelConfig.StackSpawnPoints.ToArray();
 
             _stackGenerator.GenerateStacks(stackSpawnPositions,
-                stackConfig.MinStackSize,
-                stackConfig.MaxStackSize,
-                stackConfig.OffsetBetweenTiles,
+                stackConfig,
                 0.2f);
         }
     }

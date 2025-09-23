@@ -9,6 +9,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
         [field: Space(5), SerializeField] public float OffsetBetweenTiles { get; private set; }
         [field: Range(1, 10), SerializeField] public int MaxStackSize { get; private set; }
         [field: Range(1, 10), SerializeField] public int MinStackSize { get; private set; }
+        [field: Range(1, 6), SerializeField] public int MaxTileChanges { get; private set; }
 
         private void OnValidate()
         {

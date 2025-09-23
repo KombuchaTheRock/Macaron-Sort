@@ -1,8 +1,6 @@
 using System.Collections;
 using Sources.Common.CodeBase.Infrastructure;
-using Sources.Common.CodeBase.Infrastructure.Extensions;
 using Sources.Common.CodeBase.Services;
-using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -26,59 +24,50 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
             _coroutineRunner = coroutineRunner;
         }
 
-        public void GenerateStacks(Vector3[] spawnPositions, int minStackSize, int maxStackSize, float verticalOffsetBetweenTiles, float delayBetweenStacks = 0)
+        public void GenerateStacks(Vector3[] spawnPositions, HexagonStackConfig stackConfig, float delayBetweenStacks = 0)
         {
             _stacksRoot ??= _factory.CreateStacksRoot();
 
-            if (_stackGenerateRoutine != null) 
+            if (_stackGenerateRoutine != null)
                 _coroutineRunner.StopCoroutine(_stackGenerateRoutine);
-            
-            _stackGenerateRoutine = _coroutineRunner.StartCoroutine(GenerateStacksRoutine(spawnPositions, minStackSize, maxStackSize,
-                verticalOffsetBetweenTiles, delayBetweenStacks));
+
+            _stackGenerateRoutine = _coroutineRunner.StartCoroutine(GenerateStacksRoutine(spawnPositions,
+               stackConfig,
+                delayBetweenStacks));
         }
 
-        private IEnumerator GenerateStacksRoutine(Vector3[] spawnPositions, int minStackSize, int maxStackSize,
-            float offsetBetweenTiles, float delayBetweenStacks)
+        private IEnumerator GenerateStacksRoutine(Vector3[] spawnPositions, HexagonStackConfig stackConfig, float delayBetweenStacks)
         {
             foreach (Vector3 position in spawnPositions)
             {
-                GenerateStack(position, minStackSize, maxStackSize, offsetBetweenTiles);
+                GenerateStack(position, stackConfig);
                 yield return new WaitForSeconds(delayBetweenStacks);
             }
         }
 
-        private void GenerateStack(Vector3 spawnPosition, int minStackSize, int maxStackSize, float offsetBetweenTiles)
+        private void GenerateStack(Vector3 spawnPosition, HexagonStackConfig stackConfig)
         {
-            HexagonStack hexagonStack = _factory.CreateHexagonStack(spawnPosition, _stacksRoot, offsetBetweenTiles);
+            HexagonStack hexagonStack = _factory.CreateHexagonStack(spawnPosition, _stacksRoot, stackConfig.OffsetBetweenTiles);
             hexagonStack.name = HexagonStackName;
-            
-            int amount = Random.Range(minStackSize, maxStackSize);
 
-            HexagonTileType[] randomTiles = GetRandomTiles();
-            int firstTileIndex = Random.Range(0, amount);
+            int amount = Random.Range(stackConfig.MinStackSize, stackConfig.MaxStackSize + 1);
+            HexagonTileType[] randomTiles = TileShuffler.GetRandomTileTypes(amount, 3);
 
             for (int i = 0; i < amount; i++)
-                SpawnHexagon(i, hexagonStack, randomTiles, firstTileIndex, offsetBetweenTiles);
+                SpawnHexagon(i, hexagonStack, randomTiles, stackConfig.OffsetBetweenTiles);
+            
+            hexagonStack.UpdateStackSizeDisplay();
         }
 
         private void SpawnHexagon(int index, HexagonStack hexagonStack,
-            HexagonTileType[] randomTiles, int firstTileIndex, float offsetBetweenTiles)
+            HexagonTileType[] randomTiles, float offsetBetweenTiles)
         {
             Vector3 hexagonLocalPosition = Vector3.up * index * offsetBetweenTiles;
             Vector3 spawnPosition = hexagonStack.transform.TransformPoint(hexagonLocalPosition);
 
-            HexagonTileType tileType = index <= firstTileIndex ? randomTiles[0] : randomTiles[1];
-            Hexagon hexagon = _factory.CreateHexagon(spawnPosition, tileType, hexagonStack.transform);
+            Hexagon hexagon = _factory.CreateHexagon(spawnPosition, randomTiles[index], hexagonStack.transform);
 
             hexagonStack.Add(hexagon);
-        }
-
-        private HexagonTileType[] GetRandomTiles()
-        {
-            HexagonTileType firstType = EnumExtensions.GetRandomValue<HexagonTileType>();
-            HexagonTileType secondType = EnumExtensions.GetRandomValue<HexagonTileType>();
-            
-            return new[] { firstType, secondType };
         }
     }
 }

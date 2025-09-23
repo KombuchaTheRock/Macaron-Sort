@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
@@ -60,7 +61,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
                 if (_hexagonGrid.TryGetCell(neighborPos, out GridCell cell) == false)
                     continue;
 
-                if (cell.IsOccupied && cell.Stack.TopHexagon == topHexagonType)
+                if (cell.IsOccupied && cell.Stack.TopHexagon.TileType == topHexagonType)
                     result.Add(cell);
             }
 
@@ -104,7 +105,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             if (mergeCandidate.Stack.Hexagons.Count < HexagonsCountForComplete)
                 yield break;
 
-            List<Hexagon> similarHexagons = GetSimilarHexagons(mergeCandidate.Stack, mergeCandidate.Stack.TopHexagon,
+            List<Hexagon> similarHexagons = GetSimilarHexagons(mergeCandidate.Stack, mergeCandidate.Stack.TopHexagon.TileType,
                 out bool isMonoType);
 
             if (isMonoType == false || similarHexagons.Count < HexagonsCountForComplete)
@@ -130,6 +131,8 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
         public IEnumerator MergeRoutine(StackMergeCandidate mergeCandidate, List<Hexagon> hexagonForMerge)
         {
+            mergeCandidate.Stack.HideDisplayedSize();
+            
             float offsetBetweenTiles = mergeCandidate.Stack.OffsetBetweenTiles;
             float initialY = mergeCandidate.Stack.Hexagons[^1].transform.position.y + offsetBetweenTiles;
             Tween mergeTween = null;
@@ -149,6 +152,8 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             }
 
             yield return mergeTween.WaitForCompletion();
+            
+            mergeCandidate.Stack.UpdateStackSizeDisplay();
         }
 
         private void DeleteStack(StackMergeCandidate mergeCandidate) =>

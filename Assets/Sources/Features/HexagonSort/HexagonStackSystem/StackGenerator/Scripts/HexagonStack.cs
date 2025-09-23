@@ -11,18 +11,31 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
     {
         [SerializeField] private StackMovement _movement;
         [SerializeField] private HexagonStackCollider _collider;
-
+        [SerializeField] private StackSizeViewer _stackSizeViewer;
+        
         public IReadOnlyList<Hexagon> Hexagons => _hexagons;
         public float OffsetBetweenTiles { get; private set; }
         public Vector3 InitialPosition { get; private set; }
         
-        public HexagonTileType TopHexagon => Hexagons[^1].TileType;
+        public Hexagon TopHexagon => Hexagons[^1];
         public bool CanMove => _movement.CanMove;
 
         private List<Hexagon> _hexagons = new();
 
-        private void Awake() =>
+        private void Awake()
+        {
+            _stackSizeViewer.Initialize(this);
             _movement.StartAnimation(transform.position);
+        }
+        
+        public void UpdateStackSizeDisplay()
+        {
+            _stackSizeViewer.Show();
+            _stackSizeViewer.UpdateStackSize();
+        }
+
+        public void HideDisplayedSize() => 
+            _stackSizeViewer.Hide();
 
         public void SetInitialPosition(Vector3 position) =>
             InitialPosition = position;
@@ -33,22 +46,11 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
         public void DisableMovement() =>
             _movement.DisableMovement();
 
-        public void EnableMovement() =>
-            _movement.EnableMovement();
-
         public void FollowingTarget(Vector3 target, float speed) =>
             _movement.FollowingTarget(target, speed);
 
         public void MoveToTarget(Vector3 targetPosition, float speed, Action onComplete = null) =>
             _movement.MoveToTarget(targetPosition, speed, onComplete);
-
-        private void ChangeColliderSize(float hexagonHeight)
-        {
-            float stackHeight = _hexagons.Count * (hexagonHeight + (OffsetBetweenTiles - hexagonHeight));
-            float stackColliderHeightMultiplier = stackHeight / _collider.OriginalHeight;
-
-            _collider.SetHeight(stackColliderHeightMultiplier);
-        }
 
         public void Add(Hexagon hexagon)
         {
@@ -64,9 +66,17 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
         {
             _hexagons.Remove(hexagon);
             ChangeColliderSize(hexagon.Height);
-
+            
             if (_hexagons.Count <= 0) 
                 Destroy(gameObject);
+        }
+
+        private void ChangeColliderSize(float hexagonHeight)
+        {
+            float stackHeight = _hexagons.Count * (hexagonHeight + (OffsetBetweenTiles - hexagonHeight));
+            float stackColliderHeightMultiplier = stackHeight / _collider.OriginalHeight;
+
+            _collider.SetHeight(stackColliderHeightMultiplier);
         }
     }
 }

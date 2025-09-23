@@ -19,3 +19,9 @@ MonoBehaviour:
     HexagonPrefab: {fileID: 450927700611805717, guid: 8b50e144101021047b4523abaf0a9015, type: 3}
   - TileType: 2
     HexagonPrefab: {fileID: 450927700611805717, guid: 0af643538d9213a46a8c095db9a2422f, type: 3}
+  - TileType: 5
+    HexagonPrefab: {fileID: 450927700611805717, guid: 4a7c4988409089446973355ad30e7f07, type: 3}
+  - TileType: 3
+    HexagonPrefab: {fileID: 450927700611805717, guid: 561297de6441b2b4face773467d68012, type: 3}
+  - TileType: 4
+    HexagonPrefab: {fileID: 450927700611805717, guid: 0547dd53203602544be58a65132a14da, type: 3}
