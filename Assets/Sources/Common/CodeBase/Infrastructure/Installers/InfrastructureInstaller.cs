@@ -1,6 +1,7 @@
 using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
 using Sources.Common.CodeBase.Services;
 using Sources.Common.CodeBase.Services.PlayerProgress;
+using Sources.Common.CodeBase.Services.SaveService;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using UnityEngine;
@@ -20,13 +21,36 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
             BindInputService();
             BindStackGenerator();
             BindGridGenerator();
-            BindPlayerProgress();
+            BindSaveDataFactory();
+            BindGameProgress();
+            BindPlayerLevel();
         }
 
-        private void BindPlayerProgress()
+        private void BindSaveDataFactory()
         {
-            Container.Bind<IPlayerProgress>()
-                .To<PlayerProgress>()
+            Container.Bind<ISaveDataFactory>()
+                .To<SaveDataFactory>()
+                .AsSingle();
+        }
+
+        private void BindPlayerLevel()
+        {
+            Container.BindInterfacesTo<PlayerLevel>()
+                .AsSingle();
+        }
+
+        private void BindGameProgress()
+        {
+            Container.Bind<ISerializer>()
+                .To<JsonUtilitySerializer>()
+                .AsSingle();
+        
+            Container.Bind<ISaveSystem>()
+                .To<SaveSystem>()
+                .AsSingle();
+
+            Container.Bind<IGameProgressService>()
+                .To<GameProgressService>()
                 .AsSingle();
         }
 

@@ -21,6 +21,7 @@ namespace Sources.Common.CodeBase.Services
         private readonly IStaticDataService _staticData;
         private Transform _instanceRoot;
 
+        public List<IProgressReader> ProgressReaders { get; private set; } 
         public MergeSystem MergeSystem { get; private set; }
         public StackMover StackMover { get; private set; }
         public GridRotator GridRotator { get; private set; }
@@ -35,6 +36,7 @@ namespace Sources.Common.CodeBase.Services
 
             Stacks = new List<HexagonStack>();
             GridCells = new List<GridCell>();
+            ProgressReaders = new List<IProgressReader>();
         }
 
         public void CreateInstanceRoot() =>
@@ -118,23 +120,39 @@ namespace Sources.Common.CodeBase.Services
         private Transform CreateRootObject(string rootObjectName) =>
             new GameObject(rootObjectName).transform;
 
-        private GameObject Instantiate(GameObject prefab, Vector3 at, Transform parent = null) =>
-            _instantiator.InstantiatePrefab(prefab, at, Quaternion.identity, parent);
-
         private GameObject Instantiate(string assetPath, Vector3 at, Transform parent = null)
         {
             GameObject prefab = _resourceLoader.LoadAsset<GameObject>(assetPath);
+            GameObject instantiatedPrefab = _instantiator.InstantiatePrefab(prefab, at, Quaternion.identity, parent);
             
-            return _instantiator.InstantiatePrefab(prefab, at, Quaternion.identity, parent);
+            RegisterProgressReaders(instantiatedPrefab.gameObject);
+            
+            return instantiatedPrefab;
         }
 
         private T Instantiate<T>(string assetPath, Vector3 at, Transform parent = null) where T : Component
         {
             GameObject prefab = _resourceLoader.LoadAsset<GameObject>(assetPath);
-            return _instantiator.InstantiatePrefabForComponent<T>(prefab, at, Quaternion.identity, parent);
+            T instantiatedPrefab = _instantiator.InstantiatePrefabForComponent<T>(prefab, at, Quaternion.identity, parent);
+            
+            RegisterProgressReaders(instantiatedPrefab.gameObject);
+            
+            return instantiatedPrefab;
         }
 
-        private T Instantiate<T>(GameObject prefab, Vector3 at, Transform parent = null) where T : Component =>
-            _instantiator.InstantiatePrefabForComponent<T>(prefab, at, Quaternion.identity, parent);
+        private T Instantiate<T>(GameObject prefab, Vector3 at, Transform parent = null) where T : Component
+        {
+            T instantiatedPrefab = _instantiator.InstantiatePrefabForComponent<T>(prefab, at, Quaternion.identity, parent);
+            
+            RegisterProgressReaders(instantiatedPrefab.gameObject);
+            
+            return instantiatedPrefab;
+        }
+
+        private void RegisterProgressReaders(GameObject gameObject)
+        {
+            foreach (IProgressReader progressReader in gameObject.GetComponentsInChildren<IProgressReader>())
+                ProgressReaders.Add(progressReader);
+        }
     }
 }

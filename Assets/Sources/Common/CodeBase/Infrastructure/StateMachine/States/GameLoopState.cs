@@ -13,7 +13,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
     {
         private readonly IGameFactory _factory;
         private readonly IStaticDataService _staticData;
-        private readonly IPlayerProgress _playerProgress;
+        private readonly IPlayerLevel _playerLevel;
         private readonly IStackGenerator _stackGenerator;
 
         private int _stacksAmount;
@@ -21,12 +21,12 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private MergeSystem _mergeSystem;
 
         public GameLoopState(IGameFactory factory, IStackGenerator stackGenerator, 
-            IStaticDataService staticData, IPlayerProgress playerProgress)
+            IStaticDataService staticData, IPlayerLevel playerLevel)
         {
             _stackGenerator = stackGenerator;
             _factory = factory;
             _staticData = staticData;
-            _playerProgress = playerProgress;
+            _playerLevel = playerLevel;
         }
 
         public void Enter()
@@ -47,7 +47,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         }
 
         private void OnStackCompleted(int score) => 
-            _playerProgress.Progress.ScoreData.AddScore(score);
+            _playerLevel.AddScore(score);
 
         public void Exit()
         {

@@ -1,4 +1,5 @@
 ﻿using Sources.Common.CodeBase.Services;
+using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
@@ -14,12 +15,14 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private readonly IStackGenerator _stackGenerator;
         private readonly IGridGenerator _gridGenerator;
         private readonly IStaticDataService _staticData;
+        private readonly IGameProgressService _progressService;
         private readonly SceneLoader _sceneLoader;
         
         private string _currentLevelName;
 
         public LoadLevelState(IGameStateMachine stateMachine, SceneLoader sceneLoader, IGameFactory factory,
-            IStackGenerator stackGenerator, IGridGenerator gridGenerator, IStaticDataService staticData)
+            IStackGenerator stackGenerator, IGridGenerator gridGenerator, IStaticDataService staticData,
+            IGameProgressService progressService)
         {
             _stateMachine = stateMachine;
             _sceneLoader = sceneLoader;
@@ -27,6 +30,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _stackGenerator = stackGenerator;
             _gridGenerator = gridGenerator;
             _staticData = staticData;
+            _progressService = progressService;
         }
 
         public void Enter(string levelName)
@@ -51,6 +55,8 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             
             _factory.CreateMergeSystem(stackMover, hexagonGrid);
             _factory.CreateHUD();
+            
+            _progressService.ApplyProgress();
         }
 
         private HexagonGrid GenerateGrid()

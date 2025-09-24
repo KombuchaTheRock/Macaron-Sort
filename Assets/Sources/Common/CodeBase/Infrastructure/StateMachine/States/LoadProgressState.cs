@@ -1,27 +1,38 @@
-﻿using Sources.Common.CodeBase.Services.PlayerProgress;
+﻿using Cysharp.Threading.Tasks;
+using Sources.Common.CodeBase.Services.PlayerProgress;
 
 namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 {
     public class LoadProgressState : IState
     {
         private readonly IGameStateMachine _gameStateMachine;
-        private readonly IPlayerProgress _playerProgress;
+        private readonly IGameProgressService _gameProgressService;
 
-        public LoadProgressState(IGameStateMachine gameStateMachine, IPlayerProgress playerProgress)
+        public LoadProgressState(IGameStateMachine gameStateMachine, IGameProgressService gameProgressService)
         {
             _gameStateMachine = gameStateMachine;
-            _playerProgress = playerProgress;
+            _gameProgressService = gameProgressService;
         }        
         
-        public void Enter()
+        public void Enter() => 
+            LoadProgressOrInitNew().Forget();
+
+        private async UniTask LoadProgressOrInitNew()
         {
-            InitializePlayerProgress();
-            
+            bool saveExists = await _gameProgressService.SavedProgressExists();
+
+            if (saveExists)
+            {
+                await _gameProgressService.LoadProgressAsync();
+            }
+            else
+            {
+                _gameProgressService.InitializeNewProgress();
+                await _gameProgressService.SaveProgressAsync();
+            }
+
             _gameStateMachine.Enter<LoadLevelState, string>(SceneNames.Gameplay);
         }
-
-        private void InitializePlayerProgress() => 
-            _playerProgress.Progress = new Progress();
 
         public void Exit()
         {

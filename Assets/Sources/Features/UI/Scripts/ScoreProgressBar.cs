@@ -12,32 +12,32 @@ namespace Sources.Features.UI.Scripts
         [SerializeField] private Slider _progressBar;
         [SerializeField] private TextMeshProUGUI _scoreProgress;
         
-        private MergeSystem _mergeSystem;
-        private IPlayerProgress _playerProgress;
+        private IPlayerLevel _playerLevel;
 
         [Inject]
-        private void Construct(IPlayerProgress playerProgress) =>
-            _playerProgress = playerProgress;
+        private void Construct(IPlayerLevel playerLevel) =>
+        _playerLevel = playerLevel;
+            
 
         private void Start()
         {
-            _playerProgress.Progress.ScoreData.Changed += OnScoreChanged;
-            UpdateScore();
+            _playerLevel.ScoreChanged += OnLevelScoreChanged;
+            UpdateViewScore();
         }
 
         private void OnDestroy() =>
-            _playerProgress.Progress.ScoreData.Changed -= OnScoreChanged;
+            _playerLevel.ScoreChanged -= OnLevelScoreChanged;
 
-        private void OnScoreChanged(int addedScore) => 
-            UpdateScore();
+        private void OnLevelScoreChanged(int addedScore) => 
+            UpdateViewScore();
 
-        private void UpdateScore()
+        private void UpdateViewScore()
         {
             _progressBar.value =
-                (float)_playerProgress.Progress.ScoreData.Score / 
-                _playerProgress.Progress.ScoreData.MaxScore;
+                (float)_playerLevel.Score / 
+                _playerLevel.MaxScore;
             
-            string scoreProgress = $"{_playerProgress.Progress.ScoreData.Score} / {_playerProgress.Progress.ScoreData.MaxScore}";
+            string scoreProgress = $"{_playerLevel.Score} / {_playerLevel.MaxScore}";
             _scoreProgress.text = scoreProgress;
         }
     }
