@@ -1,5 +1,5 @@
+using System;
 using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
-using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using UnityEngine;
 using Color = UnityEngine.Color;
@@ -8,6 +8,9 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
 {
     public class GridCell : MonoBehaviour
     {
+        public event Action StackAdded;
+        public event Action StackRemoved;
+        
         [SerializeField] private MeshColor _meshColor;
 
         private Color[] _normal;
@@ -30,11 +33,19 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
         public void InitializeGridPosition(Vector2Int gridPosition) =>
         PositionOnGrid = gridPosition;
         
-        public void SetStack(HexagonStack stack) =>
+        public void SetStack(HexagonStack stack)
+        {
             Stack = stack;
+            
+            StackAdded?.Invoke();
+        }
 
-        public void RemoveStack() =>
+        public void RemoveStack()
+        {
             Stack = null;
+            
+            StackRemoved?.Invoke();
+        }
 
         public void EnableHighlight()
         {

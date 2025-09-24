@@ -12,10 +12,13 @@ public class Restarter : MonoBehaviour
     private IGameFactory _factory;
     private IStackGenerator _stackGenerator;
     private IStaticDataService _staticData;
+    private IHexagonFactory _hexagonFactory;
 
     [Inject]
-    private void Construct(IGameFactory factory, IStackGenerator stackGenerator, IStaticDataService staticData)
+    private void Construct(IGameFactory factory, IHexagonFactory hexagonFactory, IStackGenerator stackGenerator,
+        IStaticDataService staticData)
     {
+        _hexagonFactory = hexagonFactory;
         _staticData = staticData;
         _stackGenerator = stackGenerator;
         _factory = factory;
@@ -31,11 +34,11 @@ public class Restarter : MonoBehaviour
         foreach (GridCell gridCell in _factory.GridCells)
             gridCell.RemoveStack();
 
-        foreach (HexagonStack stack in _factory.Stacks)
+        foreach (HexagonStack stack in _hexagonFactory.Stacks)
             if (stack != null)
                 Destroy(stack.gameObject);
 
-        _factory.Stacks.Clear();
+        _hexagonFactory.Stacks.Clear();
 
         GenerateStacks();
     }

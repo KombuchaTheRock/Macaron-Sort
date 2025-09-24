@@ -18,12 +18,21 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
             BindResourceLoader();
             BindStaticDataService();
             BindGameFactory();
+            BindHexagonFactory();
             BindInputService();
             BindStackGenerator();
             BindGridGenerator();
             BindSaveDataFactory();
             BindGameProgress();
             BindPlayerLevel();
+        }
+
+        private void BindHexagonFactory()
+        {
+            Container.Bind<IHexagonFactory>()
+                .To<HexagonFactory>()
+                .AsSingle()
+                .WithArguments(Container);
         }
 
         private void BindSaveDataFactory()

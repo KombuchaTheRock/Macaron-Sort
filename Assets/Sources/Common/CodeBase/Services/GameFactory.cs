@@ -2,39 +2,32 @@
 using Sources.Common.CodeBase.Paths;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
-using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
-using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
 using UnityEngine;
 using Zenject;
 
 namespace Sources.Common.CodeBase.Services
 {
-    public class GameFactory : IGameFactory
+    public class GameFactory : BaseFactory, IGameFactory
     {
         private const string InstanceRootName = "GameFactoryRoot";
-        private const string StacksRootName = "Stacks";
 
-        private readonly IInstantiator _instantiator;
-        private readonly IResourceLoader _resourceLoader;
         private readonly IStaticDataService _staticData;
         private Transform _instanceRoot;
 
-        public List<IProgressReader> ProgressReaders { get; private set; } 
+        public List<IProgressReader> ProgressReaders { get; private set; }
         public MergeSystem MergeSystem { get; private set; }
         public StackMover StackMover { get; private set; }
         public GridRotator GridRotator { get; private set; }
-        public List<HexagonStack> Stacks { get; private set; }
+        
         public List<GridCell> GridCells { get; private set; }
 
-        public GameFactory(IInstantiator instantiator, IResourceLoader resourceLoader, IStaticDataService staticData)
+        public GameFactory(IInstantiator instantiator, IResourceLoader resourceLoader, IStaticDataService staticData) :
+            base(instantiator, resourceLoader)
         {
-            _instantiator = instantiator;
-            _resourceLoader = resourceLoader;
             _staticData = staticData;
-
-            Stacks = new List<HexagonStack>();
+            
             GridCells = new List<GridCell>();
             ProgressReaders = new List<IProgressReader>();
         }
@@ -42,7 +35,7 @@ namespace Sources.Common.CodeBase.Services
         public void CreateInstanceRoot() =>
             _instanceRoot = CreateRootObject(InstanceRootName);
 
-        public GameObject CreateHUD() => 
+        public GameObject CreateHUD() =>
             Instantiate(AssetsPaths.HUD, Vector3.zero, _instanceRoot);
 
         public HexagonGrid CreateHexagonGrid(Grid grid)
@@ -54,7 +47,7 @@ namespace Sources.Common.CodeBase.Services
             GridRotator = gridRotator;
 
             HexagonGrid hexagonGrid = gridRotator.GetComponent<HexagonGrid>();
-            hexagonGrid.Initialize(grid);
+            RegisterProgressReaders(hexagonGrid.gameObject);
 
             return hexagonGrid;
         }
@@ -77,24 +70,6 @@ namespace Sources.Common.CodeBase.Services
             return stackMover;
         }
 
-        public Transform CreateStacksRoot()
-        {
-            Transform rootObject = CreateRootObject(StacksRootName);
-            rootObject.SetParent(_instanceRoot);
-
-            return rootObject;
-        }
-
-        public HexagonStack CreateHexagonStack(Vector3 position, Transform parent, float offsetBetweenTiles)
-        {
-            HexagonStack hexagonStack = Instantiate<HexagonStack>(AssetsPaths.StackPrefab, position, parent);
-            hexagonStack.SetInitialPosition(position);
-            hexagonStack.SetOffsetBetweenTiles(offsetBetweenTiles);
-
-            Stacks.Add(hexagonStack);
-            return hexagonStack;
-        }
-
         public GridCell CreateGridCell(Vector3 position, Vector2Int positionOnGrid, Transform parent, Color normalColor,
             Color highlightColor)
         {
@@ -106,48 +81,8 @@ namespace Sources.Common.CodeBase.Services
             return gridCell;
         }
 
-        public Hexagon CreateHexagon(Vector3 position, HexagonTileType tileType, Transform parent)
-        {
-            HexagonTileData hexagonTileData = _staticData.ForHexagonTle(tileType);
-            Hexagon hexagonPrefab = hexagonTileData.HexagonPrefab;
-            Hexagon hexagon = Instantiate<Hexagon>(hexagonPrefab.gameObject, position, parent);
-
-            hexagon.Initialize(tileType, hexagonTileData.ScoreAmount);
-
-            return hexagon;
-        }
-
         private Transform CreateRootObject(string rootObjectName) =>
             new GameObject(rootObjectName).transform;
-
-        private GameObject Instantiate(string assetPath, Vector3 at, Transform parent = null)
-        {
-            GameObject prefab = _resourceLoader.LoadAsset<GameObject>(assetPath);
-            GameObject instantiatedPrefab = _instantiator.InstantiatePrefab(prefab, at, Quaternion.identity, parent);
-            
-            RegisterProgressReaders(instantiatedPrefab.gameObject);
-            
-            return instantiatedPrefab;
-        }
-
-        private T Instantiate<T>(string assetPath, Vector3 at, Transform parent = null) where T : Component
-        {
-            GameObject prefab = _resourceLoader.LoadAsset<GameObject>(assetPath);
-            T instantiatedPrefab = _instantiator.InstantiatePrefabForComponent<T>(prefab, at, Quaternion.identity, parent);
-            
-            RegisterProgressReaders(instantiatedPrefab.gameObject);
-            
-            return instantiatedPrefab;
-        }
-
-        private T Instantiate<T>(GameObject prefab, Vector3 at, Transform parent = null) where T : Component
-        {
-            T instantiatedPrefab = _instantiator.InstantiatePrefabForComponent<T>(prefab, at, Quaternion.identity, parent);
-            
-            RegisterProgressReaders(instantiatedPrefab.gameObject);
-            
-            return instantiatedPrefab;
-        }
 
         private void RegisterProgressReaders(GameObject gameObject)
         {

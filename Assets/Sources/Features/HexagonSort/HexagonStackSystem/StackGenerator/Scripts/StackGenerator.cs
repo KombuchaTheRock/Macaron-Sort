@@ -15,13 +15,13 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
         private Transform _stacksRoot;
         private float _currentStackHeight;
 
-        private readonly IGameFactory _factory;
+        private readonly IHexagonFactory _factory;
         private readonly ICoroutineRunner _coroutineRunner;
         private Coroutine _stackGenerateRoutine;
 
-        public StackGenerator(IGameFactory gameFactory, ICoroutineRunner coroutineRunner)
+        public StackGenerator(IHexagonFactory hexagonFactory, ICoroutineRunner coroutineRunner)
         {
-            _factory = gameFactory;
+            _factory = hexagonFactory;
             _coroutineRunner = coroutineRunner;
         }
 
@@ -37,6 +37,34 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
                 delayBetweenStacks));
         }
 
+        public HexagonStack GenerateStack(Vector3 spawnPosition, HexagonStackConfig stackConfig, HexagonTileType[] hexagons = null)
+        {
+            HexagonStack hexagonStack = _factory.CreateHexagonStack(spawnPosition, _stacksRoot, stackConfig.OffsetBetweenTiles);
+            hexagonStack.name = HexagonStackName;
+
+            HexagonTileType[] tiles;
+            int amount;
+            
+            if (hexagons == null)
+            {
+                amount = Random.Range(stackConfig.MinStackSize, stackConfig.MaxStackSize + 1);
+                tiles = TileShuffler.GetRandomTileTypes(amount, stackConfig.MaxTileChanges);
+            }
+            else
+            {
+                amount = hexagons.Length;
+                tiles = hexagons;
+            }
+            
+
+            for (int i = 0; i < amount; i++)
+                SpawnHexagon(i, hexagonStack, tiles, stackConfig.OffsetBetweenTiles);
+            
+            hexagonStack.ShowDisplayedSize();
+            
+            return hexagonStack;
+        }
+
         private IEnumerator GenerateStacksRoutine(Vector3[] spawnPositions, HexagonStackConfig stackConfig, float delayBetweenStacks)
         {
             foreach (Vector3 position in spawnPositions)
@@ -44,20 +72,6 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
                 GenerateStack(position, stackConfig);
                 yield return new WaitForSeconds(delayBetweenStacks);
             }
-        }
-
-        private void GenerateStack(Vector3 spawnPosition, HexagonStackConfig stackConfig)
-        {
-            HexagonStack hexagonStack = _factory.CreateHexagonStack(spawnPosition, _stacksRoot, stackConfig.OffsetBetweenTiles);
-            hexagonStack.name = HexagonStackName;
-
-            int amount = Random.Range(stackConfig.MinStackSize, stackConfig.MaxStackSize + 1);
-            HexagonTileType[] randomTiles = TileShuffler.GetRandomTileTypes(amount, stackConfig.MaxTileChanges);
-
-            for (int i = 0; i < amount; i++)
-                SpawnHexagon(i, hexagonStack, randomTiles, stackConfig.OffsetBetweenTiles);
-            
-            hexagonStack.ShowDisplayedSize();
         }
 
         private void SpawnHexagon(int index, HexagonStack hexagonStack,

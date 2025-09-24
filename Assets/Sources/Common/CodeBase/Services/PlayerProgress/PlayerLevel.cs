@@ -20,6 +20,7 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
         {
             _config = staticData.GameConfig.PlayerLevelConfig;
             _gameProgressService = gameProgressService;
+            
             _gameProgressService.ProgressLoaded += OnProgressLoaded;
         }
         

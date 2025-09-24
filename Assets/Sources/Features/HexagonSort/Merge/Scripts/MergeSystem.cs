@@ -58,9 +58,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             try
             {
                 while (_updatedCells.Count > 0)
-                {
                     yield return CheckForMergeRoutine(_updatedCells.First());
-                }
             }
             finally
             {

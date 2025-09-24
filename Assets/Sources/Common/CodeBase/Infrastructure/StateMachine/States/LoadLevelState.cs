@@ -4,6 +4,7 @@ using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
+using Sources.Features.HexagonSort.Merge.Scripts;
 using UnityEngine;
 
 namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
@@ -52,10 +53,13 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 
             HexagonGrid hexagonGrid = GenerateGrid();
             StackMover stackMover = _factory.CreateStackMover();
-            
-            _factory.CreateMergeSystem(stackMover, hexagonGrid);
+
+            MergeSystem mergeSystem = _factory.CreateMergeSystem(stackMover, hexagonGrid);
             _factory.CreateHUD();
-            
+
+            HexagonGridSaveLoader hexagonGridSaveLoader = hexagonGrid.GetComponent<HexagonGridSaveLoader>();
+            hexagonGridSaveLoader.Initialize(mergeSystem);
+
             _progressService.ApplyProgress();
         }
 
