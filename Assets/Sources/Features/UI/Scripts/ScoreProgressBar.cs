@@ -1,5 +1,4 @@
 using Sources.Common.CodeBase.Services.PlayerProgress;
-using Sources.Features.HexagonSort.Merge.Scripts;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +10,7 @@ namespace Sources.Features.UI.Scripts
     {
         [SerializeField] private Slider _progressBar;
         [SerializeField] private TextMeshProUGUI _scoreProgress;
+        [SerializeField] private TextMeshProUGUI _currentLevel;
         
         private IPlayerLevel _playerLevel;
 
@@ -39,6 +39,7 @@ namespace Sources.Features.UI.Scripts
             
             string scoreProgress = $"{_playerLevel.Score} / {_playerLevel.MaxScore}";
             _scoreProgress.text = scoreProgress;
+            _currentLevel.text = _playerLevel.Level.ToString();
         }
     }
 }

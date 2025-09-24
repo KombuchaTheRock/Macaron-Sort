@@ -9,7 +9,7 @@ using Zenject;
 
 namespace Sources.Common.CodeBase.Services
 {
-    public class StaticDataService : IStaticDataService, IInitializable
+    public class StaticDataService : IStaticDataService//, IInitializable
     {
         private Dictionary<HexagonStackTemplate, HexagonStackConfig> _stackStaticData;
         private Dictionary<HexagonTileType, HexagonTileData> _hexagonTileStaticData;
@@ -18,8 +18,11 @@ namespace Sources.Common.CodeBase.Services
 
         public GameConfig GameConfig { get; private set; }
 
-        public StaticDataService(IResourceLoader resourceLoader) => 
+        public StaticDataService(IResourceLoader resourceLoader)
+        {
             _resourceLoader = resourceLoader;
+            Initialize();
+        }
 
         public void Initialize()
         {

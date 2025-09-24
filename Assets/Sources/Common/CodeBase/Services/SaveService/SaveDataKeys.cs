@@ -8,8 +8,8 @@ namespace Sources.Common.CodeBase.Services.SaveService
     {
         private static readonly Dictionary<Type, string> DataKeys = new()
         {
-            { typeof(PlayerData), "PlayerData" },
-            { typeof(WorldData), "WorldData" },
+            { typeof(PersistentProgressData), "PersistentProgressData" },
+            { typeof(ControlPointProgressData), "ControlPointProgressData" },
         };
     
         public static string GetKey<TData>() where TData : ISaveData

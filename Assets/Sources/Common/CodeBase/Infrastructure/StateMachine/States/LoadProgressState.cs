@@ -28,7 +28,9 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             else
             {
                 _gameProgressService.InitializeNewProgress();
-                await _gameProgressService.SaveProgressAsync();
+                
+                await _gameProgressService.SavePersistentProgressAsync();
+                await _gameProgressService.SaveControlPointProgressAsync();
             }
 
             _gameStateMachine.Enter<LoadLevelState, string>(SceneNames.Gameplay);

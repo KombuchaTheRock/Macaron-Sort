@@ -52,7 +52,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
             hexagonStack.name = HexagonStackName;
 
             int amount = Random.Range(stackConfig.MinStackSize, stackConfig.MaxStackSize + 1);
-            HexagonTileType[] randomTiles = TileShuffler.GetRandomTileTypes(amount, 3);
+            HexagonTileType[] randomTiles = TileShuffler.GetRandomTileTypes(amount, stackConfig.MaxTileChanges);
 
             for (int i = 0; i < amount; i++)
                 SpawnHexagon(i, hexagonStack, randomTiles, stackConfig.OffsetBetweenTiles);

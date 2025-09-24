@@ -4,10 +4,10 @@ using UnityEngine;
 namespace Sources.Common.CodeBase.Services.PlayerProgress
 {
     [Serializable]
-    public class PlayerData : ISaveData
+    public class PlayerData
     {
         [SerializeField] private int _score;
-        [SerializeField] private int _level;
+        [SerializeField] private int _level = 1;
 
         public int Score => _score;
         public int Level => _level;

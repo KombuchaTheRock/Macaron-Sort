@@ -1,14 +1,16 @@
+using System.Runtime.Serialization;
+
 namespace Sources.Common.CodeBase.Services.PlayerProgress
 {
     public class GameProgress
     {
-        public PlayerData PlayerData { get; }
-        public WorldData WorldData { get; }
-
-        public GameProgress(PlayerData playerData, WorldData worldData)
+        public PersistentProgressData PersistentProgressData { get; }
+        public ControlPointProgressData ControlPointProgressData { get; }
+        
+        public GameProgress(PersistentProgressData persistentProgressData, ControlPointProgressData controlPointProgressData)
         {
-            PlayerData = playerData;
-            WorldData = worldData;
+            PersistentProgressData = persistentProgressData;
+            ControlPointProgressData = controlPointProgressData;
         }
     }
 }

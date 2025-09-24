@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Sources.Common.CodeBase.Services.SaveService;
+using UnityEngine;
 
 namespace Sources.Common.CodeBase.Services.PlayerProgress
 {
@@ -15,8 +16,8 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
         private readonly IGameFactory _gameFactory;
         private readonly ISaveDataFactory _saveDataFactory;
 
-        private CancellationTokenSource _playerSaveCancellationToken;
-        private CancellationTokenSource _worldSaveCancellationToken;
+        private CancellationTokenSource _persistentSaveCancellationToken;
+        private CancellationTokenSource _controlPointSaveCancellationToken;
 
         public GameProgressService(ISaveSystem saveSystem, IGameFactory gameFactory, ISaveDataFactory saveDataFactory)
         {
@@ -31,75 +32,67 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
                 progressReader.ApplyProgress(GameProgress);
         }
 
-        public async UniTask SaveProgressAsync()
+        public async UniTask SavePersistentProgressAsync()
         {
-            CancelCurrentSaves();
-            ResetCancellationTokens();
+            Debug.Log("Saving game progress");
+            
+            CancelPersistentProgressSave();
+            ResetPersistentCancellationToken();
 
-            List<UniTask> tasks = new();
-
-            if (await _saveSystem.ExistsAsync<PlayerData>() == false)
-                tasks.Add(SaveDataAsync(GameProgress.PlayerData, _playerSaveCancellationToken));
-
-            if (await _saveSystem.ExistsAsync<WorldData>() == false)
-                tasks.Add(SaveDataAsync(GameProgress.WorldData, _worldSaveCancellationToken));
-
-            await UniTask.WhenAll(tasks);
+            await SaveDataAsync(GameProgress.PersistentProgressData, _persistentSaveCancellationToken);
+            
         }
 
-        public async UniTask SaveControlPoint()
+        public async UniTask SaveControlPointProgressAsync()
         {
-            CancelCurrentSaves();
-            ResetCancellationTokens();
+            CancelControlPointProgressSave();
+            ResetControlPointCancellationToken();
 
-            List<UniTask> tasks = new();
-
-            if (await _saveSystem.ExistsAsync<PlayerData>() == false)
-                tasks.Add(SaveDataAsync(GameProgress.PlayerData, _playerSaveCancellationToken));
-
-            if (await _saveSystem.ExistsAsync<WorldData>() == false)
-                tasks.Add(SaveDataAsync(GameProgress.WorldData, _worldSaveCancellationToken));
-
-            await UniTask.WhenAll(tasks);
+            await SaveDataAsync(GameProgress.ControlPointProgressData, _controlPointSaveCancellationToken);
         }
 
         public async UniTask LoadProgressAsync()
         {
-            PlayerData playerData = await _saveSystem.LoadAsync<PlayerData>();
-            WorldData worldData = await _saveSystem.LoadAsync<WorldData>();
+            Debug.Log("Loading game progress");
+            
+            PersistentProgressData persistentProgressData = await _saveSystem.LoadAsync<PersistentProgressData>();
+            ControlPointProgressData controlPointProgressData = await _saveSystem.LoadAsync<ControlPointProgressData>();;
 
-            GameProgress = new GameProgress(playerData, worldData);
+            GameProgress = new GameProgress(persistentProgressData, controlPointProgressData);
 
             ProgressLoaded?.Invoke();
         }
 
         public async UniTask<bool> SavedProgressExists()
         {
-            bool playerDataExists = await _saveSystem.ExistsAsync<PlayerData>();
-            bool worldDataExists = await _saveSystem.ExistsAsync<WorldData>();
+            bool persistentProgressDataExists = await _saveSystem.ExistsAsync<PersistentProgressData>();
+            bool controlPointProgressDataExists = await _saveSystem.ExistsAsync<ControlPointProgressData>();
 
-            return playerDataExists && worldDataExists;
+           return persistentProgressDataExists && controlPointProgressDataExists;
         }
 
         public void InitializeNewProgress()
         {
-            PlayerData playerData = _saveDataFactory.CreateNewPlayerData();
-            WorldData worldData = _saveDataFactory.CreateNewWorldData();
+            Debug.Log("Initializing new game progress");
 
-            GameProgress = new GameProgress(playerData, worldData);
+            PersistentProgressData persistentProgressData = _saveDataFactory.CreatePersistentProgressData();
+            ControlPointProgressData controlPointProgressData = _saveDataFactory.CreateControlPointProgressData();
+
+            GameProgress = new GameProgress(persistentProgressData, controlPointProgressData);
+            ProgressLoaded?.Invoke();
         }
 
-        private void CancelCurrentSaves()
-        {
-            _playerSaveCancellationToken?.Cancel();
-            _worldSaveCancellationToken?.Cancel();
-        }
+        private void CancelControlPointProgressSave() => 
+            _controlPointSaveCancellationToken?.Cancel();
 
-        private void ResetCancellationTokens()
-        {
-            _playerSaveCancellationToken = new CancellationTokenSource();
-            _worldSaveCancellationToken = new CancellationTokenSource();
-        }
+        private void CancelPersistentProgressSave() => 
+            _persistentSaveCancellationToken?.Cancel();
+
+        private void ResetPersistentCancellationToken() => 
+            _persistentSaveCancellationToken = new CancellationTokenSource();
+
+        private void ResetControlPointCancellationToken() => 
+            _controlPointSaveCancellationToken = new CancellationTokenSource();
 
         private async UniTask SaveDataAsync<T>(T data, CancellationTokenSource cancellationToken) where T : ISaveData
         {
@@ -110,7 +103,7 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
             }
             catch (OperationCanceledException)
             {
-                UnityEngine.Debug.LogWarning($"Сохранение {typeof(T).Name} отменено (новые изменения)");
+                Debug.LogWarning($"Сохранение {typeof(T).Name} отменено (новые изменения)");
             }
         }
     }

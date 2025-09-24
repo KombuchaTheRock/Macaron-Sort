@@ -47,8 +47,6 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
 
         public void Hide(Action onCompleted = null)
         {
-            Debug.Log("Hiding");
-            
             if (_stack == null)
                 TextScaleAnim(_stack.Hexagons.Count, from: 1, to: 0,
                     () =>
@@ -60,8 +58,6 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
 
         public void Show()
         {
-            Debug.Log("Showing");
-            
             //_text.gameObject.SetActive(true);
 
             if (_stack == null)

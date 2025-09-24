@@ -28,6 +28,6 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
         }
 
         private void SaveProgress() =>
-            _gameProgressService.SaveProgressAsync().Forget();
+            _gameProgressService.SavePersistentProgressAsync().Forget();
     }
 }

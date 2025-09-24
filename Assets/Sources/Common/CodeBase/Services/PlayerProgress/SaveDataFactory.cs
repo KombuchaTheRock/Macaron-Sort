@@ -9,10 +9,10 @@
             _staticData = staticData;
         }
 
-        public PlayerData CreateNewPlayerData() =>
-            new();
+        public PersistentProgressData CreatePersistentProgressData() =>
+            new(new PlayerData(), new WorldData());
 
-        public WorldData CreateNewWorldData() =>
-            new();
+        public ControlPointProgressData CreateControlPointProgressData() => 
+            new(new PlayerData(), new WorldData());
     }
 }

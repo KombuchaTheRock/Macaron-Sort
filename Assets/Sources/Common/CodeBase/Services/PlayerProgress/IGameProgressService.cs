@@ -8,9 +8,10 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
         public event Action ProgressLoaded;
         GameProgress GameProgress { get; }
         void ApplyProgress();
-        UniTask SaveProgressAsync();
+        UniTask SavePersistentProgressAsync();
         UniTask LoadProgressAsync();
         UniTask<bool> SavedProgressExists();
         void InitializeNewProgress();
+        UniTask SaveControlPointProgressAsync();
     }
 }

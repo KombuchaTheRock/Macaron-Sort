@@ -9,11 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f589d2f97b854231abc6a1df12c5dfef, type: 3}
-  m_Name: StackConfig
+  m_Script: {fileID: 11500000, guid: fadc6e25f4994c12be10ac42ea72dd06, type: 3}
+  m_Name: PlayerLevelConfig
   m_EditorClassIdentifier: 
-  <Template>k__BackingField: 0
-  <OffsetBetweenTiles>k__BackingField: 0.11
-  <MaxStackSize>k__BackingField: 10
-  <MinStackSize>k__BackingField: 5
-  <MaxTileChanges>k__BackingField: 1
+  <BaseMaxScoreForLevel>k__BackingField: 0
+  <MaxScoreGrowthFactor>k__BackingField: 0
+  <ControlPointSaveInterval>k__BackingField: 0

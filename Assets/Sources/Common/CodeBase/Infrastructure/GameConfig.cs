@@ -1,4 +1,5 @@
 using NaughtyAttributes;
+using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
@@ -14,5 +15,6 @@ namespace Sources.Common.CodeBase.Infrastructure
         [field: SerializeField, Expandable] public GridRotationConfig GridRotation { get; private set; }
         [field: SerializeField, Expandable] public LevelConfig LevelConfig { get; private set; }
         [field: SerializeField, Expandable] public StackMoverConfig StackMoverConfig { get; private set; }
+        [field: SerializeField, Expandable] public PlayerLevelConfig PlayerLevelConfig { get; private set; }
     }
 }
