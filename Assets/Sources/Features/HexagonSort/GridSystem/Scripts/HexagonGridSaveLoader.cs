@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Sources.Common.CodeBase.Services;
 using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
-using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
 
@@ -21,11 +19,13 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         private List<GridCell> _cells;
         private IStackGenerator _stackGenerator;
         private IStaticDataService _staticData;
+        private IPlayerLevel _playerLevel;
 
         [Inject]
         private void Construct(IGameProgressService gameProgress, IStackGenerator stackGenerator,
-            IStaticDataService staticData)
+            IStaticDataService staticData, IPlayerLevel playerLevel)
         {
+            _playerLevel = playerLevel;
             _staticData = staticData;
             _stackGenerator = stackGenerator;
             _gameProgress = gameProgress;
@@ -46,7 +46,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
             if (placedStacks.Count <= 0)
                 return;
 
-            foreach (PlacedStack placedStack in placedStacks.ToList())
+            foreach (PlacedStack placedStack in placedStacks)
             {
                 HexagonStackConfig stackConfig = _staticData.ForHexagonStack(HexagonStackTemplate.Default);
                 float offsetAboveGridGrid = _staticData.GameConfig.StackMoverConfig.PlaceOffsetAboveGrid;
@@ -64,33 +64,40 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
             }
         }
 
-        private void OnDestroy()
-        {
+        private void OnDestroy() => 
             CleanUp();
-        }
 
         private void SubscribeUpdates()
         {
             foreach (GridCell gridCell in _cells)
-                gridCell.StackRemoved += UpdateGridData;
+                gridCell.StackRemoved += UpdateGridPersistentData;
 
-            _mergeSystem.MergeStarted += UpdateGridData;
-            _mergeSystem.MergeFinished += UpdateGridData;
+            _playerLevel.ControlPointAchieved += UpdateGridControlPointData;
+            _mergeSystem.MergeStarted += UpdateGridPersistentData;
+            _mergeSystem.MergeFinished += UpdateGridPersistentData;
         }
 
         private void CleanUp()
         {
             foreach (GridCell gridCell in _cells)
-                gridCell.StackRemoved -= UpdateGridData;
+                gridCell.StackRemoved -= UpdateGridPersistentData;
 
-            _mergeSystem.MergeStarted -= UpdateGridData;
-            _mergeSystem.MergeFinished -= UpdateGridData;
+            _mergeSystem.MergeStarted -= UpdateGridPersistentData;
+            _mergeSystem.MergeFinished -= UpdateGridPersistentData;
         }
 
-        private void UpdateGridData()
+        private void UpdateGridControlPointData()
         {
-            StacksData stacksData = _gameProgress.GameProgress.PersistentProgressData.WorldData.StacksData;
-            stacksData.UpdateStacksOnGridData(_cells);
+            Debug.Log("ControlPointSaved");
+            
+            StacksData stacksControlPointData = _gameProgress.GameProgress.ControlPointProgressData.WorldData.StacksData;
+            stacksControlPointData.UpdateStacksOnGridData(_cells);
+        }
+
+        private void UpdateGridPersistentData()
+        {
+            StacksData stacksPersistentData = _gameProgress.GameProgress.PersistentProgressData.WorldData.StacksData;
+            stacksPersistentData.UpdateStacksOnGridData(_cells);
         }
     }
 }

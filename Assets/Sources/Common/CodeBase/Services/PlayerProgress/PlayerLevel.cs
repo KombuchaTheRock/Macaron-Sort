@@ -6,6 +6,7 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
     public class PlayerLevel : IDisposable, IPlayerLevel
     {
         public event Action<int> ScoreChanged;
+        public event Action ControlPointAchieved;
 
         private readonly IGameProgressService _gameProgressService;
         private readonly PlayerLevelConfig _config;
@@ -43,12 +44,14 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
 
             if (IsLevelControlPoint)
             {
-                Debug.Log("Level control point");
+                Debug.Log("ControlPointSaved");
+                
                 _gameProgressService.GameProgress.ControlPointProgressData.PlayerData.UpdateData(this);
                 _gameProgressService.SaveControlPointProgressAsync();
+                
+                ControlPointAchieved?.Invoke();
             }
         }
-
 
         private int CalculateMaxScore(int level) => 
             Mathf.RoundToInt(_config.BaseMaxScoreForLevel * Mathf.Pow(_config.MaxScoreGrowthFactor, level - 1));

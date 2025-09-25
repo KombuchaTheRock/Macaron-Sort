@@ -59,6 +59,9 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             HexagonGridSaveLoader hexagonGridSaveLoader = hexagonGrid.GetComponent<HexagonGridSaveLoader>();
             hexagonGridSaveLoader.Initialize(mergeSystem);
 
+            GameFinisher gameFinisher = hexagonGrid.GetComponent<GameFinisher>();
+            gameFinisher.Initialize(mergeSystem);
+            
             _progressService.ApplyProgress();
             
             mergeSystem.UpdateOccupiedCells();
