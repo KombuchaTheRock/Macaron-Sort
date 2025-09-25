@@ -17,7 +17,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
         public event Action<int> StackCompleted;
         public event Action MergeStarted;
         public event Action MergeFinished;
-        
+
         private HashSet<GridCell> _updatedCells = new();
         private StackMover _stackMover;
         private StackMergeLogic _mergeLogic;
@@ -34,19 +34,19 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
             _mergeLogic = new StackMergeLogic(_hexagonGrid, this);
             _mergeLogic.StackCompleted += OnStackCompleted;
-            
+
             UpdateOccupiedCells();
         }
 
         public void UpdateOccupiedCells()
         {
             List<GridCell> occupiedCells = _hexagonGrid.Cells.Where(cell => cell.IsOccupied).ToList();
-            
+
             _updatedCells.AddRange(occupiedCells);
             StartCoroutine(CellsUpdatedRoutine());
         }
 
-        private void OnStackCompleted(int score) => 
+        private void OnStackCompleted(int score) =>
             StackCompleted?.Invoke(score);
 
         private void OnDestroy()
@@ -67,7 +67,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
         {
             IsMerging = true;
             MergeStarted?.Invoke();
-            
+
             try
             {
                 while (_updatedCells.Count > 0)
@@ -101,7 +101,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             while (prioritizedNeighbourStacks.Count > 0)
             {
                 StackMergeCandidate neighbourStack = prioritizedNeighbourStacks.First();
-                
+
                 SortedSet<StackMergeCandidate> mergePair = new()
                 {
                     placedStack,
@@ -132,24 +132,30 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
                 _updatedCells.Add(from.Cell);
                 _updatedCells.Add(to.Cell);
 
+                
                 List<Hexagon> hexagonsForMerge = _mergeLogic.GetHexagonsToMerge(topHexagonType, from.Stack);
                 _mergeLogic.RemoveHexagonsFromStack(from.Stack, hexagonsForMerge);
 
-                from.Stack?.HideDisplayedSize();
-                to.Stack?.HideDisplayedSize();
-                
+                from.Stack.HideDisplayedSize();
+                 to.Stack.HideDisplayedSize();
+
                 yield return StartCoroutine(_mergeLogic.MergeRoutine(to, hexagonsForMerge));
+
+                if (from.Stack != null)
+                    from.Stack.ShowDisplayedSize();
                 
-                from.Stack?.ShowDisplayedSize();
-                to.Stack?.ShowDisplayedSize();
-                
+                if (to.Stack != null)
+                    to.Stack.ShowDisplayedSize();
+
                 prioritizedNeighbourStacks.Remove(neighbourStack);
                 _completeCandidate = to;
             }
-            
+
             yield return _mergeLogic.CheckStackForComplete(_completeCandidate);
+            
+            //_completeCandidate.Stack.ShowDisplayedSize();
         }
-        
+
         private SortedSet<StackMergeCandidate> GetMergeCandidates(GridCell filledCell,
             List<GridCell> neighboursCells)
         {

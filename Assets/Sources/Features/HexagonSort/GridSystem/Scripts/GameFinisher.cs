@@ -1,7 +1,5 @@
 ﻿using System.Linq;
-using Cysharp.Threading.Tasks;
 using Sources.Common.CodeBase.Infrastructure.StateMachine;
-using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Features.HexagonSort.Merge.Scripts;
 using UnityEngine;
 using Zenject;
@@ -14,14 +12,12 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         [SerializeField] private GameOverScreen _gameOverScreen;
         
         private MergeSystem _mergeSystem;
-        private IGameProgressService _progressService;
         private IGameStateMachine _stateMachine;
 
         [Inject]
-        private void Construct(IGameProgressService progressService, IGameStateMachine stateMachine)
+        private void Construct(IGameStateMachine stateMachine)
         {
             _stateMachine = stateMachine;
-            _progressService = progressService;
         }
 
         public void Initialize(MergeSystem mergeSystem)
@@ -29,11 +25,15 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
             _mergeSystem = mergeSystem;
             _mergeSystem.MergeFinished += OnMergeFinished;
             
+            _gameOverScreen.gameObject.SetActive(false);
             _gameOverScreen.ToControlPointButton.onClick.AddListener(ResetProgressToControlPoint);
         }
 
-        private void OnDestroy() => 
+        private void OnDestroy()
+        {
             _mergeSystem.MergeFinished -= OnMergeFinished;
+            _gameOverScreen.ToControlPointButton.onClick.RemoveListener(ResetProgressToControlPoint);
+        }
 
         private void OnMergeFinished()
         {
@@ -47,9 +47,8 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 
         private void ResetProgressToControlPoint()
         {
-            
-
             _stateMachine.Enter<ResetState>();
+            _gameOverScreen.gameObject.SetActive(false);
         }
     }
 }

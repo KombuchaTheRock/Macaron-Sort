@@ -9,8 +9,8 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
 {
     public class StackSizeViewer : MonoBehaviour
     {
-        private HexagonStack _stack;
         [SerializeField] private TextMeshPro _text;
+        private HexagonStack _stack;
         private TweenerCore<Vector3, Vector3, VectorOptions> _scaleAnimation;
 
         public void Initialize(HexagonStack stack)
@@ -24,7 +24,6 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
 
         private void OnSizeChanged()
         {
-            Hide();
             ChangeText();
         }
 
@@ -50,14 +49,20 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
 
         public void Hide(Action onCompleted = null)
         {
-            if (_stack == null)
+            if (_stack != null)
+            {
+                //_text.gameObject.SetActive(false);
                 TextScaleAnim(_stack.Hexagons.Count, from: 1, to: 0);
+            }
         }
 
         public void Show()
         {
-            if (_stack == null)
+            if (_stack != null)
+            {
+                //_text.gameObject.SetActive(true);
                 TextScaleAnim(_stack.Hexagons.Count, from: 0, to: 1);
+            }
         }
 
 
@@ -65,10 +70,10 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
         {
             _scaleAnimation?.Complete();
 
-            _scaleAnimation = _text.transform.DOScale(to, 0.5f)
+            _scaleAnimation = _text.transform.DOScale(to, 0.2f)
                 .From(from)
-                .SetEase(Ease.OutBounce)
-                .SetLink(gameObject)
+                .SetEase(Ease.InOutSine)
+                .SetLink(_text.gameObject)
                 .OnComplete(() => onCompleted?.Invoke())
                 .Play();
         }

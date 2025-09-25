@@ -68,8 +68,6 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
             for (int i = 0; i < amount; i++)
                 SpawnHexagon(i, hexagonStack, tiles, stackConfig.OffsetBetweenTiles);
 
-            hexagonStack.ShowDisplayedSize();
-
             return hexagonStack;
         }
 

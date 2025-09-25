@@ -27,6 +27,9 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
         
         public void AddScore(int score)
         {
+            if (score > MaxScore)
+                score = MaxScore;
+            
             Score += score;
 
             if (Score >= MaxScore) 
