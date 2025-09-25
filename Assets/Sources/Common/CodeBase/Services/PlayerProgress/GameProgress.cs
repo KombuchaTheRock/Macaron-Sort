@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 
 namespace Sources.Common.CodeBase.Services.PlayerProgress
 {

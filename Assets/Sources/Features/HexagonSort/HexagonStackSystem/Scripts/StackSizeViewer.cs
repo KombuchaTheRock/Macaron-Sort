@@ -19,6 +19,9 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
             _stack.SizeChanged += OnSizeChanged;
         }
 
+        private void OnDestroy() => 
+            _stack.SizeChanged -= OnSizeChanged;
+
         private void OnSizeChanged()
         {
             Hide();
@@ -48,18 +51,11 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
         public void Hide(Action onCompleted = null)
         {
             if (_stack == null)
-                TextScaleAnim(_stack.Hexagons.Count, from: 1, to: 0,
-                    () =>
-                    {
-                        onCompleted?.Invoke();
-                        //_text.gameObject.SetActive(false);
-                    });
+                TextScaleAnim(_stack.Hexagons.Count, from: 1, to: 0);
         }
 
         public void Show()
         {
-            //_text.gameObject.SetActive(true);
-
             if (_stack == null)
                 TextScaleAnim(_stack.Hexagons.Count, from: 0, to: 1);
         }

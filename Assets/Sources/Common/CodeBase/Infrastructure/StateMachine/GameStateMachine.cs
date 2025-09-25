@@ -24,6 +24,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine
                 [typeof(LoadProgressState)] = _gameStateFactory.CreateState<LoadProgressState>(),
                 [typeof(LoadLevelState)] = _gameStateFactory.CreateState<LoadLevelState>(),
                 [typeof(GameLoopState)] = _gameStateFactory.CreateState<GameLoopState>(),
+                [typeof(ResetState)] = _gameStateFactory.CreateState<ResetState>(),
             };
 
             Enter<BootstrapState>();

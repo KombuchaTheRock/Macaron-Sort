@@ -63,8 +63,6 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             gameFinisher.Initialize(mergeSystem);
             
             _progressService.ApplyProgress();
-            
-            mergeSystem.UpdateOccupiedCells();
         }
 
         private HexagonGrid GenerateGrid()

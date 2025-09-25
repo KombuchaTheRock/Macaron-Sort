@@ -135,7 +135,13 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
                 List<Hexagon> hexagonsForMerge = _mergeLogic.GetHexagonsToMerge(topHexagonType, from.Stack);
                 _mergeLogic.RemoveHexagonsFromStack(from.Stack, hexagonsForMerge);
 
+                from.Stack?.HideDisplayedSize();
+                to.Stack?.HideDisplayedSize();
+                
                 yield return StartCoroutine(_mergeLogic.MergeRoutine(to, hexagonsForMerge));
+                
+                from.Stack?.ShowDisplayedSize();
+                to.Stack?.ShowDisplayedSize();
                 
                 prioritizedNeighbourStacks.Remove(neighbourStack);
                 _completeCandidate = to;

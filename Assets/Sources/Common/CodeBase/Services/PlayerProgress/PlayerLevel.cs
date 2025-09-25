@@ -44,13 +44,20 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
 
             if (IsLevelControlPoint)
             {
-                Debug.Log("ControlPointSaved");
                 
-                _gameProgressService.GameProgress.ControlPointProgressData.PlayerData.UpdateData(this);
-                _gameProgressService.SaveControlPointProgressAsync();
-                
-                ControlPointAchieved?.Invoke();
+
+                SaveControlPointData();
             }
+        }
+
+        private void SaveControlPointData()
+        {
+            Debug.Log("ControlPointSaved");
+            
+            _gameProgressService.GameProgress.ControlPointProgressData.PlayerData.UpdateData(this);
+            _gameProgressService.SaveControlPointProgressAsync();
+                
+            ControlPointAchieved?.Invoke();
         }
 
         private int CalculateMaxScore(int level) => 
@@ -65,6 +72,11 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
             Level = _gameProgressService.GameProgress.PersistentProgressData.PlayerData.Level;
 
             MaxScore = CalculateMaxScore(Level);
+
+            if (Level == 1)
+            {
+                SaveControlPointData();
+            }
             
             ScoreChanged?.Invoke(Score);
         }

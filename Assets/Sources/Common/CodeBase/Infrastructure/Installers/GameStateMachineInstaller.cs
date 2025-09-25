@@ -25,6 +25,9 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
 
             Container.Bind<GameLoopState>()
                 .AsSingle();
+            
+            Container.Bind<ResetState>()
+                .AsSingle();
         }
 
         private void BindGameStateMachine()

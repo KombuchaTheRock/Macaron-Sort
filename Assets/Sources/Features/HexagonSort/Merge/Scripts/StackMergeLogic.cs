@@ -146,8 +146,6 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
         public IEnumerator MergeRoutine(StackMergeCandidate mergeCandidate, List<Hexagon> hexagonForMerge)
         {
-            //mergeCandidate.Stack.HideDisplayedSize();
-            
             float offsetBetweenTiles = mergeCandidate.Stack.OffsetBetweenTiles;
             float initialY = mergeCandidate.Stack.Hexagons[^1].transform.position.y + offsetBetweenTiles;
             Tween mergeTween = null;
@@ -167,8 +165,6 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             }
 
             yield return mergeTween.WaitForCompletion();
-            
-           mergeCandidate.Stack.ShowDisplayedSize();
         }
 
         public List<Hexagon> GetSimilarHexagons(HexagonStack stack, HexagonTileType sample, out bool isMonoType)

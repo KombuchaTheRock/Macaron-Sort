@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Sources.Common.CodeBase.Services.SaveService;
@@ -9,6 +11,7 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
     public class GameProgressService : IGameProgressService
     {
         public GameProgress GameProgress { get; private set; }
+
         public event Action ProgressLoaded;
 
         private readonly ISaveSystem _saveSystem;
@@ -33,13 +36,10 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
 
         public async UniTask SavePersistentProgressAsync()
         {
-            Debug.Log("Saving game progress");
-            
             CancelPersistentProgressSave();
             ResetPersistentCancellationToken();
 
             await SaveDataAsync(GameProgress.PersistentProgressData, _persistentSaveCancellationToken);
-            
         }
 
         public async UniTask SaveControlPointProgressAsync()
@@ -52,14 +52,41 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
 
         public async UniTask LoadProgressAsync()
         {
-            Debug.Log("Loading game progress");
-            
             PersistentProgressData persistentProgressData = await _saveSystem.LoadAsync<PersistentProgressData>();
-            ControlPointProgressData controlPointProgressData = await _saveSystem.LoadAsync<ControlPointProgressData>();;
+            ControlPointProgressData controlPointProgressData = await _saveSystem.LoadAsync<ControlPointProgressData>();
 
             GameProgress = new GameProgress(persistentProgressData, controlPointProgressData);
 
             ProgressLoaded?.Invoke();
+        }
+
+        public void PersistentProgressToControlPoint()
+        {
+            ControlPointProgressData controlPointProgressData = GameProgress.ControlPointProgressData;
+            PersistentProgressData persistentProgressData = CloneControlPointData(controlPointProgressData);
+
+            GameProgress = new GameProgress(persistentProgressData, controlPointProgressData);
+            
+            ProgressLoaded?.Invoke();
+        }
+
+        private PersistentProgressData CloneControlPointData(ControlPointProgressData controlPointProgressData)
+        {
+            int level = controlPointProgressData.PlayerData.Level;
+            int score = controlPointProgressData.PlayerData.Score;
+            
+            PlayerData playerData = new(score,level);
+
+            List<PlacedStack> stacksOnGrid = controlPointProgressData.WorldData.StacksData.StacksOnGrid.ToList();
+            List<FreeStack> freeStacks = controlPointProgressData.WorldData.StacksData.FreeStacks.ToList();
+            StacksData stacksData= new(stacksOnGrid, freeStacks);
+            
+            WorldData worldData = new(stacksData);
+            
+            PersistentProgressData persistentProgressData =
+                new(playerData, worldData);
+            
+            return persistentProgressData;
         }
 
         public async UniTask<bool> SavedProgressExists()
@@ -67,13 +94,11 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
             bool persistentProgressDataExists = await _saveSystem.ExistsAsync<PersistentProgressData>();
             bool controlPointProgressDataExists = await _saveSystem.ExistsAsync<ControlPointProgressData>();
 
-           return persistentProgressDataExists && controlPointProgressDataExists;
+            return persistentProgressDataExists && controlPointProgressDataExists;
         }
 
         public void InitializeNewProgress()
         {
-            Debug.Log("Initializing new game progress");
-
             PersistentProgressData persistentProgressData = _saveDataFactory.CreatePersistentProgressData();
             ControlPointProgressData controlPointProgressData = _saveDataFactory.CreateControlPointProgressData();
 
@@ -81,16 +106,16 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
             ProgressLoaded?.Invoke();
         }
 
-        private void CancelControlPointProgressSave() => 
+        private void CancelControlPointProgressSave() =>
             _controlPointSaveCancellationToken?.Cancel();
 
-        private void CancelPersistentProgressSave() => 
+        private void CancelPersistentProgressSave() =>
             _persistentSaveCancellationToken?.Cancel();
 
-        private void ResetPersistentCancellationToken() => 
+        private void ResetPersistentCancellationToken() =>
             _persistentSaveCancellationToken = new CancellationTokenSource();
 
-        private void ResetControlPointCancellationToken() => 
+        private void ResetControlPointCancellationToken() =>
             _controlPointSaveCancellationToken = new CancellationTokenSource();
 
         private async UniTask SaveDataAsync<T>(T data, CancellationTokenSource cancellationToken) where T : ISaveData

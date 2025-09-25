@@ -29,8 +29,6 @@ public class Restarter : MonoBehaviour
         if (_factory.StackMover.IsDragging || _factory.MergeSystem.IsMerging)
             return;
 
-        _factory.StackMover.ResetStacksOnGridCount();
-
         foreach (GridCell gridCell in _factory.GridCells)
             gridCell.RemoveStack();
 

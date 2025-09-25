@@ -13,5 +13,6 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
         UniTask<bool> SavedProgressExists();
         void InitializeNewProgress();
         UniTask SaveControlPointProgressAsync();
+        void PersistentProgressToControlPoint();
     }
 }

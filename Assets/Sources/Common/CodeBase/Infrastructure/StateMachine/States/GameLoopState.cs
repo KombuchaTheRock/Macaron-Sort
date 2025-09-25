@@ -21,7 +21,6 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private readonly IGameProgressService _gameProgressService;
         private readonly IStackGenerator _stackGenerator;
 
-        private int _stacksAmount;
         private StackMover _stackMover;
         private MergeSystem _mergeSystem;
         private List<HexagonStack> _generatedStacks;
@@ -39,18 +38,19 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 
         public void Enter()
         {
+            _generatedStacks = new List<HexagonStack>();
             _stackMover = _factory.StackMover;
             _mergeSystem = _factory.MergeSystem;
             _stackConfig = _staticData.ForHexagonStack(HexagonStackTemplate.Default);
-
+            
+            _mergeSystem.UpdateOccupiedCells();
+            
             SubscribeUpdates();
-
+            
             GenerateStacks(_stackConfig);
-
-            _stacksAmount = _staticData.GameConfig.LevelConfig.StackSpawnPoints.Count;
         }
 
-        public void Exit() =>
+        public void Exit() => 
             CleanUp();
 
         private void SubscribeUpdates()
@@ -62,7 +62,12 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _mergeSystem.MergeStarted += OnMergeStarted;
             _mergeSystem.MergeFinished += OnMergeFinished;
             _mergeSystem.StackCompleted += OnStackCompleted;
+
+            _playerLevel.ControlPointAchieved += OnControlPointAchieved;
         }
+
+        private void OnControlPointAchieved() => 
+            SaveControlPointData(_generatedStacks);
 
         private void CleanUp()
         {
@@ -98,9 +103,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             if (_generatedStacks.Count <= 0)
             {
                 Vector3[] stackSpawnPositions = _staticData.GameConfig.LevelConfig.StackSpawnPoints.ToArray();
-
                 GenerateNewStacks(stackSpawnPositions, _stackConfig, OnStacksGenerated);
-                _stackMover.ResetStacksOnGridCount();
             }
         }
 
@@ -164,6 +167,14 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         {
             StacksData stacksData = _gameProgressService.GameProgress.PersistentProgressData.WorldData.StacksData;
             stacksData.UpdateFreeStacksData(stacks);
+        }
+
+        private void SaveControlPointData(List<HexagonStack> stacks)
+        {
+            StacksData stacksData = _gameProgressService.GameProgress.ControlPointProgressData.WorldData.StacksData;
+            stacksData.UpdateFreeStacksData(stacks);
+            
+            _gameProgressService.SaveControlPointProgressAsync();
         }
     }
 }

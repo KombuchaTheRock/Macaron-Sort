@@ -41,6 +41,9 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 
         public void ApplyProgress(GameProgress progress)
         {
+            Debug.Log("APPLY PROGRESS");
+            
+            PlayerData playerData = progress.PersistentProgressData.PlayerData;
             List<PlacedStack> placedStacks = progress.PersistentProgressData.WorldData.StacksData.StacksOnGrid;
 
             if (placedStacks.Count <= 0)
@@ -72,7 +75,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
             foreach (GridCell gridCell in _cells)
                 gridCell.StackRemoved += UpdateGridPersistentData;
 
-            _playerLevel.ControlPointAchieved += UpdateGridControlPointData;
+            _playerLevel.ControlPointAchieved += SaveControlPointData;
             _mergeSystem.MergeStarted += UpdateGridPersistentData;
             _mergeSystem.MergeFinished += UpdateGridPersistentData;
         }
@@ -86,12 +89,12 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
             _mergeSystem.MergeFinished -= UpdateGridPersistentData;
         }
 
-        private void UpdateGridControlPointData()
+        private void SaveControlPointData()
         {
-            Debug.Log("ControlPointSaved");
-            
             StacksData stacksControlPointData = _gameProgress.GameProgress.ControlPointProgressData.WorldData.StacksData;
             stacksControlPointData.UpdateStacksOnGridData(_cells);
+
+            _gameProgress.SaveControlPointProgressAsync();
         }
 
         private void UpdateGridPersistentData()
