@@ -15,10 +15,8 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         private IGameStateMachine _stateMachine;
 
         [Inject]
-        private void Construct(IGameStateMachine stateMachine)
-        {
+        private void Construct(IGameStateMachine stateMachine) => 
             _stateMachine = stateMachine;
-        }
 
         public void Initialize(MergeSystem mergeSystem)
         {
@@ -39,15 +37,13 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         {
             int occupiedCellsCount = _hexagonGrid.Cells.Where(x => x.IsOccupied).ToList().Count;
 
-            if (occupiedCellsCount >= _hexagonGrid.Cells.Count)
-            {
+            if (occupiedCellsCount >= _hexagonGrid.Cells.Count) 
                 _gameOverScreen.gameObject.SetActive(true);
-            }
         }
 
         private void ResetProgressToControlPoint()
         {
-            _stateMachine.Enter<ResetState>();
+            _stateMachine.Enter<ResetState, bool>(false);
             _gameOverScreen.gameObject.SetActive(false);
         }
     }

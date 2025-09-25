@@ -144,16 +144,13 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
                 if (from.Stack != null)
                     from.Stack.ShowDisplayedSize();
                 
-                if (to.Stack != null)
-                    to.Stack.ShowDisplayedSize();
-
                 prioritizedNeighbourStacks.Remove(neighbourStack);
                 _completeCandidate = to;
             }
 
             yield return _mergeLogic.CheckStackForComplete(_completeCandidate);
             
-            //_completeCandidate.Stack.ShowDisplayedSize();
+            _completeCandidate.Stack.ShowDisplayedSize();
         }
 
         private SortedSet<StackMergeCandidate> GetMergeCandidates(GridCell filledCell,

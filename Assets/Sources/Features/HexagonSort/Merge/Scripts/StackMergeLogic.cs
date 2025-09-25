@@ -9,7 +9,6 @@ using Sources.Common.CodeBase.Infrastructure;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
-using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -19,7 +18,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
     public class StackMergeLogic
     {
         public event Action<int> StackCompleted;
-        
+
         private const int HexagonsCountForComplete = 10;
         private readonly HexagonGrid _hexagonGrid;
 
@@ -108,7 +107,8 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             if (mergeCandidate.Stack.Hexagons.Count < HexagonsCountForComplete)
                 yield break;
 
-            List<Hexagon> similarHexagons = GetSimilarHexagons(mergeCandidate.Stack, mergeCandidate.Stack.TopHexagon.TileType,
+            List<Hexagon> similarHexagons = GetSimilarHexagons(mergeCandidate.Stack,
+                mergeCandidate.Stack.TopHexagon.TileType,
                 out bool isMonoType);
 
             if (isMonoType == false || similarHexagons.Count < HexagonsCountForComplete)
@@ -127,7 +127,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             }
 
             yield return deleteAnimation.WaitForCompletion();
-            
+
             CompleteStack(mergeCandidate);
         }
 
@@ -135,12 +135,14 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
         {
             int score = 0;
 
-            foreach (Hexagon hexagon in mergeCandidate.Stack.Hexagons) 
+            foreach (Hexagon hexagon in mergeCandidate.Stack.Hexagons)
                 score += hexagon.Score;
-            
+
             mergeCandidate.Cell.SetStack(null);
-            Object.Destroy(mergeCandidate.Stack.gameObject);
-            
+
+            if (mergeCandidate.Stack != null) 
+                Object.Destroy(mergeCandidate.Stack.gameObject);
+
             StackCompleted?.Invoke(score);
         }
 
@@ -192,7 +194,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             Hexagon hexagon, float duration)
         {
             Quaternion hexagonInitialRotation = hexagon.transform.rotation;
-            
+
             Vector3 targetPosition = new(stack.transform.position.x, targetY, stack.transform.position.z);
             Vector3 movementDirection = targetPosition - hexagon.transform.position;
 

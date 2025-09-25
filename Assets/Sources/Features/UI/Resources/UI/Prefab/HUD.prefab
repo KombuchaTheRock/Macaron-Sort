@@ -515,7 +515,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: RESTART
+  m_text: CLEAR PROGRESS
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -542,12 +542,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 60
+  m_fontSize: 35.1
   m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 60
+  m_fontSizeMax: 35.1
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -850,7 +850,7 @@ GameObject:
   - component: {fileID: 7385423674907425778}
   - component: {fileID: 2588688311559084005}
   - component: {fileID: 6384061451314105498}
-  - component: {fileID: 1192397112305402704}
+  - component: {fileID: 8273473214491690565}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -960,9 +960,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1192397112305402704}
-        m_TargetAssemblyTypeName: Restarter, Assembly-CSharp
-        m_MethodName: Restart
+      - m_Target: {fileID: 8273473214491690565}
+        m_TargetAssemblyTypeName: ProgressCleaner, Assembly-CSharp
+        m_MethodName: ClearProgress
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -972,7 +972,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &1192397112305402704
+--- !u!114 &8273473214491690565
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -981,10 +981,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 6839107665654277061}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02604140affceac4f85fea8ec148cf4c, type: 3}
+  m_Script: {fileID: 11500000, guid: 85f60e6ce5147084d969bec824e1f521, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _debugText: {fileID: 0}
 --- !u!1 &8774036614173602584
 GameObject:
   m_ObjectHideFlags: 0

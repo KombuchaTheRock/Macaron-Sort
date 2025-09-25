@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Sources.Common.CodeBase.Infrastructure.StateMachine
 {
-    public class ResetState : IState
+    public class ResetState : IPayloadedState<bool>
     {
         private readonly IGameStateMachine _stateMachine;
         private readonly IHexagonFactory _hexagonFactory;
@@ -22,7 +22,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine
             _progressService = progressService;
         }
         
-        public void Enter()
+        public void Enter(bool newProgress)
         {
             foreach (GridCell gridCell in _gameFactory.GridCells)
                 gridCell.RemoveStack();
@@ -33,7 +33,16 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine
             
             _hexagonFactory.Stacks.Clear();
 
-            _progressService.PersistentProgressToControlPoint();
+            if (newProgress)
+            {
+                _progressService.InitializeNewProgress();
+                
+                _progressService.SavePersistentProgressAsync();
+                _progressService.SaveControlPointProgressAsync();
+            }
+            else
+                _progressService.PersistentProgressToControlPoint();
+
             _progressService.ApplyProgress();
             
             _stateMachine.Enter<GameLoopState>();
