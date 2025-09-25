@@ -5,7 +5,6 @@ using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
-using UnityEngine;
 
 namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 {
@@ -61,6 +60,8 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             hexagonGridSaveLoader.Initialize(mergeSystem);
 
             _progressService.ApplyProgress();
+            
+            mergeSystem.UpdateOccupiedCells();
         }
 
         private HexagonGrid GenerateGrid()

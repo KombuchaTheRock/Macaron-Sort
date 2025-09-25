@@ -1,4 +1,6 @@
-﻿using Sources.Common.CodeBase.Services;
+﻿using System;
+using System.Collections.Generic;
+using Sources.Common.CodeBase.Services;
 using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
@@ -11,29 +13,48 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 {
     public class GameLoopState : IState
     {
+        private const float DelayBetweenStacks = 0.2f;
+
         private readonly IGameFactory _factory;
         private readonly IStaticDataService _staticData;
         private readonly IPlayerLevel _playerLevel;
+        private readonly IGameProgressService _gameProgressService;
         private readonly IStackGenerator _stackGenerator;
 
         private int _stacksAmount;
         private StackMover _stackMover;
         private MergeSystem _mergeSystem;
+        private List<HexagonStack> _generatedStacks;
+        private HexagonStackConfig _stackConfig;
 
-        public GameLoopState(IGameFactory factory, IStackGenerator stackGenerator, 
-            IStaticDataService staticData, IPlayerLevel playerLevel)
+        public GameLoopState(IGameFactory factory, IStackGenerator stackGenerator,
+            IStaticDataService staticData, IPlayerLevel playerLevel, IGameProgressService gameProgressService)
         {
             _stackGenerator = stackGenerator;
             _factory = factory;
             _staticData = staticData;
             _playerLevel = playerLevel;
+            _gameProgressService = gameProgressService;
         }
 
         public void Enter()
         {
             _stackMover = _factory.StackMover;
             _mergeSystem = _factory.MergeSystem;
+            _stackConfig = _staticData.ForHexagonStack(HexagonStackTemplate.Default);
 
+            SubscribeUpdates();
+
+            GenerateStacks(_stackConfig);
+
+            _stacksAmount = _staticData.GameConfig.LevelConfig.StackSpawnPoints.Count;
+        }
+
+        public void Exit() =>
+            CleanUp();
+
+        private void SubscribeUpdates()
+        {
             _stackMover.StackPlaced += OnStackPlaced;
             _stackMover.DragStarted += OnDragStarted;
             _stackMover.DragFinished += OnDragFinished;
@@ -41,15 +62,9 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _mergeSystem.MergeStarted += OnMergeStarted;
             _mergeSystem.MergeFinished += OnMergeFinished;
             _mergeSystem.StackCompleted += OnStackCompleted;
-
-            GenerateStacks();
-            _stacksAmount = _staticData.GameConfig.LevelConfig.StackSpawnPoints.Count;
         }
 
-        private void OnStackCompleted(int score) => 
-            _playerLevel.AddScore(score);
-
-        public void Exit()
+        private void CleanUp()
         {
             _stackMover.StackPlaced -= OnStackPlaced;
             _stackMover.DragStarted -= OnDragStarted;
@@ -58,6 +73,9 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _mergeSystem.MergeStarted -= OnMergeStarted;
             _mergeSystem.MergeFinished -= OnMergeFinished;
         }
+
+        private void OnStackCompleted(int score) =>
+            _playerLevel.AddScore(score);
 
         private void OnMergeStarted() =>
             UpdateGridRotationEnabled();
@@ -73,9 +91,15 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 
         private void OnStackPlaced(GridCell cell)
         {
-            if (_stackMover.StacksOnGridCount >= _stacksAmount)
+            _generatedStacks.Remove(cell.Stack);
+
+            UpdateFreeStacksData(_generatedStacks);
+
+            if (_generatedStacks.Count <= 0)
             {
-                GenerateStacks();
+                Vector3[] stackSpawnPositions = _staticData.GameConfig.LevelConfig.StackSpawnPoints.ToArray();
+
+                GenerateNewStacks(stackSpawnPositions, _stackConfig, OnStacksGenerated);
                 _stackMover.ResetStacksOnGridCount();
             }
         }
@@ -88,14 +112,58 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
                 _factory.GridRotator.enabled = true;
         }
 
-        private void GenerateStacks()
+        private void GenerateStacks(HexagonStackConfig stackConfig)
         {
-            HexagonStackConfig stackConfig = _staticData.ForHexagonStack(HexagonStackTemplate.Default);
-            Vector3[] stackSpawnPositions = _staticData.GameConfig.LevelConfig.StackSpawnPoints.ToArray();
+            List<FreeStack> freeStacks = _gameProgressService.GameProgress.PersistentProgressData.WorldData.StacksData
+                .FreeStacks;
 
+            if (freeStacks.Count <= 0)
+            {
+                Vector3[] stackSpawnPositions = _staticData.GameConfig.LevelConfig.StackSpawnPoints.ToArray();
+                GenerateNewStacks(stackSpawnPositions, stackConfig, OnStacksGenerated);
+            }
+            else
+            {
+                GenerateSavedStacks(freeStacks, stackConfig, OnStacksGenerated);
+            }
+        }
+
+        private void GenerateNewStacks(Vector3[] stackSpawnPositions, HexagonStackConfig stackConfig,
+            Action<List<HexagonStack>> onStacksGenerated)
+        {
             _stackGenerator.GenerateStacks(stackSpawnPositions,
                 stackConfig,
-                0.2f);
+                DelayBetweenStacks,
+                onStacksGenerated);
+        }
+
+        private void GenerateSavedStacks(List<FreeStack> freeStacks, HexagonStackConfig stackConfig,
+            Action<List<HexagonStack>> onStacksGenerated)
+        {
+            List<HexagonStack> generatedStacks = new();
+
+            foreach (FreeStack freeStack in freeStacks)
+            {
+                HexagonStack hexagonStack =
+                    _stackGenerator.GenerateStack(freeStack.SpawnPosition, stackConfig, freeStack.Tiles);
+
+                generatedStacks.Add(hexagonStack);
+            }
+
+            onStacksGenerated(generatedStacks);
+        }
+
+        private void OnStacksGenerated(List<HexagonStack> stacks)
+        {
+            _generatedStacks = stacks;
+
+            UpdateFreeStacksData(_generatedStacks);
+        }
+
+        private void UpdateFreeStacksData(List<HexagonStack> stacks)
+        {
+            StacksData stacksData = _gameProgressService.GameProgress.PersistentProgressData.WorldData.StacksData;
+            stacksData.UpdateFreeStacksData(stacks);
         }
     }
 }

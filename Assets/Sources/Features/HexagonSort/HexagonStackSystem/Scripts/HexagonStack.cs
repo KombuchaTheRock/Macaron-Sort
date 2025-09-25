@@ -23,11 +23,11 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
 
         private List<Hexagon> _hexagons = new();
 
-        private void Awake()
-        {
+        private void Awake() => 
             _stackSizeViewer.Initialize(this);
+
+        public void ActivateSpawnAnimation() => 
             _movement.StartAnimation(transform.position);
-        }
 
         public void ShowDisplayedSize() => 
             _stackSizeViewer.Show();

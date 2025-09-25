@@ -60,7 +60,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
             if (targetCell?.IsOccupied == false)
             {
                 _placementLogic.PlaceOnGrid(_currentStack, targetCell);
-                ++StacksOnGridCount;
+                StacksOnGridCount++;
                 
                 StackPlaced?.Invoke(targetCell);
             }

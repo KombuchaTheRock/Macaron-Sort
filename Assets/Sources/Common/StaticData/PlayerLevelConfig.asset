@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fadc6e25f4994c12be10ac42ea72dd06, type: 3}
   m_Name: PlayerLevelConfig
   m_EditorClassIdentifier: 
-  <BaseMaxScoreForLevel>k__BackingField: 0
-  <MaxScoreGrowthFactor>k__BackingField: 0
-  <ControlPointSaveInterval>k__BackingField: 0
+  <BaseMaxScoreForLevel>k__BackingField: 100
+  <MaxScoreGrowthFactor>k__BackingField: 1.2
+  <ControlPointSaveInterval>k__BackingField: 5

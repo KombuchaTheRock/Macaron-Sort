@@ -7,6 +7,7 @@ using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Sources.Features.HexagonSort.Merge.Scripts
@@ -21,16 +22,28 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
         private StackMover _stackMover;
         private StackMergeLogic _mergeLogic;
         private StackMergeCandidate _completeCandidate;
-        
+        private HexagonGrid _hexagonGrid;
+
         public bool IsMerging { get; private set; }
 
         public void Initialize(StackMover stackMover, HexagonGrid hexagonGrid)
         {
+            _hexagonGrid = hexagonGrid;
             _stackMover = stackMover;
             _stackMover.StackPlaced += OnStackPlaced;
 
-            _mergeLogic = new StackMergeLogic(hexagonGrid, this);
+            _mergeLogic = new StackMergeLogic(_hexagonGrid, this);
             _mergeLogic.StackCompleted += OnStackCompleted;
+            
+            UpdateOccupiedCells();
+        }
+
+        public void UpdateOccupiedCells()
+        {
+            List<GridCell> occupiedCells = _hexagonGrid.Cells.Where(cell => cell.IsOccupied).ToList();
+            
+            _updatedCells.AddRange(occupiedCells);
+            StartCoroutine(CellsUpdatedRoutine());
         }
 
         private void OnStackCompleted(int score) => 
@@ -47,10 +60,10 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             _updatedCells.Add(cell);
 
             if (IsMerging == false)
-                StartCoroutine(StackPlacedRoutine());
+                StartCoroutine(CellsUpdatedRoutine());
         }
 
-        private IEnumerator StackPlacedRoutine()
+        private IEnumerator CellsUpdatedRoutine()
         {
             IsMerging = true;
             MergeStarted?.Invoke();
