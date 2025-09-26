@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Sources.Common.CodeBase.Services
+namespace Sources.Common.CodeBase.Services.SoundService
 {
     public interface IAudioFactory
     {

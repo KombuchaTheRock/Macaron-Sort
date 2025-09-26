@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6525731497734747002}
   - component: {fileID: 5103559616292541721}
+  - component: {fileID: -1917246169832249579}
   m_Layer: 0
   m_Name: StackMover
   m_TagString: Untagged
@@ -44,3 +45,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6304c99468774ad0be04a5f741ec0ed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-1917246169832249579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6471170678107212383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8983e92ff5fcefc43a35259b92df73b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stackMover: {fileID: 5103559616292541721}
+  _stackPlacedSound:
+    <AudioClip>k__BackingField: {fileID: 8300000, guid: 4bbdbff2bad303940b846f10f2ba4a28, type: 3}
+    <CanBeReplaceableBySame>k__BackingField: 0
+  _stackStartDraggingSound:
+    <AudioClip>k__BackingField: {fileID: 8300000, guid: 04689fe4457ae59459fcf170265777a4, type: 3}
+    <CanBeReplaceableBySame>k__BackingField: 0
