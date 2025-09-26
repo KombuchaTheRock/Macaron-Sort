@@ -11,6 +11,8 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
 {
     public class InfrastructureInstaller : MonoInstaller
     {
+        [SerializeField] private SoundPool _soundPool;
+        
         public override void InstallBindings()
         {
             BindGameStateFactory();
@@ -19,12 +21,30 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
             BindStaticDataService();
             BindGameFactory();
             BindHexagonFactory();
+            BindAudioFactory();
             BindInputService();
             BindStackGenerator();
             BindGridGenerator();
             BindSaveDataFactory();
             BindGameProgress();
             BindPlayerLevel();
+            BindSoundService();
+        }
+
+        private void BindSoundService()
+        {
+            Container.Bind<ISoundService>()
+                .To<SoundService>()
+                .AsSingle()
+                .WithArguments(_soundPool);
+        }
+
+        private void BindAudioFactory()
+        {
+            Container.Bind<IAudioFactory>()
+                .To<AudioFactory>()
+                .AsSingle()
+                .WithArguments(Container);
         }
 
         private void BindHexagonFactory()

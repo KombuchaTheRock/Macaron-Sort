@@ -9,5 +9,6 @@ namespace Sources.Common.CodeBase.Paths
         public const string GridRootPrefab = "Grid/Prefab/GridRoot";
         public const string MergeSystemPrefab = "MergeSystem/Prefab/MergeSystem";
         public const string HUD = "UI/Prefab/HUD";
+        public const string SoundSource = "Audio/AudioSource";
     }
 }

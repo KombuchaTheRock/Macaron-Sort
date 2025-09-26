@@ -13,7 +13,7 @@ namespace Sources.Common.CodeBase.Services
             _instantiator = instantiator;
             _resourceLoader = resourceLoader;
         }
-        
+
         protected GameObject Instantiate(string assetPath, Vector3 at, Transform parent = null)
         {
             GameObject prefab = _resourceLoader.LoadAsset<GameObject>(assetPath);
