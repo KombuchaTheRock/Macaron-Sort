@@ -71,6 +71,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 
         private void CleanUp()
         {
+            _mergeSystem.StackCompleted -= OnStackCompleted;
             _stackMover.StackPlaced -= OnStackPlaced;
             _stackMover.DragStarted -= OnDragStarted;
             _stackMover.DragFinished -= OnDragFinished;
@@ -117,18 +118,20 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 
         private void GenerateStacks(HexagonStackConfig stackConfig)
         {
-            List<FreeStack> freeStacks = _gameProgressService.GameProgress.PersistentProgressData.WorldData.StacksData
-                .FreeStacks;
-
-            if (freeStacks.Count <= 0)
-            {
-                Vector3[] stackSpawnPositions = _staticData.GameConfig.LevelConfig.StackSpawnPoints.ToArray();
-                GenerateNewStacks(stackSpawnPositions, stackConfig, OnStacksGenerated);
-            }
-            else
-            {
-                GenerateSavedStacks(freeStacks, stackConfig, OnStacksGenerated);
-            }
+            Vector3[] stackSpawnPositions = _staticData.GameConfig.LevelConfig.StackSpawnPoints.ToArray();
+            GenerateNewStacks(stackSpawnPositions, stackConfig, OnStacksGenerated);
+            
+            // List<FreeStack> freeStacks = _gameProgressService.GameProgress.PersistentProgressData.WorldData.StacksData
+            //     .FreeStacks;
+            //
+            // if (freeStacks.Count <= 0)
+            // {
+            //     
+            // }
+            // else
+            // {
+            //     GenerateSavedStacks(freeStacks, stackConfig, OnStacksGenerated);
+            // }
         }
 
         private void GenerateNewStacks(Vector3[] stackSpawnPositions, HexagonStackConfig stackConfig,

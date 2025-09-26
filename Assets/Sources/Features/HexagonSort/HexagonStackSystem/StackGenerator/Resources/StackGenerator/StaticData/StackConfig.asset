@@ -15,5 +15,5 @@ MonoBehaviour:
   <Template>k__BackingField: 0
   <OffsetBetweenTiles>k__BackingField: 0.11
   <MaxStackSize>k__BackingField: 9
-  <MinStackSize>k__BackingField: 9
+  <MinStackSize>k__BackingField: 1
   <MaxTileChanges>k__BackingField: 1

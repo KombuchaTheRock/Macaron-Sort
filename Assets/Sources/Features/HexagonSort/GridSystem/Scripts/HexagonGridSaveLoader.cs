@@ -41,9 +41,6 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 
         public void ApplyProgress(GameProgress progress)
         {
-            Debug.Log("APPLY PROGRESS");
-            
-            PlayerData playerData = progress.PersistentProgressData.PlayerData;
             List<PlacedStack> placedStacks = progress.PersistentProgressData.WorldData.StacksData.StacksOnGrid;
 
             if (placedStacks.Count <= 0)

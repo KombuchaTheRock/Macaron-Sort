@@ -126,7 +126,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
                     HexagonDeleteAnimation(similarHexagons.First(), delay, 0.2f, DeleteAnimationCompleted);
                 deleteAnimation.Play();
 
-                delay += 0.04f;
+                delay += 0.03f;
 
                 similarHexagons.RemoveAt(0);
             }
@@ -150,6 +150,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             if (mergeCandidate.Stack != null)
                 Object.Destroy(mergeCandidate.Stack.gameObject);
 
+            Debug.Log($"Score in MergeLogic {score}");
             StackCompleted?.Invoke(score);
         }
 

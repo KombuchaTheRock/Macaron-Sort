@@ -29,12 +29,20 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
 
         private void ChangeText()
         {
-            int hexagonsCount = _stack.Hexagons.Count;
+            int sameHexagonsCount = 0;
+            
+            for (int i = _stack.Hexagons.Count - 1; i >= 0; i--)
+            {
+                if (_stack.Hexagons[i].TileType != _stack.TopHexagon.TileType)
+                    break;
+                
+                sameHexagonsCount++;
+            }
 
-            float newY = hexagonsCount * _stack.OffsetBetweenTiles + 0.5f;
+            float newY = _stack.Hexagons.Count * _stack.OffsetBetweenTiles + 0.5f;
             Vector3 newPosition = new(_text.transform.position.x, newY, _text.transform.position.z);
 
-            _text.text = hexagonsCount.ToString();
+            _text.text = sameHexagonsCount.ToString();
             _text.transform.position = newPosition;
         }
 
@@ -47,22 +55,16 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
                 _text.transform.rotation = Quaternion.Euler(90, 0, 0);
         }
 
-        public void Hide(Action onCompleted = null)
+        public void Hide()
         {
-            if (_stack != null)
-            {
-                //_text.gameObject.SetActive(false);
+            if (_stack != null) 
                 TextScaleAnim(_stack.Hexagons.Count, from: 1, to: 0);
-            }
         }
 
         public void Show()
         {
-            if (_stack != null)
-            {
-                //_text.gameObject.SetActive(true);
+            if (_stack != null) 
                 TextScaleAnim(_stack.Hexagons.Count, from: 0, to: 1);
-            }
         }
 
 
