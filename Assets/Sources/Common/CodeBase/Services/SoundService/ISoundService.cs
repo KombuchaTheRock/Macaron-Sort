@@ -4,7 +4,6 @@ namespace Sources.Common.CodeBase.Services.SoundService
     {
         void Mute();
         void UnMute();
-
         void Play(Sound sound);
     }
 }

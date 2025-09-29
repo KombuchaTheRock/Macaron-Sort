@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Sources.Common.CodeBase.Infrastructure.StateMachine;
+using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
 using Sources.Features.HexagonSort.Merge.Scripts;
 using UnityEngine;
 using Zenject;
@@ -21,13 +22,21 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         public void Initialize(MergeSystem mergeSystem)
         {
             _mergeSystem = mergeSystem;
-            _mergeSystem.MergeFinished += OnMergeFinished;
-            
             _gameOverScreen.gameObject.SetActive(false);
+            
+            SubscribeUpdates();
+        }
+
+        private void OnDestroy() => 
+            CleanUp();
+
+        private void SubscribeUpdates()
+        {
+            _mergeSystem.MergeFinished += OnMergeFinished;
             _gameOverScreen.ToControlPointButton.onClick.AddListener(ResetProgressToControlPoint);
         }
 
-        private void OnDestroy()
+        private void CleanUp()
         {
             _mergeSystem.MergeFinished -= OnMergeFinished;
             _gameOverScreen.ToControlPointButton.onClick.RemoveListener(ResetProgressToControlPoint);
@@ -43,7 +52,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 
         private void ResetProgressToControlPoint()
         {
-            _stateMachine.Enter<ResetState, bool>(false);
+            _stateMachine.Enter<ResetProgressState, bool>(false);
             _gameOverScreen.gameObject.SetActive(false);
         }
     }

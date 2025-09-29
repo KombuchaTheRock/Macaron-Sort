@@ -7,8 +7,8 @@ namespace Sources.Common.CodeBase.Services
 {
     public interface IHexagonFactory
     {
-        Transform CreateStacksRoot();
         List<HexagonStack> Stacks { get; }
+        Transform CreateStacksRoot();
         Hexagon CreateHexagon(Vector3 position, HexagonTileType tileType, Transform parent);
         HexagonStack CreateHexagonStack(Vector3 position, Transform parent, float offsetBetweenTiles);
     }

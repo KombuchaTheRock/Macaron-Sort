@@ -42,11 +42,9 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _stackMover = _factory.StackMover;
             _mergeSystem = _factory.MergeSystem;
             _stackConfig = _staticData.ForHexagonStack(HexagonStackTemplate.Default);
-            
             _mergeSystem.UpdateOccupiedCells();
             
             SubscribeUpdates();
-            
             GenerateStacks(_stackConfig);
         }
 
@@ -120,18 +118,6 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         {
             Vector3[] stackSpawnPositions = _staticData.GameConfig.LevelConfig.StackSpawnPoints.ToArray();
             GenerateNewStacks(stackSpawnPositions, stackConfig, OnStacksGenerated);
-            
-            // List<FreeStack> freeStacks = _gameProgressService.GameProgress.PersistentProgressData.WorldData.StacksData
-            //     .FreeStacks;
-            //
-            // if (freeStacks.Count <= 0)
-            // {
-            //     
-            // }
-            // else
-            // {
-            //     GenerateSavedStacks(freeStacks, stackConfig, OnStacksGenerated);
-            // }
         }
 
         private void GenerateNewStacks(Vector3[] stackSpawnPositions, HexagonStackConfig stackConfig,
@@ -143,26 +129,9 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
                 onStacksGenerated);
         }
 
-        private void GenerateSavedStacks(List<FreeStack> freeStacks, HexagonStackConfig stackConfig,
-            Action<List<HexagonStack>> onStacksGenerated)
-        {
-            List<HexagonStack> generatedStacks = new();
-
-            foreach (FreeStack freeStack in freeStacks)
-            {
-                HexagonStack hexagonStack =
-                    _stackGenerator.GenerateStack(freeStack.SpawnPosition, stackConfig, freeStack.Tiles);
-
-                generatedStacks.Add(hexagonStack);
-            }
-
-            onStacksGenerated(generatedStacks);
-        }
-
         private void OnStacksGenerated(List<HexagonStack> stacks)
         {
             _generatedStacks = stacks;
-
             UpdateFreeStacksData(_generatedStacks);
         }
 

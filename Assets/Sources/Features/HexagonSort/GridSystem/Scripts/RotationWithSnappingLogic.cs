@@ -7,8 +7,9 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
     {
         private const float RotationDirection = -1;
         
-        private readonly float _snapAngle;
-        private readonly float _snapThreshold;
+        public event Action<float> OnAngleChanged;
+        public event Action<float> SnapToNextAngle;
+        public event Action<float> ReturnToPreviousAngle;
 
         private Vector2 _previousCursorPosition;
         private float _currentAngle;
@@ -16,10 +17,9 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         private float _previousAngle;
         private float _rotationSensitivity;
         private bool _isRotating;
-
-        public event Action<float> OnAngleChanged;
-        public event Action<float> SnapToNextAngle;
-        public event Action<float> ReturnToPreviousAngle;
+        
+        private readonly float _snapThreshold;
+        private readonly float _snapAngle;
 
         public float CurrentAngle => _currentAngle;
 
@@ -41,13 +41,13 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         public void ActivateSnapping() => 
             Snapping();
 
-        public void Update(Vector2 cursorPosition)
+        public void UpdateRotation(Vector2 cursorPosition)
         {
             if (_isRotating)
-                FreeRotation(cursorPosition);
+                RotateToCursor(cursorPosition);
         }
 
-        private void FreeRotation(Vector2 cursorPosition)
+        private void RotateToCursor(Vector2 cursorPosition)
         {
             Vector2 delta = cursorPosition - _previousCursorPosition;
             float angleDelta = delta.x * _rotationSensitivity * Time.fixedDeltaTime * RotationDirection;
@@ -79,10 +79,8 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
             }
         }
 
-        private float GetAngleDifference(float targetSnapAngle)
-        {
-            return Mathf.Abs(Mathf.DeltaAngle(_currentAngle, targetSnapAngle));
-        }
+        private float GetAngleDifference(float targetSnapAngle) => 
+            Mathf.Abs(Mathf.DeltaAngle(_currentAngle, targetSnapAngle));
 
         private float FindClosestSnapAngle()
         {

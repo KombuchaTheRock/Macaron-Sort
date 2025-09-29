@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
-using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using UnityEngine;
 
 namespace Sources.Features.HexagonSort.GridSystem.Scripts
@@ -9,6 +8,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
     public class HexagonGrid : MonoBehaviour
     {
         private Dictionary<Vector2Int, GridCell> _hexagonGrid = new();
+        
         public List<GridCell> Cells => _hexagonGrid.Select(x => x.Value).ToList();
         
         public void AddCell(Vector2Int cell, GridCell gridCell) =>
@@ -16,18 +16,5 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 
         public bool TryGetCell(Vector2Int positionOnGrid, out GridCell gridCell) =>
             _hexagonGrid.TryGetValue(positionOnGrid, out gridCell);
-
-        public void ClearGrid()
-        {
-            foreach (GridCell cell in Cells)
-            {
-                if (cell.IsOccupied)
-                {
-                    HexagonStack stack = cell.Stack;
-                    cell.SetStack(null);
-                    Destroy(stack.gameObject);
-                }
-            }
-        }
     }
 }

@@ -9,42 +9,41 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
     public class HexagonStack : MonoBehaviour
     {
         public event Action SizeChanged;
-        
+
         [SerializeField] private StackMovement _movement;
         [SerializeField] private HexagonStackCollider _collider;
-        [SerializeField] private StackSizeViewer _stackSizeViewer;
-        
+        [SerializeField] private StackSizeView _stackSizeView;
+
         public IReadOnlyList<Hexagon> Hexagons => _hexagons;
         public float OffsetBetweenTiles { get; private set; }
         public Vector3 InitialPosition { get; private set; }
-        
         public Hexagon TopHexagon => Hexagons[^1];
         public bool CanMove => _movement.CanMove;
 
         private List<Hexagon> _hexagons = new();
 
-        private void Awake() => 
-            _stackSizeViewer.Initialize(this);
+        private void Awake() =>
+            _stackSizeView.Initialize(this);
 
-        public void ActivateSpawnAnimation() => 
+        public void ActivateSpawnAnimation() =>
             _movement.StartAnimation(transform.position);
 
-        public void ShowDisplayedSize() => 
-            _stackSizeViewer.Show();
-        
-        public void HideDisplayedSize() => 
-            _stackSizeViewer.Hide();
+        public void ShowDisplayedSize() =>
+            _stackSizeView.Show();
+
+        public void HideDisplayedSize() =>
+            _stackSizeView.Hide();
 
         public void SetInitialPosition(Vector3 position) =>
             InitialPosition = position;
 
         public void SetOffsetBetweenTiles(float offset) =>
-        OffsetBetweenTiles = offset;
-        
+            OffsetBetweenTiles = offset;
+
         public void DisableMovement() =>
             _movement.DisableMovement();
 
-        public void FollowingTarget(Vector3 target, float speed) =>
+        public void FollowTarget(Vector3 target, float speed) =>
             _movement.FollowingTarget(target, speed);
 
         public void MoveToTarget(Vector3 targetPosition, float speed, Action onComplete = null) =>
@@ -55,7 +54,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
             hexagon.transform.rotation = transform.rotation;
             _hexagons.Add(hexagon);
             ChangeColliderSize(hexagon.Height);
-            
+
             SizeChanged?.Invoke();
         }
 
@@ -66,10 +65,10 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
         {
             _hexagons.Remove(hexagon);
             ChangeColliderSize(hexagon.Height);
-            
+
             SizeChanged?.Invoke();
-            
-            if (_hexagons.Count <= 0) 
+
+            if (_hexagons.Count <= 0)
                 Destroy(gameObject);
         }
 

@@ -39,33 +39,36 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
             SubscribeUpdates();
         }
 
+        private void OnDestroy() => 
+            CleanUp();
+
         public void ApplyProgress(GameProgress progress)
         {
-            List<PlacedStack> placedStacks = progress.PersistentProgressData.WorldData.StacksData.StacksOnGrid;
+            List<PlacedStackData> placedStacks = progress.PersistentProgressData.WorldData.StacksData.StacksOnGrid;
 
             if (placedStacks.Count <= 0)
                 return;
 
-            foreach (PlacedStack placedStack in placedStacks)
-            {
-                HexagonStackConfig stackConfig = _staticData.ForHexagonStack(HexagonStackTemplate.Default);
-                float offsetAboveGridGrid = _staticData.GameConfig.StackMoverConfig.PlaceOffsetAboveGrid;
-
-                if (_hexagonGrid.TryGetCell(placedStack.PositionOnGrid, out GridCell cell) == false) 
-                    continue;
-                
-                Vector3 spawnPosition = cell.transform.position + Vector3.up * offsetAboveGridGrid;
-                HexagonStack stack =
-                    _stackGenerator.GenerateStack(spawnPosition, stackConfig, placedStack.Tiles);
-                    
-                stack.transform.parent = cell.transform;
-                stack.DisableMovement();
-                cell.SetStack(stack);
-            }
+            foreach (PlacedStackData placedStack in placedStacks) 
+                GenerateStack(placedStack);
         }
 
-        private void OnDestroy() => 
-            CleanUp();
+        private void GenerateStack(PlacedStackData placedStack)
+        {
+            HexagonStackConfig stackConfig = _staticData.ForHexagonStack(HexagonStackTemplate.Default);
+            float offsetAboveGridGrid = _staticData.GameConfig.StackMoverConfig.PlaceOffsetAboveGrid;
+
+            if (_hexagonGrid.TryGetCell(placedStack.PositionOnGrid, out GridCell cell) == false) 
+                return;
+                
+            Vector3 spawnPosition = cell.transform.position + Vector3.up * offsetAboveGridGrid;
+            HexagonStack stack =
+                _stackGenerator.GenerateStack(spawnPosition, stackConfig, placedStack.Tiles);
+                    
+            stack.transform.parent = cell.transform;
+            stack.DisableMovement();
+            cell.SetStack(stack);
+        }
 
         private void SubscribeUpdates()
         {
@@ -73,6 +76,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
                 gridCell.StackRemoved += UpdateGridPersistentData;
 
             _playerLevel.ControlPointAchieved += SaveControlPointData;
+            
             _mergeSystem.MergeStarted += UpdateGridPersistentData;
             _mergeSystem.MergeFinished += UpdateGridPersistentData;
         }

@@ -11,12 +11,6 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
 
         public int Score => _score;
         public int Level => _level;
-
-        public PlayerData()
-        {
-            _score = 0;
-            _level = 1;
-        }
         
         public PlayerData(int score, int level)
         {

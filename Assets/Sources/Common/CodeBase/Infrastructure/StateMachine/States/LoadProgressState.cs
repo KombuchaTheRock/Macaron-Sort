@@ -17,6 +17,10 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         public void Enter() => 
             LoadProgressOrInitNew().Forget();
 
+        public void Exit()
+        {
+        }
+
         private async UniTask LoadProgressOrInitNew()
         {
             bool saveExists = await _gameProgressService.SavedProgressExists();
@@ -34,11 +38,6 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             }
 
             _gameStateMachine.Enter<LoadLevelState, string>(SceneNames.Gameplay);
-        }
-
-        public void Exit()
-        {
-            
         }
     }
 }

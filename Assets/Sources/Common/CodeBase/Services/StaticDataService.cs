@@ -3,13 +3,11 @@ using System.Linq;
 using Sources.Common.CodeBase.Infrastructure;
 using Sources.Common.CodeBase.Paths;
 using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
-using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
-using Zenject;
 
 namespace Sources.Common.CodeBase.Services
 {
-    public class StaticDataService : IStaticDataService//, IInitializable
+    public class StaticDataService : IStaticDataService
     {
         private Dictionary<HexagonStackTemplate, HexagonStackConfig> _stackStaticData;
         private Dictionary<HexagonTileType, HexagonTileData> _hexagonTileStaticData;
@@ -21,10 +19,10 @@ namespace Sources.Common.CodeBase.Services
         public StaticDataService(IResourceLoader resourceLoader)
         {
             _resourceLoader = resourceLoader;
-            Initialize();
+            LoadStaticData();
         }
 
-        public void Initialize()
+        private void LoadStaticData()
         {
             GameConfig = _resourceLoader.LoadAsset<GameConfig>(StaticDataPaths.GameConfig);
 
@@ -35,7 +33,6 @@ namespace Sources.Common.CodeBase.Services
                 .Configs
                 .ToDictionary(x => x.TileType, x => x);
         }
-
 
         public HexagonStackConfig ForHexagonStack(HexagonStackTemplate gridTemplate) =>
             _stackStaticData.GetValueOrDefault(gridTemplate);

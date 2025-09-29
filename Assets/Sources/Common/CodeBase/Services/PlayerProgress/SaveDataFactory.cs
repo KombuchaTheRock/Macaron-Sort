@@ -1,4 +1,6 @@
-﻿namespace Sources.Common.CodeBase.Services.PlayerProgress
+﻿using System.Collections.Generic;
+
+namespace Sources.Common.CodeBase.Services.PlayerProgress
 {
     public class SaveDataFactory : ISaveDataFactory
     {
@@ -9,10 +11,24 @@
             _staticData = staticData;
         }
 
-        public PersistentProgressData CreatePersistentProgressData() =>
-            new(new PlayerData(), new WorldData());
+        public PersistentProgressData CreatePersistentProgressData()
+        {
+            return new PersistentProgressData(new PlayerData(0, 1), new WorldData(
+                new StacksData(
+                    new List<PlacedStackData>(),
+                    new List<FreeStackDataData>())
+                )
+            );
+        }
 
-        public ControlPointProgressData CreateControlPointProgressData() => 
-            new(new PlayerData(), new WorldData());
+        public ControlPointProgressData CreateControlPointProgressData()
+        {
+            return new ControlPointProgressData(new PlayerData(0, 1), new WorldData(
+                    new StacksData(
+                        new List<PlacedStackData>(),
+                        new List<FreeStackDataData>())
+                )
+            );
+        }
     }
 }

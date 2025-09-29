@@ -13,7 +13,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
             _groundLayerMask = groundLayerMask;
         }
 
-        public int CheckGround(Ray groundCheckRay, out RaycastHit hit)
+        public int GetLayerBy(Ray groundCheckRay, out RaycastHit hit)
         {
             Physics.Raycast(groundCheckRay, out RaycastHit raycastHit, _maxRaycastDistance, _groundLayerMask);
             hit = raycastHit;

@@ -7,9 +7,10 @@ using UnityEngine;
 
 namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
 {
-    public class StackSizeViewer : MonoBehaviour
+    public class StackSizeView : MonoBehaviour
     {
         [SerializeField] private TextMeshPro _text;
+        
         private HexagonStack _stack;
         private TweenerCore<Vector3, Vector3, VectorOptions> _scaleAnimation;
 
@@ -22,10 +23,8 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
         private void OnDestroy() => 
             _stack.SizeChanged -= OnSizeChanged;
 
-        private void OnSizeChanged()
-        {
+        private void OnSizeChanged() => 
             ChangeText();
-        }
 
         private void ChangeText()
         {
@@ -58,17 +57,16 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
         public void Hide()
         {
             if (_stack != null) 
-                TextScaleAnim(_stack.Hexagons.Count, from: 1, to: 0);
+                TextScaleAnim(from: 1, to: 0);
         }
 
         public void Show()
         {
             if (_stack != null) 
-                TextScaleAnim(_stack.Hexagons.Count, from: 0, to: 1);
+                TextScaleAnim(from: 0, to: 1);
         }
 
-
-        private void TextScaleAnim(int hexagonsCount, float from, float to, Action onCompleted = null)
+        private void TextScaleAnim(float from, float to, Action onCompleted = null)
         {
             _scaleAnimation?.Complete();
 

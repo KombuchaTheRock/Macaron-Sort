@@ -5,11 +5,11 @@ using UnityEngine;
 namespace Sources.Common.CodeBase.Services.PlayerProgress
 {
     [Serializable]
-    public class FreeStack : GeneratedStack
+    public class FreeStackDataData : GeneratedStackData
     {
         [field: SerializeField] public Vector3 SpawnPosition { get; private set; }
 
-        public FreeStack(HexagonTileType[] tiles, Vector3 spawnPosition) : base(tiles) => 
+        public FreeStackDataData(HexagonTileType[] tiles, Vector3 spawnPosition) : base(tiles) => 
             SpawnPosition = spawnPosition;
     }
 }

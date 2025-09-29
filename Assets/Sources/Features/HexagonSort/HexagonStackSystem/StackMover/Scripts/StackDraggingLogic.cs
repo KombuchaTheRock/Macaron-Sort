@@ -37,16 +37,16 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
             if (Physics.Raycast(ray, out RaycastHit hit, _config.MaxRaycastDistance, _draggingLayerMask))
             {
                 Vector3 targetPosition = hit.point + Vector3.up * _config.DraggingVerticalOffset;
-                stack.FollowingTarget(targetPosition, _config.DraggingSpeed);
+                stack.FollowTarget(targetPosition, _config.DraggingSpeed);
 
                 Ray groundCheckRay = new(stack.transform.position, Vector3.down);
-                CheckGround(groundCheckRay);
+                CheckLayerBy(groundCheckRay);
             }
         }
 
-        private void CheckGround(Ray groundCheckRay)
+        private void CheckLayerBy(Ray groundCheckRay)
         {
-            int layer = _groundChecker.CheckGround(groundCheckRay, out RaycastHit hit);
+            int layer = _groundChecker.GetLayerBy(groundCheckRay, out RaycastHit hit);
 
             if (layer == _config.GroundLayer)
             {
@@ -77,8 +77,10 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
             _lastCellUnderCursor = cell;
         }
 
-        public GridCell GetTargetCell() => _lastCellUnderCursor;
-
-        public void ResetCell() => _lastCellUnderCursor = null;
+        public GridCell GetTargetCell() => 
+            _lastCellUnderCursor;
+        
+        public void ResetCell() => 
+            _lastCellUnderCursor = null;
     }
 }

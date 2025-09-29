@@ -8,7 +8,6 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
 {
     public class GridCell : MonoBehaviour
     {
-        public event Action StackAdded;
         public event Action StackRemoved;
         
         [SerializeField] private MeshColor _meshColor;
@@ -33,12 +32,8 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
         public void InitializeGridPosition(Vector2Int gridPosition) =>
         PositionOnGrid = gridPosition;
         
-        public void SetStack(HexagonStack stack)
-        {
+        public void SetStack(HexagonStack stack) => 
             Stack = stack;
-            
-            StackAdded?.Invoke();
-        }
 
         public void RemoveStack()
         {

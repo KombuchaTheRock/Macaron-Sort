@@ -13,13 +13,17 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
 
         public float OriginalHeight => _originalHeight;
 
-        private void Awake()
+        private void Awake() => 
+            Initialize();
+
+        private void Initialize()
         {
             _originalScale = _meshCollider.transform.localScale;
             _originalHeight = _meshCollider.sharedMesh.bounds.size.y;
 
             _originalPosition = _meshCollider.transform.localPosition;
             Bounds meshBounds = _meshCollider.sharedMesh.bounds;
+            
             _originalPivotOffset = meshBounds.center.y - meshBounds.min.y;
         }
 
@@ -36,6 +40,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
             float heightDifference = (newScale.y - _originalScale.y) * _originalPivotOffset;
             Vector3 newPosition = _originalPosition;
             newPosition.y += heightDifference;
+            
             _meshCollider.transform.localPosition = newPosition;
         }
     }

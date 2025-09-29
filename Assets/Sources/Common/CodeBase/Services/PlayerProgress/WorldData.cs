@@ -8,14 +8,7 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
     {
         [field: SerializeField] public StacksData StacksData { get; private set; }
 
-        public WorldData()
-        {
-            StacksData = new StacksData();
-        }
-
-        public WorldData(StacksData stacksData)
-        {
+        public WorldData(StacksData stacksData) => 
             StacksData = stacksData;
-        }
     }
 }

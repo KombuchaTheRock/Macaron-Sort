@@ -11,16 +11,10 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
     [Serializable]
     public class StacksData
     {
-        [field: SerializeField] public List<PlacedStack> StacksOnGrid { get; private set; }
-        [field: SerializeField] public List<FreeStack> FreeStacks { get; private set; }
+        [field: SerializeField] public List<PlacedStackData> StacksOnGrid { get; private set; } 
+        [field: SerializeField] public List<FreeStackDataData> FreeStacks { get; private set; }
 
-        public StacksData()
-        {
-            StacksOnGrid = new List<PlacedStack>();
-            FreeStacks = new List<FreeStack>();
-        }
-
-        public StacksData(List<PlacedStack> stacksOnGrid, List<FreeStack> freeStacks)
+        public StacksData(List<PlacedStackData> stacksOnGrid, List<FreeStackDataData> freeStacks)
         {
             StacksOnGrid = stacksOnGrid;
             FreeStacks = freeStacks;
@@ -36,9 +30,9 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
                     continue;
                 
                 HexagonTileType[] tiles = cell.Stack.Hexagons.Select(x => x.TileType).ToArray();
-                PlacedStack placedStack = new(tiles, cell.PositionOnGrid);
+                PlacedStackData placedStackData = new(tiles, cell.PositionOnGrid);
                 
-                StacksOnGrid.Add(placedStack);
+                StacksOnGrid.Add(placedStackData);
             }
         }
 
@@ -49,9 +43,9 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
             foreach (HexagonStack stack in stacks)
             {
                 HexagonTileType[] tiles = stack.Hexagons.Select(x => x.TileType).ToArray();
-                FreeStack freeStack = new(tiles,stack.InitialPosition);
+                FreeStackDataData freeStackDataData = new(tiles,stack.InitialPosition);
                 
-                FreeStacks.Add(freeStack);
+                FreeStacks.Add(freeStackDataData);
             }
         }
     }

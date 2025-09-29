@@ -1,20 +1,19 @@
-﻿using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
-using Sources.Common.CodeBase.Services;
+﻿using Sources.Common.CodeBase.Services;
 using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using UnityEngine;
 
-namespace Sources.Common.CodeBase.Infrastructure.StateMachine
+namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 {
-    public class ResetState : IPayloadedState<bool>
+    public class ResetProgressState : IPayloadedState<bool>
     {
         private readonly IGameStateMachine _stateMachine;
         private readonly IHexagonFactory _hexagonFactory;
         private readonly IGameFactory _gameFactory;
         private readonly IGameProgressService _progressService;
 
-        public ResetState(IGameStateMachine stateMachine, IHexagonFactory hexagonFactory, IGameFactory gameFactory, IGameProgressService progressService)
+        public ResetProgressState(IGameStateMachine stateMachine, IHexagonFactory hexagonFactory, IGameFactory gameFactory, IGameProgressService progressService)
         {
             _stateMachine = stateMachine;
             _hexagonFactory = hexagonFactory;

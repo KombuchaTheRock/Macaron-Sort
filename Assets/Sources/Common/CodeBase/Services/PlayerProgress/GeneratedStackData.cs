@@ -5,11 +5,11 @@ using UnityEngine;
 namespace Sources.Common.CodeBase.Services.PlayerProgress
 {
     [Serializable]
-    public abstract class GeneratedStack
+    public abstract class GeneratedStackData
     {
         [field: SerializeField] public HexagonTileType[] Tiles { get; private set; }
 
-        protected GeneratedStack(HexagonTileType[] tiles) =>
+        protected GeneratedStackData(HexagonTileType[] tiles) =>
             Tiles = tiles;
     }
 }

@@ -2,7 +2,6 @@
 using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
-using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
 
@@ -12,37 +11,32 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
     {
         private readonly IGameStateMachine _stateMachine;
         private readonly IGameFactory _factory;
-        private readonly IStackGenerator _stackGenerator;
         private readonly IGridGenerator _gridGenerator;
         private readonly IStaticDataService _staticData;
         private readonly IGameProgressService _progressService;
         private readonly SceneLoader _sceneLoader;
-        
-        private string _currentLevelName;
 
-        public LoadLevelState(IGameStateMachine stateMachine, SceneLoader sceneLoader, IGameFactory factory,
-            IStackGenerator stackGenerator, IGridGenerator gridGenerator, IStaticDataService staticData,
+        public LoadLevelState(IGameStateMachine stateMachine, SceneLoader sceneLoader, IGameFactory factory, IGridGenerator gridGenerator, IStaticDataService staticData,
             IGameProgressService progressService)
         {
             _stateMachine = stateMachine;
             _sceneLoader = sceneLoader;
             _factory = factory;
-            _stackGenerator = stackGenerator;
             _gridGenerator = gridGenerator;
             _staticData = staticData;
             _progressService = progressService;
         }
 
-        public void Enter(string levelName)
-        {
-            _currentLevelName = levelName;
+        public void Enter(string levelName) => 
             _sceneLoader.Load(levelName, OnLoaded);
+
+        public void Exit()
+        {
         }
 
         private void OnLoaded()
         {
             InitializeGameWorld();
-
             _stateMachine.Enter<GameLoopState>();
         }
 
@@ -71,10 +65,6 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             HexagonGrid hexagonGrid = _gridGenerator.GenerateGrid(gridConfig.Grid, gridConfig.Size, gridConfig.CellConfig);
             
             return hexagonGrid;
-        }
-
-        public void Exit()
-        {
         }
     }
 }

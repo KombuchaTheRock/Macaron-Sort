@@ -7,7 +7,6 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
     public class ControlPointProgressData : ISaveData
     {
         [field: SerializeField] public PlayerData PlayerData { get; private set; }
-
         [field: SerializeField] public WorldData WorldData { get; private set; }
 
         public ControlPointProgressData(PlayerData playerData, WorldData worldData)

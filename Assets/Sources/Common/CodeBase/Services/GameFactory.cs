@@ -20,14 +20,14 @@ namespace Sources.Common.CodeBase.Services
         public MergeSystem MergeSystem { get; private set; }
         public StackMover StackMover { get; private set; }
         public GridRotator GridRotator { get; private set; }
-        
+
         public List<GridCell> GridCells { get; private set; }
 
         public GameFactory(IInstantiator instantiator, IResourceLoader resourceLoader, IStaticDataService staticData) :
             base(instantiator, resourceLoader)
         {
             _staticData = staticData;
-            
+
             GridCells = new List<GridCell>();
             ProgressReaders = new List<IProgressReader>();
         }
@@ -41,7 +41,6 @@ namespace Sources.Common.CodeBase.Services
         public HexagonGrid CreateHexagonGrid(Grid grid)
         {
             GridRotator gridRotator = Instantiate<GridRotator>(AssetsPaths.GridRootPrefab, Vector3.zero, _instanceRoot);
-            ;
             gridRotator.Initialize(_staticData.GameConfig.GridRotation);
             gridRotator.gameObject.name = "Grid";
             GridRotator = gridRotator;

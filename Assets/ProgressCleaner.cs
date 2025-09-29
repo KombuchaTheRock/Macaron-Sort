@@ -1,4 +1,5 @@
 using Sources.Common.CodeBase.Infrastructure.StateMachine;
+using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
 using Sources.Common.CodeBase.Services;
 using UnityEngine;
 using Zenject;
@@ -20,6 +21,6 @@ public class ProgressCleaner : MonoBehaviour
         if (_gameFactory.MergeSystem.IsMerging || _gameFactory.StackMover.IsDragging)
             return;
         
-        _stateMachine.Enter<ResetState, bool>(true);
+        _stateMachine.Enter<ResetProgressState, bool>(true);
     }
 }

@@ -14,11 +14,10 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
     {
         private const string HexagonStackName = "Stack";
 
-        private Transform _stacksRoot;
-
         private readonly IHexagonFactory _hexagonFactory;
         private readonly ICoroutineRunner _coroutineRunner;
 
+        private Transform _stacksRoot;
         private Coroutine _stackGenerateRoutine;
 
         public StackGenerator(IHexagonFactory hexagonHexagonFactory, ICoroutineRunner coroutineRunner)
@@ -63,7 +62,6 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
                 amount = hexagons.Length;
                 tiles = hexagons;
             }
-
 
             for (int i = 0; i < amount; i++)
                 SpawnHexagon(i, hexagonStack, tiles, stackConfig.OffsetBetweenTiles);

@@ -7,10 +7,9 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
     public class GridRotator : MonoBehaviour
     {
         private IInputService _input;
-
-        [SerializeField] private LayerMask _groundLayerMask;
         private RotationWithSnappingLogic _rotation;
         private GridRotationConfig _config;
+        
         private float _targetAngle;
         private float _currentVisualAngle;
         private bool _isSnapping;
@@ -23,16 +22,10 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         public void Initialize(GridRotationConfig config)
         {
             _config = config;
-
-            _input.CursorUp += OnCursorUp;
-            _input.CursorDown += OnCursorDown;
-
             _rotation = new RotationWithSnappingLogic(_config.RotationSensitivity, _config.SnapAnchorAngle,
                 _config.SnapThreshold);
 
-            _rotation.OnAngleChanged += OnAngleChanged;
-            _rotation.SnapToNextAngle += OnSnapToNextAngle;
-            _rotation.ReturnToPreviousAngle += OnSnapToPreviousAngle;
+            SubscribeUpdates();
         }
 
         private void Update()
@@ -46,7 +39,26 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         private void FixedUpdate()
         {
             if (_input.IsCursorHold)
-                _rotation.Update(_input.CursorPosition);
+                _rotation.UpdateRotation(_input.CursorPosition);
+        }
+
+        private void OnDisable()
+        {
+            ApplyTargetAngleRotation();
+            transform.localScale = Vector3.one;
+        }
+
+        private void OnDestroy() => 
+            CleanUp();
+
+        private void SubscribeUpdates()
+        {
+            _input.CursorUp += OnCursorUp;
+            _input.CursorDown += OnCursorDown;
+            
+            _rotation.OnAngleChanged += OnAngleChanged;
+            _rotation.SnapToNextAngle += OnSnapToNextAngle;
+            _rotation.ReturnToPreviousAngle += OnSnapToPreviousAngle;
         }
 
         private void HandleGridResizing(bool isRotating)
@@ -146,29 +158,11 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         private bool IsAngleReached() =>
             Mathf.Abs(Mathf.DeltaAngle(_currentVisualAngle, _targetAngle)) < 0.1f;
 
-        private void OnDisable()
-        {
-            ApplyTargetAngleRotation();
-            transform.localScale = Vector3.one;
-        }
-
-        private Ray GetClickedRay() =>
-            Camera.main.ScreenPointToRay(_input.CursorPosition);
-        
-        private void OnDestroy()
-        {
-            UnsubscribeFromRotationLogic();
-            UnsubscribeFromInput();
-        }
-
-        private void UnsubscribeFromInput()
+        private void CleanUp()
         {
             _input.CursorUp -= OnCursorUp;
             _input.CursorDown -= OnCursorDown;
-        }
-
-        private void UnsubscribeFromRotationLogic()
-        {
+            
             _rotation.OnAngleChanged -= OnAngleChanged;
             _rotation.SnapToNextAngle -= OnSnapToNextAngle;
             _rotation.ReturnToPreviousAngle -= OnSnapToPreviousAngle;

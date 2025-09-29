@@ -7,7 +7,9 @@ namespace Sources.Common.CodeBase.Services.SoundService
     public class SoundSource : MonoBehaviour
     {
         [SerializeField] private AudioSource _audioSource;
+        
         private Coroutine _coroutine;
+        
         public AudioClip PlayingClip { get; private set; }
         
         public void PlayWithCallback(AudioClip clip, Action onSoundPlayed)

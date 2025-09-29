@@ -5,11 +5,11 @@ using UnityEngine;
 namespace Sources.Common.CodeBase.Services.PlayerProgress
 {
     [Serializable]
-    public class PlacedStack : GeneratedStack
+    public class PlacedStackData : GeneratedStackData
     {
         [field: SerializeField] public Vector2Int PositionOnGrid { get; private set; }
 
-        public PlacedStack(HexagonTileType[] tiles, Vector2Int positionOnGrid) : base(tiles) =>
+        public PlacedStackData(HexagonTileType[] tiles, Vector2Int positionOnGrid) : base(tiles) =>
             PositionOnGrid = positionOnGrid;
     }
 }

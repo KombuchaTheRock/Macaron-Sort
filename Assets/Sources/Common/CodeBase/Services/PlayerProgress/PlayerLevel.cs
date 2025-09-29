@@ -73,7 +73,6 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
     
         private void OnProgressLoaded()
         {
-            
             Score = _gameProgressService.GameProgress.PersistentProgressData.PlayerData.Score;
             Level = _gameProgressService.GameProgress.PersistentProgressData.PlayerData.Level;
 

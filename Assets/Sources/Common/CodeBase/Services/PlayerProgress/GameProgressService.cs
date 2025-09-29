@@ -63,30 +63,11 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
         public void PersistentProgressToControlPoint()
         {
             ControlPointProgressData controlPointProgressData = GameProgress.ControlPointProgressData;
-            PersistentProgressData persistentProgressData = CloneControlPointData(controlPointProgressData);
+            PersistentProgressData persistentProgressData = ResetPersistentTo(controlPointProgressData);
 
             GameProgress = new GameProgress(persistentProgressData, controlPointProgressData);
-            
+
             ProgressLoaded?.Invoke();
-        }
-
-        private PersistentProgressData CloneControlPointData(ControlPointProgressData controlPointProgressData)
-        {
-            int level = controlPointProgressData.PlayerData.Level;
-            int score = controlPointProgressData.PlayerData.Score;
-            
-            PlayerData playerData = new(score,level);
-
-            List<PlacedStack> stacksOnGrid = controlPointProgressData.WorldData.StacksData.StacksOnGrid.ToList();
-            List<FreeStack> freeStacks = controlPointProgressData.WorldData.StacksData.FreeStacks.ToList();
-            StacksData stacksData= new(stacksOnGrid, freeStacks);
-            
-            WorldData worldData = new(stacksData);
-            
-            PersistentProgressData persistentProgressData =
-                new(playerData, worldData);
-            
-            return persistentProgressData;
         }
 
         public async UniTask<bool> SavedProgressExists()
@@ -104,6 +85,25 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
 
             GameProgress = new GameProgress(persistentProgressData, controlPointProgressData);
             ProgressLoaded?.Invoke();
+        }
+
+        private PersistentProgressData ResetPersistentTo(ControlPointProgressData controlPointProgressData)
+        {
+            int level = controlPointProgressData.PlayerData.Level;
+            int score = controlPointProgressData.PlayerData.Score;
+
+            PlayerData playerData = new(score, level);
+
+            List<PlacedStackData> stacksOnGrid = controlPointProgressData.WorldData.StacksData.StacksOnGrid.ToList();
+            List<FreeStackDataData> freeStacks = controlPointProgressData.WorldData.StacksData.FreeStacks.ToList();
+            StacksData stacksData = new(stacksOnGrid, freeStacks);
+
+            WorldData worldData = new(stacksData);
+
+            PersistentProgressData persistentProgressData =
+                new(playerData, worldData);
+
+            return persistentProgressData;
         }
 
         private void CancelControlPointProgressSave() =>

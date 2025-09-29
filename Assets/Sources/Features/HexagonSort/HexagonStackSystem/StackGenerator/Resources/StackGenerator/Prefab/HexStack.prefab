@@ -328,7 +328,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _movement: {fileID: -6636090706746761247}
   _collider: {fileID: 787492034219709581}
-  _stackSizeViewer: {fileID: 8799049773350031005}
+  _stackSizeView: {fileID: 8799049773350031005}
 --- !u!114 &-6636090706746761247
 MonoBehaviour:
   m_ObjectHideFlags: 0

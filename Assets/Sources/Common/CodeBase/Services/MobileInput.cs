@@ -9,9 +9,7 @@ namespace Sources.Common.CodeBase.Services
         public event Action CursorDown;
         public event Action CursorUp;
         
-        public bool IsCursorHold =>
-            CheckCursorHold();
-
+        public bool IsCursorHold => CheckCursorHold();
         public Vector2 CursorPosition { get; private set; }
 
         public void Tick() => 

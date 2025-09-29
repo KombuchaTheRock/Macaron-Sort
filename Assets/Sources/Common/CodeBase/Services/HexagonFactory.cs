@@ -9,8 +9,10 @@ namespace Sources.Common.CodeBase.Services
 {
     public class HexagonFactory : BaseFactory, IHexagonFactory
     {
-        private readonly IStaticDataService _staticData;
         private const string StacksRootName = "Stacks";
+        
+        private readonly IStaticDataService _staticData;
+        
         public List<HexagonStack> Stacks { get; private set; }
 
         public Transform CreateStacksRoot() => 
