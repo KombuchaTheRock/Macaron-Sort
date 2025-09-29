@@ -2,17 +2,29 @@ using System;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
+using Sources.Common.CodeBase.Services.Settings;
 using TMPro;
 using UnityEngine;
+using Zenject;
 
 namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
 {
-    public class StackSizeView : MonoBehaviour
+    public class StackSizeView : MonoBehaviour, ISettingsReader
     {
         [SerializeField] private TextMeshPro _text;
         
         private HexagonStack _stack;
         private TweenerCore<Vector3, Vector3, VectorOptions> _scaleAnimation;
+        private IGameSettings _gameSettings;
+
+        [Inject]
+        private void Construct(IGameSettings gameSettings)
+        {
+            _gameSettings = gameSettings;
+        }
+
+        private void Start() => 
+            LoadSettings(_gameSettings.GameSettingsData);
 
         public void Initialize(HexagonStack stack)
         {
@@ -56,13 +68,13 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
 
         public void Hide()
         {
-            if (_stack != null) 
+            if (_stack != null && _text.enabled) 
                 TextScaleAnim(from: 1, to: 0);
         }
 
         public void Show()
         {
-            if (_stack != null) 
+            if (_stack != null && _text.enabled) 
                 TextScaleAnim(from: 0, to: 1);
         }
 
@@ -76,6 +88,17 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
                 .SetLink(_text.gameObject)
                 .OnComplete(() => onCompleted?.Invoke())
                 .Play();
+        }
+
+        public void LoadSettings(GameSettingsData settings)
+        {
+            bool numbersEnabled = settings.NumbersOnTilesEnabled;
+
+            if (_text == null)
+                return;
+            
+            Debug.Log("TextEnabled = " + numbersEnabled);
+            _text.enabled = numbersEnabled;
         }
     }
 }

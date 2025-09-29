@@ -2,6 +2,7 @@
 using Sources.Common.CodeBase.Infrastructure.StateMachine;
 using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
 using Sources.Features.HexagonSort.Merge.Scripts;
+using Sources.Features.UI.Scripts;
 using UnityEngine;
 using Zenject;
 

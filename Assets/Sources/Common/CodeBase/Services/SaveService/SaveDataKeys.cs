@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Sources.Common.CodeBase.Services.PlayerProgress;
+using Sources.Common.CodeBase.Services.PlayerProgress.Data;
 
 namespace Sources.Common.CodeBase.Services.SaveService
 {

@@ -1,4 +1,6 @@
 
+using Sources.Common.CodeBase.Services.PlayerProgress.Data;
+
 namespace Sources.Common.CodeBase.Services.PlayerProgress
 {
     public class GameProgress

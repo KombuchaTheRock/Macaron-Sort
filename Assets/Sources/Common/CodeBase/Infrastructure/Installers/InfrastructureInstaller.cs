@@ -1,8 +1,14 @@
 using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
-using Sources.Common.CodeBase.Services;
+using Sources.Common.CodeBase.Services.Factories.GameFactory;
+using Sources.Common.CodeBase.Services.Factories.HexagonFactory;
+using Sources.Common.CodeBase.Services.InputService;
 using Sources.Common.CodeBase.Services.PlayerProgress;
+using Sources.Common.CodeBase.Services.ResourceLoader;
 using Sources.Common.CodeBase.Services.SaveService;
+using Sources.Common.CodeBase.Services.Settings;
 using Sources.Common.CodeBase.Services.SoundService;
+using Sources.Common.CodeBase.Services.StaticData;
+using Sources.Common.CodeBase.Services.WindowService;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using UnityEngine;
@@ -20,9 +26,13 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
             BindSceneLoader();
             BindResourceLoader();
             BindStaticDataService();
+            
+            
             BindGameFactory();
             BindHexagonFactory();
             BindAudioFactory();
+            BindUIFactory();
+            
             BindInputService();
             BindStackGenerator();
             BindGridGenerator();
@@ -30,6 +40,38 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
             BindGameProgress();
             BindPlayerLevel();
             BindSoundService();
+            BindGameSettingsSaveLoader();
+            BindGameSettings();
+            BindWindowService();
+        }
+
+        private void BindWindowService()
+        {
+            Container.Bind<IWindowService>()
+                .To<WindowService>()
+                .AsSingle();
+        }
+
+        private void BindUIFactory()
+        {
+            Container.Bind<IUIFactory>()
+                .To<UIFactory>()
+                .AsSingle()
+                .WithArguments(Container);
+        }
+
+        private void BindGameSettingsSaveLoader()
+        {
+            Container.Bind<ISettingsSaveLoader>()
+                .To<SettingsSaveLoader>()
+                .AsSingle();
+        }
+
+        private void BindGameSettings()
+        {
+            Container.Bind<IGameSettings>()
+                .To<GameSettings>()
+                .AsSingle();
         }
 
         private void BindSoundService()

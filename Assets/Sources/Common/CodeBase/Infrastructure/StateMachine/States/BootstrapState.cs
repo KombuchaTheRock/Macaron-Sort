@@ -1,5 +1,6 @@
 ﻿
 using Sources.Common.CodeBase.Services;
+using Sources.Common.CodeBase.Services.StaticData;
 
 namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 {

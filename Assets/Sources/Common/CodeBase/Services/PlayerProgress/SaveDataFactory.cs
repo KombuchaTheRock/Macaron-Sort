@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Sources.Common.CodeBase.Services.PlayerProgress.Data;
+using Sources.Common.CodeBase.Services.StaticData;
 
 namespace Sources.Common.CodeBase.Services.PlayerProgress
 {

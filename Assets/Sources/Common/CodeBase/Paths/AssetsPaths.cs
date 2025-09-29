@@ -10,5 +10,7 @@ namespace Sources.Common.CodeBase.Paths
         public const string MergeSystemPrefab = "MergeSystem/Prefab/MergeSystem";
         public const string HUD = "UI/Prefab/HUD";
         public const string SoundSource = "Audio/AudioSource";
+        public const string MasterMixer = "Audio/Master";
+        public const string UIRoot = "UI/Prefab/UIRoot";
     }
 }

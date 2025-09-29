@@ -1,4 +1,5 @@
 ﻿using System;
+using Sources.Common.CodeBase.Services.StaticData;
 using UnityEngine;
 
 namespace Sources.Common.CodeBase.Services.PlayerProgress
@@ -57,8 +58,6 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
 
         private void SaveControlPointData()
         {
-            Debug.Log("ControlPointSaved");
-            
             _gameProgressService.GameProgress.ControlPointProgressData.PlayerData.UpdateData(this);
             _gameProgressService.SaveControlPointProgressAsync();
                 
@@ -81,7 +80,6 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
             if (Level == 1) 
                 SaveControlPointData();
             
-            Debug.Log("OnProgressLoaded");
             ScoreChanged?.Invoke(Score);
         }
     }

@@ -1,22 +1,34 @@
-﻿using UnityEngine.Audio;
+﻿using Sources.Common.CodeBase.Paths;
+using Sources.Common.CodeBase.Services.ResourceLoader;
+using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Sources.Common.CodeBase.Services.SoundService
 {
     public class SoundService : ISoundService
     {
-        private const string MasterMixerName = "Master";
+        private const string MasterMixerVolume = "MasterVolume";
         private AudioMixer _mixer;
 
         private readonly SoundPool _soundPool;
 
-        public SoundService(SoundPool soundPool) =>
+        public SoundService(SoundPool soundPool, IResourceLoader resourceLoader)
+        {
             _soundPool = soundPool;
+            _mixer = resourceLoader.LoadAsset<AudioMixer>(AssetsPaths.MasterMixer);
+        }
 
-        public void Mute() =>
-            _mixer.SetFloat(MasterMixerName, 0);
+        public void Mute()
+        {
+            Debug.Log("Mute");
+            _mixer.SetFloat(MasterMixerVolume, -80f);
+        }
 
-        public void UnMute() =>
-            _mixer.SetFloat(MasterMixerName, 80f);
+        public void UnMute()
+        {
+            Debug.Log("UnMute");
+            _mixer.SetFloat(MasterMixerVolume, 0f);
+        }
 
         public void Play(Sound sound)
         {

@@ -37,9 +37,6 @@ namespace Sources.Features.UI.Scripts
 
         private void UpdateViewScore()
         {
-            Debug.Log("Score" + _playerLevel.Score);
-            Debug.Log("MaxScore" + _playerLevel.MaxScore);
-            
             float newValue = (float)_playerLevel.Score /
                                  _playerLevel.MaxScore;
             

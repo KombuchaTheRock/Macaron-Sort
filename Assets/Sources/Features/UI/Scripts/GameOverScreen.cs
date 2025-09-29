@@ -1,8 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameOverScreen : MonoBehaviour
+namespace Sources.Features.UI.Scripts
 {
-    public Button ToControlPointButton => _toControlPointButton;
-    [SerializeField] private Button _toControlPointButton;
+    public class GameOverScreen : MonoBehaviour
+    {
+        public Button ToControlPointButton => _toControlPointButton;
+        [SerializeField] private Button _toControlPointButton;
+    }
 }

@@ -7,5 +7,6 @@
         public const string LevelConfig = "Level/StaticData/LevelConfig";
         public const string GameConfig ="StaticData/GameConfig";
         public const string HexagonTileStaticData = "Hexagon/StaticData/HexagonTileStaticData";
+        public const string WindowStaticData = "UI/StaticData/WindowsStaticData";
     }
 }
