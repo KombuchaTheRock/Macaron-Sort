@@ -10,6 +10,7 @@ using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
+using TMPro;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -135,7 +136,21 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
             yield return deleteAnimation.WaitForCompletion();
 
+            StackCompletePopUp(mergeCandidate);
+
             CompleteStack(mergeCandidate);
+        }
+
+        private static void StackCompletePopUp(StackMergeCandidate mergeCandidate)
+        {
+            Vector3 popUpPosition = mergeCandidate.Stack.TopHexagon.transform.position;
+            
+            GameObject popUp = Resources.Load<GameObject>("StackGenerator/Prefab/StackCountPopUp");
+            
+            TextMeshPro popUpText = popUp.GetComponentInChildren<TextMeshPro>();
+            popUpText.text = mergeCandidate.Stack.Hexagons.Count.ToString();
+            
+            Object.Instantiate(popUp, popUpPosition, popUp.transform.rotation, mergeCandidate.Cell.transform);
         }
 
         private void CompleteStack(StackMergeCandidate mergeCandidate)
@@ -149,8 +164,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
             if (mergeCandidate.Stack != null)
                 Object.Destroy(mergeCandidate.Stack.gameObject);
-
-            Debug.Log($"Score in MergeLogic {score}");
+            
             StackCompleted?.Invoke(score);
         }
 

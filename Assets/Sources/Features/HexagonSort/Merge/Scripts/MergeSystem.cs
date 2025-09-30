@@ -122,8 +122,6 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
                     neighbourStack
                 };
 
-                bool isBothMonoStacks = mergePair.Min.IsMonoType && mergePair.Max.IsMonoType;
-
                 StackMergeCandidate from;
                 StackMergeCandidate to;
 
@@ -132,7 +130,12 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
                     from = neighbourStack;
                     to = placedStack;
                 }
-                else if (isBothMonoStacks)
+                else if (mergePair.Min.IsMonoType && mergePair.Max.IsMonoType)
+                {
+                    from = mergePair.Min;
+                    to = mergePair.Max;
+                }
+                else if (mergePair.Max.IsMonoType)
                 {
                     from = mergePair.Min;
                     to = mergePair.Max;
