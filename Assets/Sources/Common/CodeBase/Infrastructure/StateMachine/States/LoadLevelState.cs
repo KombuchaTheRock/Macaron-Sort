@@ -2,6 +2,7 @@
 using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Common.CodeBase.Services.Settings;
 using Sources.Common.CodeBase.Services.StaticData;
+using Sources.Common.CodeBase.Services.WindowService;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
@@ -13,18 +14,20 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
     {
         private readonly IGameStateMachine _stateMachine;
         private readonly IGameFactory _factory;
+        private readonly IUIFactory _uiFactory;
         private readonly IGridGenerator _gridGenerator;
         private readonly IStaticDataService _staticData;
         private readonly IGameProgressService _progressService;
         private readonly IGameSettings _gameSettings;
         private readonly SceneLoader _sceneLoader;
 
-        public LoadLevelState(IGameStateMachine stateMachine, SceneLoader sceneLoader, IGameFactory factory, IGridGenerator gridGenerator, IStaticDataService staticData,
+        public LoadLevelState(IGameStateMachine stateMachine, SceneLoader sceneLoader, IGameFactory factory, IUIFactory uiFactory, IGridGenerator gridGenerator, IStaticDataService staticData,
             IGameProgressService progressService, IGameSettings gameSettings)
         {
             _stateMachine = stateMachine;
             _sceneLoader = sceneLoader;
             _factory = factory;
+            _uiFactory = uiFactory;
             _gridGenerator = gridGenerator;
             _staticData = staticData;
             _progressService = progressService;
@@ -47,7 +50,8 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private void InitializeGameWorld()
         {
             _factory.CreateInstanceRoot();
-
+            _uiFactory.CreateUIRoot();
+            
             HexagonGrid hexagonGrid = GenerateGrid();
             StackMover stackMover = _factory.CreateStackMover();
 

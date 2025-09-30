@@ -17,35 +17,36 @@ namespace Sources.Common.CodeBase.Services.Factories
             _resourceLoader = resourceLoader;
         }
 
-        
 
         protected GameObject Instantiate(string assetPath, Vector3 at, Transform parent = null)
         {
             GameObject prefab = _resourceLoader.LoadAsset<GameObject>(assetPath);
             GameObject instantiatedPrefab = _instantiator.InstantiatePrefab(prefab, at, Quaternion.identity, parent);
-            
+
             return instantiatedPrefab;
         }
-        
-        protected GameObject Instantiate(GameObject prefab, Vector3 at, Transform parent = null)
+
+        protected GameObject Instantiate(GameObject prefab, Transform parent)
         {
-            GameObject instantiatedPrefab = _instantiator.InstantiatePrefab(prefab, at, Quaternion.identity, parent);
-            
+            GameObject instantiatedPrefab = _instantiator.InstantiatePrefab(prefab, parent);
+
             return instantiatedPrefab;
         }
 
         protected T Instantiate<T>(string assetPath, Vector3 at, Transform parent = null) where T : Component
         {
             GameObject prefab = _resourceLoader.LoadAsset<GameObject>(assetPath);
-            T instantiatedPrefab = _instantiator.InstantiatePrefabForComponent<T>(prefab, at, Quaternion.identity, parent);
-            
+            T instantiatedPrefab =
+                _instantiator.InstantiatePrefabForComponent<T>(prefab, at, Quaternion.identity, parent);
+
             return instantiatedPrefab;
         }
 
         protected T Instantiate<T>(GameObject prefab, Vector3 at, Transform parent = null) where T : Component
         {
-            T instantiatedPrefab = _instantiator.InstantiatePrefabForComponent<T>(prefab, at, Quaternion.identity, parent);
-            
+            T instantiatedPrefab =
+                _instantiator.InstantiatePrefabForComponent<T>(prefab, at, Quaternion.identity, parent);
+
             return instantiatedPrefab;
         }
     }

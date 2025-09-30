@@ -26,7 +26,7 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
             BindSceneLoader();
             BindResourceLoader();
             BindStaticDataService();
-            
+            BindPauseService();
             
             BindGameFactory();
             BindHexagonFactory();
@@ -43,6 +43,13 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
             BindGameSettingsSaveLoader();
             BindGameSettings();
             BindWindowService();
+        }
+
+        private void BindPauseService()
+        {
+            Container.Bind<IPauseService>()
+                .To<PauseService>()
+                .AsSingle();
         }
 
         private void BindWindowService()

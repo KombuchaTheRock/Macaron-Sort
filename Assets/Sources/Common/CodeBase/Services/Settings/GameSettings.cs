@@ -14,7 +14,7 @@ namespace Sources.Common.CodeBase.Services.Settings
         private bool _soundEnabled;
         private bool _numbersOnTilesEnabled;
 
-        public GameSettingsData GameSettingsData { private set; get; }
+        public GameSettingsData GameSettingsData { get; private set; }
 
         public GameSettings(ISoundService soundService, IHexagonFactory hexagonFactory,
             ISettingsSaveLoader settingsSaveLoader)

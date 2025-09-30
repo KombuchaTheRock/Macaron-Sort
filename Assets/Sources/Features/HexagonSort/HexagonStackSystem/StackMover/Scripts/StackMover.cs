@@ -10,6 +10,8 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 {
     public class StackMover : MonoBehaviour
     {
+        private LayerMask _uiLayerMask = 1 << 5;
+        
         public event Action DragStarted;
         public event Action DragFinished;
         public event Action<GridCell> StackPlaced;

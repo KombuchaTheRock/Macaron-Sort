@@ -11,12 +11,12 @@ namespace Sources.Common.CodeBase.Services.WindowService
 {
     public class UIFactory : BaseFactory, IUIFactory
     {
-        private readonly StaticDataService _staticData;
+        private readonly IStaticDataService _staticData;
         private Transform _uiRoot;
 
         public List<ISettingsReader> SettingsReaders { get; }
         
-        public UIFactory(IInstantiator instantiator, IResourceLoader resourceLoader, StaticDataService staticData) : base(instantiator,
+        public UIFactory(IInstantiator instantiator, IResourceLoader resourceLoader, IStaticDataService staticData) : base(instantiator,
             resourceLoader)
         {
             _staticData = staticData;
@@ -24,21 +24,23 @@ namespace Sources.Common.CodeBase.Services.WindowService
             SettingsReaders = new List<ISettingsReader>();
         }
 
-        public void CreateUIRoot() => 
-            _uiRoot = Instantiate(AssetsPaths.UIRoot, Vector3.zero).transform;
+        public void CreateUIRoot()
+        {
+            GameObject tempParent = new();
+            _uiRoot = Instantiate(AssetsPaths.UIRoot, Vector3.zero, tempParent.transform).transform;
+            _uiRoot.parent = null;
+        }
 
         public void CreateGameOverWindow()
         {
             WindowConfig config = _staticData.ForWindow(WindowID.GameOver);
-            Instantiate(config.Prefab.gameObject, Vector3.zero, _uiRoot );
+            Instantiate(config.Prefab.gameObject, _uiRoot );
         }
 
         public void CreatePauseWindow()
         {
             WindowConfig config = _staticData.ForWindow(WindowID.Pause);
-            RegisterSettingsReader(config.Prefab.gameObject);
-            
-            Instantiate(config.Prefab.gameObject, Vector3.zero, _uiRoot );
+            Instantiate(config.Prefab.gameObject, _uiRoot );
         }
         
         private void RegisterSettingsReader(GameObject gameObject)

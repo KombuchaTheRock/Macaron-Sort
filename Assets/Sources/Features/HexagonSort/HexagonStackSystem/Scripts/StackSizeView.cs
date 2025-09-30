@@ -97,7 +97,6 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
             if (_text == null)
                 return;
             
-            Debug.Log("TextEnabled = " + numbersEnabled);
             _text.enabled = numbersEnabled;
         }
     }
