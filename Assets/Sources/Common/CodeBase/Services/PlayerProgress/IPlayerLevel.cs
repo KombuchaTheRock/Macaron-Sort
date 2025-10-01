@@ -9,6 +9,6 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
         int Level { get; }
         int Score { get; }
         int MaxScore { get; }
-        void AddScore(int score);
+        void AddScore(int addedScore);
     }
 }

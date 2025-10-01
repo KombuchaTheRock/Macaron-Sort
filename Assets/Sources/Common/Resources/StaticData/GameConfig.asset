@@ -17,3 +17,5 @@ MonoBehaviour:
   <LevelConfig>k__BackingField: {fileID: 11400000, guid: c8fdbc0383f62784598a855d6f6b5412, type: 2}
   <StackMoverConfig>k__BackingField: {fileID: 11400000, guid: 93fd69cb429739b4d905eaaad9e43d0e, type: 2}
   <PlayerLevelConfig>k__BackingField: {fileID: 11400000, guid: 6e95cf6496105f34ab76d96b2f7c79fe, type: 2}
+  <StacksSpawnerConfig>k__BackingField: {fileID: 11400000, guid: bb39a74c23e533b4396886050bd78cb4, type: 2}
+  <PlayerDataConfig>k__BackingField: {fileID: 11400000, guid: 20ee2669662bed6469b695d0acaf15aa, type: 2}

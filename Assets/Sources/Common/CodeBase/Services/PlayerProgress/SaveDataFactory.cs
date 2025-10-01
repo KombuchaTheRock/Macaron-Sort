@@ -6,16 +6,18 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
 {
     public class SaveDataFactory : ISaveDataFactory
     {
-        private readonly IStaticDataService _staticData;
-
+        private readonly int _initialLevel;
+        private readonly int _initialScore;
+        
         public SaveDataFactory(IStaticDataService staticData)
         {
-            _staticData = staticData;
+            _initialLevel = staticData.GameConfig.PlayerDataConfig.InitialLevel;
+            _initialScore = staticData.GameConfig.PlayerDataConfig.InitialScore;
         }
 
         public PersistentProgressData CreatePersistentProgressData()
         {
-            return new PersistentProgressData(new PlayerData(0, 1), new WorldData(
+            return new PersistentProgressData(new PlayerData(_initialScore, _initialLevel), new WorldData(
                 new StacksData(
                     new List<PlacedStackData>(),
                     new List<FreeStackDataData>())
@@ -25,7 +27,7 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
 
         public ControlPointProgressData CreateControlPointProgressData()
         {
-            return new ControlPointProgressData(new PlayerData(0, 1), new WorldData(
+            return new ControlPointProgressData(new PlayerData(_initialScore, _initialLevel), new WorldData(
                     new StacksData(
                         new List<PlacedStackData>(),
                         new List<FreeStackDataData>())

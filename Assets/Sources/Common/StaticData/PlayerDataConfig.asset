@@ -9,7 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6531da1b87674051bcba9a84b7d90e03, type: 3}
-  m_Name: StacksSpawnerConfig
+  m_Script: {fileID: 11500000, guid: f16f699d41294609a094916c964ce804, type: 3}
+  m_Name: PlayerDataConfig
   m_EditorClassIdentifier: 
-  <DelayBetweenStacks>k__BackingField: 0.2
+  <InitialLevel>k__BackingField: 1
+  <InitialScore>k__BackingField: 0

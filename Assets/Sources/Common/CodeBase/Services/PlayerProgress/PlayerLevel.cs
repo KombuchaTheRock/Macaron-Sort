@@ -10,76 +10,73 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
         public event Action ControlPointAchieved;
 
         private readonly IGameProgressService _gameProgressService;
-        private readonly PlayerLevelConfig _config;
-        
+        private readonly LevelProgressCalculator _levelProgressCalculator;
+
         public int Level { get; private set; }
         public int Score { get; private set; }
         public int MaxScore { get; private set; }
 
-        private bool IsLevelControlPoint => Level % _config.ControlPointSaveInterval == 0;
-        
         public PlayerLevel(IGameProgressService gameProgressService, IStaticDataService staticData)
         {
-            _config = staticData.GameConfig.PlayerLevelConfig;
+            PlayerLevelConfig config = staticData.GameConfig.PlayerLevelConfig;
             _gameProgressService = gameProgressService;
-            
-            _gameProgressService.ProgressLoaded += OnProgressLoaded;
+            _levelProgressCalculator = new LevelProgressCalculator(config);
+
+            SubscribeUpdates();
         }
-        
-        public void AddScore(int score)
+
+        public void Dispose() =>
+            CleanUp();
+
+        private void SubscribeUpdates() =>
+            _gameProgressService.ProgressLoaded += OnProgressLoaded;
+
+        private void CleanUp() => 
+            _gameProgressService.ProgressLoaded -= OnProgressLoaded;
+
+        public void AddScore(int addedScore)
         {
-            int remainingScore = score;
-            
-            while (remainingScore > 0)
-            {
-                int neededForNextLevel = MaxScore - Score;
-        
-                if (remainingScore >= neededForNextLevel)
-                {
-                    Level++;
-                    remainingScore -= neededForNextLevel;
-                    Score = 0;
-                    MaxScore = CalculateMaxScore(Level);
-                    
-                    if (IsLevelControlPoint) 
-                        SaveControlPointData();
-                }
-                else
-                {
-                    Score += remainingScore;
-                    remainingScore = 0;
-                }
-            }
-            
+            LevelProgressResult progressResult = _levelProgressCalculator
+                .CalculateLevelProgress(
+                    Level,
+                    Score,
+                    MaxScore,
+                    addedScore);
+
+            UpdatePlayerState(progressResult);
+
+            if (progressResult.ReachedControlPoint)
+                SaveControlPointData();
+
             _gameProgressService.GameProgress.PersistentProgressData.PlayerData.UpdateData(this);
-            
             ScoreChanged?.Invoke(Score);
+        }
+
+        private void UpdatePlayerState(LevelProgressResult result)
+        {
+            Level = result.Level;
+            Score = result.Score;
+            MaxScore = result.MaxScore;
         }
 
         private void SaveControlPointData()
         {
             _gameProgressService.GameProgress.ControlPointProgressData.PlayerData.UpdateData(this);
             _gameProgressService.SaveControlPointProgressAsync();
-                
+
             ControlPointAchieved?.Invoke();
         }
 
-        private int CalculateMaxScore(int level) => 
-            Mathf.RoundToInt(_config.BaseMaxScoreForLevel * Mathf.Pow(_config.MaxScoreGrowthFactor, level - 1));
-
-        public void Dispose() => 
-            _gameProgressService.ProgressLoaded -= OnProgressLoaded;
-    
         private void OnProgressLoaded()
         {
             Score = _gameProgressService.GameProgress.PersistentProgressData.PlayerData.Score;
             Level = _gameProgressService.GameProgress.PersistentProgressData.PlayerData.Level;
 
-            MaxScore = CalculateMaxScore(Level);
+            MaxScore = _levelProgressCalculator.CalculateMaxScore(Level);
 
-            if (Level == 1) 
+            if (Level == 1)
                 SaveControlPointData();
-            
+
             ScoreChanged?.Invoke(Score);
         }
     }
