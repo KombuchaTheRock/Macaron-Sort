@@ -13,18 +13,17 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 {
     public class StacksSpawner : IDisposable, IStacksSpawner
     {
-        private const float DelayBetweenStacks = 0.2f;
-
-        private IStackMover _stackMover;
-        private IStackGenerator _stackGenerator;
-        private IHexagonFactory _hexagonFactory;
-
-        private HexagonStackConfig _stackConfig;
+        private List<HexagonStack> _generatedStacks = new();
         private Transform _stacksRoot;
         private Coroutine _stackGenerateRoutine;
-        private Vector3[] _spawnPositions;
-        private List<HexagonStack> _generatedStacks = new();
-        private ICoroutineRunner _coroutineRunner;
+
+        private readonly IStackMover _stackMover;
+        private readonly IStackGenerator _stackGenerator;
+        private readonly IHexagonFactory _hexagonFactory;
+        private readonly ICoroutineRunner _coroutineRunner;
+        private readonly HexagonStackConfig _stackConfig;
+        private readonly Vector3[] _spawnPositions;
+        private readonly float _delayBetweenStacks;
 
         public StacksSpawner(IStackMover stackMover, IStackGenerator stackGenerator, IStaticDataService staticData,
             IHexagonFactory hexagonFactory, ICoroutineRunner coroutineRunner)
@@ -35,7 +34,8 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _stackMover = stackMover;
             _stackConfig = staticData.ForHexagonStack(HexagonStackTemplate.Default);
             _spawnPositions = staticData.GameConfig.LevelConfig.StackSpawnPoints.ToArray();
-
+            _delayBetweenStacks = staticData.GameConfig.StacksSpawnerConfig.DelayBetweenStacks;
+            
             SubscribeUpdates();
         }
 
@@ -65,7 +65,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 
             _stackGenerateRoutine = _coroutineRunner.StartCoroutine(SpawnStacksRoutine(_spawnPositions,
                 _stackConfig,
-                DelayBetweenStacks,
+                _delayBetweenStacks,
                 OnStacksGenerated));
         }
 

@@ -11,12 +11,11 @@ namespace Sources.Common.CodeBase.Services.Factories.GameFactory
     {
         void CreateInstanceRoot();
         GridCell CreateGridCell(Vector3 position, Vector2Int positionOnGrid, Transform parent, Color normalColor, Color highlightColor);
-        GridRotator GridRotator { get; }
         List<GridCell> GridCells { get; }
         MergeSystem MergeSystem { get; }
         List<IProgressReader> ProgressReaders { get; }
         HexagonGrid CreateHexagonGrid();
         MergeSystem CreateMergeSystem(HexagonGrid hexagonGrid);
-        GameObject CreateHUD();
+        void CreateHUD();
     }
 }

@@ -20,7 +20,6 @@ namespace Sources.Common.CodeBase.Services.Factories.GameFactory
 
         public List<IProgressReader> ProgressReaders { get; private set; }
         public MergeSystem MergeSystem { get; private set; }
-        public GridRotator GridRotator { get; private set; }
         public List<GridCell> GridCells { get; private set; }
 
         public GameFactory(IInstantiator instantiator, IResourceLoader resourceLoader, IStaticDataService staticData) :
@@ -35,7 +34,7 @@ namespace Sources.Common.CodeBase.Services.Factories.GameFactory
         public void CreateInstanceRoot() =>
             _instanceRoot = CreateRootObject(InstanceRootName);
 
-        public GameObject CreateHUD() =>
+        public void CreateHUD() =>
             Instantiate(AssetsPaths.HUD, Vector3.zero, _instanceRoot);
 
         public HexagonGrid CreateHexagonGrid()
@@ -43,7 +42,6 @@ namespace Sources.Common.CodeBase.Services.Factories.GameFactory
             GridRotator gridRotator = Instantiate<GridRotator>(AssetsPaths.GridRootPrefab, Vector3.zero, _instanceRoot);
             gridRotator.Initialize(_staticData.GameConfig.GridRotation);
             gridRotator.gameObject.name = "Grid";
-            GridRotator = gridRotator;
 
             HexagonGrid hexagonGrid = gridRotator.GetComponent<HexagonGrid>();
             RegisterProgressReaders(hexagonGrid.gameObject);

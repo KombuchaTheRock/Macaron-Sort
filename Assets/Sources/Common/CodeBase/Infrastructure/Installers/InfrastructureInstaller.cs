@@ -16,7 +16,7 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
     public class InfrastructureInstaller : MonoInstaller, ICoroutineRunner
     {
         [SerializeField] private SoundPool _soundPool;
-        
+
         public override void InstallBindings()
         {
             BindSceneLoader();
@@ -81,7 +81,7 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
             Container.Bind<ISerializer>()
                 .To<JsonUtilitySerializer>()
                 .AsSingle();
-        
+
             Container.Bind<ISaveSystem>()
                 .To<SaveSystem>()
                 .AsSingle();
@@ -100,8 +100,7 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
         private void BindStackGenerator()
         {
             Container.BindInterfacesTo<StackGenerator>()
-                .AsSingle()
-                .WithArguments(this);
+                .AsSingle();
         }
 
         private void BindInputService()
@@ -113,7 +112,7 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
                 Container.BindInterfacesTo<MobileInput>()
                     .AsSingle();
         }
-        
+
 
         private void BindSceneLoader()
         {

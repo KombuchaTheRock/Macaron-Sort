@@ -38,17 +38,13 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
 
         public async UniTask SavePersistentProgressAsync()
         {
-            CancelPersistentProgressSave();
-            ResetPersistentCancellationToken();
-
+            ResetCancellationToken(ref _persistentSaveCancellationToken);
             await SaveDataAsync(GameProgress.PersistentProgressData, _persistentSaveCancellationToken);
         }
 
         public async UniTask SaveControlPointProgressAsync()
         {
-            CancelControlPointProgressSave();
-            ResetControlPointCancellationToken();
-
+            ResetCancellationToken(ref _controlPointSaveCancellationToken);
             await SaveDataAsync(GameProgress.ControlPointProgressData, _controlPointSaveCancellationToken);
         }
 
@@ -108,17 +104,11 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
             return persistentProgressData;
         }
 
-        private void CancelControlPointProgressSave() =>
-            _controlPointSaveCancellationToken?.Cancel();
-
-        private void CancelPersistentProgressSave() =>
-            _persistentSaveCancellationToken?.Cancel();
-
-        private void ResetPersistentCancellationToken() =>
-            _persistentSaveCancellationToken = new CancellationTokenSource();
-
-        private void ResetControlPointCancellationToken() =>
-            _controlPointSaveCancellationToken = new CancellationTokenSource();
+        private void ResetCancellationToken(ref CancellationTokenSource tokenSource)
+        {
+            tokenSource?.Cancel();
+            tokenSource = new CancellationTokenSource();
+        }
 
         private async UniTask SaveDataAsync<T>(T data, CancellationTokenSource cancellationToken) where T : ISaveData
         {
@@ -129,7 +119,7 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
             }
             catch (OperationCanceledException)
             {
-                Debug.LogWarning($"Сохранение {typeof(T).Name} отменено (новые изменения)");
+                Debug.LogWarning($"Saving {typeof(T).Name} cancelled (new changes)");
             }
         }
     }

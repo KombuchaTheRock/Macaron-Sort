@@ -24,7 +24,6 @@ public class GameOverWindow : MonoBehaviour
 
         StartCoroutine(BlurRoutine(0, 1, 0.01f));
         
-        Debug.Log("OnEnable");
         foreach (Image image in _animatedImages)
             _windowAnimation.ImageFadeAnimation(image, 0, image.color.a);
 

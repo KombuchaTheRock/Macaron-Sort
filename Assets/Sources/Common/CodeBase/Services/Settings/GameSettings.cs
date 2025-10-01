@@ -30,8 +30,6 @@ namespace Sources.Common.CodeBase.Services.Settings
 
             if (GameSettingsData != null)
             {
-                Debug.Log("Game settings loaded");
-                
                 _soundEnabled = GameSettingsData.SoundEnabled;
                 _numbersOnTilesEnabled = GameSettingsData.NumbersOnTilesEnabled;    
             }
@@ -82,8 +80,6 @@ namespace Sources.Common.CodeBase.Services.Settings
 
         public void ApplySettings()
         {
-            Debug.Log("Applying settings");
-            
            GameSettingsData = new(_soundEnabled, _numbersOnTilesEnabled);
 
             foreach (ISettingsReader settingsReader in _hexagonFactory.SettingsReaders) 

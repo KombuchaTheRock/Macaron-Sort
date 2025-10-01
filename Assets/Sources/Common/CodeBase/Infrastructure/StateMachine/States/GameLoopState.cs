@@ -5,17 +5,20 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 {
     public class GameLoopState : IState
     {
+        private readonly IGameFactory _factory;
         private readonly IStacksSpawner _stacksSpawner;
         private MergeSystem _mergeSystem;
 
         public GameLoopState(IGameFactory factory, IStacksSpawner stacksSpawner)
         {
+            _factory = factory;
             _stacksSpawner = stacksSpawner;
-            _mergeSystem = factory.MergeSystem;
         }
 
         public void Enter()
         {
+            _mergeSystem = _factory.MergeSystem;
+            
             _mergeSystem.UpdateOccupiedCells();
             _stacksSpawner.SpawnStacks();
         }

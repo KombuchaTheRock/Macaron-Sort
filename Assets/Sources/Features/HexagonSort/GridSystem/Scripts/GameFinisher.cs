@@ -47,9 +47,6 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         {
             int occupiedCellsCount = _hexagonGrid.Cells.Where(x => x.IsOccupied).ToList().Count;
 
-            Debug.Log(_hexagonGrid.Cells.Count);
-            Debug.Log(occupiedCellsCount);
-            
             if (occupiedCellsCount >= _hexagonGrid.Cells.Count) 
                 _gameOverScreen.gameObject.SetActive(true);
         }
