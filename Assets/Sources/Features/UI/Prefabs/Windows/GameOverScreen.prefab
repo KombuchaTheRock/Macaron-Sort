@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 3279383636592323643}
   - component: {fileID: 3391028414924385066}
   - component: {fileID: 5104883074987965768}
+  - component: {fileID: 4084113463471854083}
+  - component: {fileID: 7194017873898994290}
   m_Layer: 5
   m_Name: GameOverScreen
   m_TagString: Untagged
@@ -118,6 +120,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _toControlPointButton: {fileID: 45145100353789865}
+--- !u!114 &4084113463471854083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 647110744465231486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be4384379edaba43b737e57dc52f726, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animatedImages:
+  - {fileID: 2402779554543671877}
+  - {fileID: 2680204485821794857}
+  _animatedTexts:
+  - {fileID: 8738349513293908332}
+  - {fileID: 4251479247124186248}
+  _windowAnimation: {fileID: 7194017873898994290}
+--- !u!114 &7194017873898994290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 647110744465231486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8c321b2ccf04528a7842925aef818fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _duration: 0.3
 --- !u!1 &8037464171564761230
 GameObject:
   m_ObjectHideFlags: 0

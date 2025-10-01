@@ -6,27 +6,24 @@ using Zenject;
 
 public class StackMoverSoundPlayer : MonoBehaviour
 {
-    [SerializeField] private StackMover _stackMover;
     [Space(10), SerializeField] private Sound _stackPlacedSound;
     [SerializeField] private Sound _stackStartDraggingSound;
 
     private ISoundService _soundService;
+    private IStackMover _stackMover;
 
     [Inject]
-    private void Construct(ISoundService soundService)
+    private void Construct(ISoundService soundService, IStackMover stackMover)
     {
+        _stackMover = stackMover;
         _soundService = soundService;
     }
 
-    private void OnEnable()
-    {
+    private void OnEnable() => 
         SubscribeUpdates();
-    }
 
-    private void OnDisable()
-    {
+    private void OnDisable() => 
         CleanUp();
-    }
 
     private void SubscribeUpdates()
     {

@@ -14,10 +14,10 @@ namespace Sources.Common.CodeBase.Services.WindowService
 
         protected virtual void OnAwake()
         {
-            CloseButton.onClick.AddListener(OnClicked);
+            CloseButton.onClick.AddListener(OnCloseButtonClicked);
         }
 
-        protected virtual void OnClicked() =>
+        protected virtual void OnCloseButtonClicked() =>
             Destroy(gameObject);
     }
 }

@@ -1,5 +1,8 @@
-﻿using TMPro;
+﻿using System;
+using System.Collections;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.UI;
 using Zenject;
 
@@ -12,6 +15,7 @@ namespace Sources.Common.CodeBase.Services.WindowService
         [SerializeField] private TextMeshProUGUI[] _animatedTexts;
 
         private IPauseService _pauseService;
+        private PostProcessVolume _postProcessVolume;
 
         [Inject]
         private void Construct(IPauseService pauseService) =>
@@ -19,6 +23,11 @@ namespace Sources.Common.CodeBase.Services.WindowService
 
         protected override void OnAwake()
         {
+            _postProcessVolume = Camera.main.gameObject.GetComponent<PostProcessVolume>();
+            _postProcessVolume.enabled = true;
+
+            StartCoroutine(BlurRoutine(0, 1, 0.01f));
+
             foreach (Image image in _animatedImages)
                 _windowAnimation.ImageFadeAnimation(image, 0, image.color.a);
 
@@ -28,7 +37,23 @@ namespace Sources.Common.CodeBase.Services.WindowService
             base.OnAwake();
         }
 
-        protected override void OnClicked()
+        private IEnumerator BlurRoutine(float from, float to, float timeBetweenSteps, Action onCompleted = null)
+        {
+            _postProcessVolume.weight = from;
+            
+            int sign = from > to ? -1 : 1;
+            
+            while (from <= to)
+            {
+                from += 0.001f * sign;
+                _postProcessVolume.weight = from;
+                yield return new WaitForSecondsRealtime(timeBetweenSteps);
+            }
+            
+            onCompleted?.Invoke();
+        }
+
+        protected override void OnCloseButtonClicked()
         {
             foreach (TextMeshProUGUI text in _animatedTexts)
                 _windowAnimation.TextFadeAnimation(text, text.color.a, 0);
@@ -36,8 +61,12 @@ namespace Sources.Common.CodeBase.Services.WindowService
             foreach (Image image in _animatedImages)
                 _windowAnimation.ImageFadeAnimation(image, image.color.a, 0, () =>
                     {
-                        _pauseService.Unpause();
-                        base.OnClicked();
+                        StartCoroutine(BlurRoutine(1, 0, 0.01f, () =>
+                        {
+                            _postProcessVolume.enabled = false;
+                            _pauseService.Unpause();
+                            base.OnCloseButtonClicked();    
+                        }));
                     }
                 );
         }

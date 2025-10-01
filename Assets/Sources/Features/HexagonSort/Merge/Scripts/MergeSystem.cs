@@ -9,6 +9,7 @@ using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using Unity.VisualScripting;
 using UnityEngine;
+using Zenject;
 
 namespace Sources.Features.HexagonSort.Merge.Scripts
 {
@@ -21,17 +22,22 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
         public event Action MergeFinished;
 
         private HashSet<GridCell> _updatedCells = new();
-        private StackMover _stackMover;
+        private IStackMover _stackMover;
         private StackMergeLogic _mergeLogic;
         private StackMergeCandidate _completeCandidate;
         private HexagonGrid _hexagonGrid;
 
         public bool IsMerging { get; private set; }
 
-        public void Initialize(StackMover stackMover, HexagonGrid hexagonGrid)
+        [Inject]
+        private void Construct(IStackMover stackMover)
+        {
+            _stackMover = stackMover;
+        }
+        
+        public void Initialize(HexagonGrid hexagonGrid)
         {
             _hexagonGrid = hexagonGrid;
-            _stackMover = stackMover;
             _mergeLogic = new StackMergeLogic(_hexagonGrid, this);
             
             SubscribeUpdates();

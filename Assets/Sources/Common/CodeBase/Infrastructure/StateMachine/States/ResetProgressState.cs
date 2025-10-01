@@ -27,16 +27,14 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 
         public void Enter(bool newProgress)
         {
-            foreach (GridCell gridCell in _gameFactory.GridCells)
-                gridCell.RemoveStack();
+            ClearProgress();
+            LoadOrInitializeNewProgress(newProgress);
 
-            foreach (HexagonStack stack in _hexagonFactory.Stacks)
-                if (stack != null)
-                    Object.Destroy(stack.gameObject);
+            _stateMachine.Enter<GameLoopState>();
+        }
 
-            _hexagonFactory.SettingsReaders.Clear();
-            _hexagonFactory.Stacks.Clear();
-
+        private void LoadOrInitializeNewProgress(bool newProgress)
+        {
             if (newProgress)
             {
                 _progressService.InitializeNewProgress();
@@ -48,8 +46,19 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
                 _progressService.PersistentProgressToControlPoint();
 
             _progressService.ApplyProgress();
+        }
 
-            _stateMachine.Enter<GameLoopState>();
+        private void ClearProgress()
+        {
+            foreach (GridCell gridCell in _gameFactory.GridCells)
+                gridCell.RemoveStack();
+
+            foreach (HexagonStack stack in _hexagonFactory.Stacks)
+                if (stack != null)
+                    Object.Destroy(stack.gameObject);
+
+            _hexagonFactory.SettingsReaders.Clear();
+            _hexagonFactory.Stacks.Clear();
         }
 
         public void Exit()

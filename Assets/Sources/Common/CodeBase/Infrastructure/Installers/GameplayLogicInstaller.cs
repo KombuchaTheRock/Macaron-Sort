@@ -1,33 +1,37 @@
+using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using Zenject;
 
 namespace Sources.Common.CodeBase.Infrastructure.Installers
 {
-    public class GameplayLogicInstaller : MonoInstaller
+    public class GameplayLogicInstaller : MonoInstaller, ICoroutineRunner
     {
         public override void InstallBindings()
         {
-            BindStackSelectionLogic();
-            BindStackDraggingLogic();
-            BindStackPlacementLogic();
+            BindStackMover();
+            BindStacksSpawner();
         }
 
-        private void BindStackPlacementLogic()
+        private void BindStackMover()
         {
             Container.BindInterfacesTo<StackPlacementLogic>()
                 .AsSingle();
-        }
 
-        private void BindStackDraggingLogic()
-        {
             Container.BindInterfacesTo<StackDraggingLogic>()
                 .AsSingle();
-        }
 
-        private void BindStackSelectionLogic()
-        {
             Container.BindInterfacesTo<StackSelectionLogic>()
                 .AsSingle();
+
+            Container.BindInterfacesTo<StackMover>()
+                .AsSingle();
+        }
+
+        private void BindStacksSpawner()
+        {
+            Container.BindInterfacesTo<StacksSpawner>()
+                .AsSingle()
+                .WithArguments(this);
         }
     }
 }

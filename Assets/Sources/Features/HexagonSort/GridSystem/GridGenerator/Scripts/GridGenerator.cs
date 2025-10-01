@@ -17,7 +17,7 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
 
         public HexagonGrid GenerateGrid(Grid grid, int gridSize, CellConfig cellConfig)
         {
-            _hexagonGrid = _factory.CreateHexagonGrid(grid);
+            _hexagonGrid = _factory.CreateHexagonGrid();
             _gridRoot = _hexagonGrid.transform;
             
             float inradius = GeometryUtils.InradiusFromOutRadius(cellConfig.CellSize);

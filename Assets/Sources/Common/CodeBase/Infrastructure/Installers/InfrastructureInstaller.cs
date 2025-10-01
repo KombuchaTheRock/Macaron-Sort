@@ -1,6 +1,3 @@
-using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
-using Sources.Common.CodeBase.Services.Factories.GameFactory;
-using Sources.Common.CodeBase.Services.Factories.HexagonFactory;
 using Sources.Common.CodeBase.Services.InputService;
 using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Common.CodeBase.Services.ResourceLoader;
@@ -16,27 +13,19 @@ using Zenject;
 
 namespace Sources.Common.CodeBase.Infrastructure.Installers
 {
-    public class InfrastructureInstaller : MonoInstaller
+    public class InfrastructureInstaller : MonoInstaller, ICoroutineRunner
     {
         [SerializeField] private SoundPool _soundPool;
         
         public override void InstallBindings()
         {
-            BindGameStateFactory();
             BindSceneLoader();
             BindResourceLoader();
             BindStaticDataService();
             BindPauseService();
-            
-            BindGameFactory();
-            BindHexagonFactory();
-            BindAudioFactory();
-            BindUIFactory();
-            
             BindInputService();
             BindStackGenerator();
             BindGridGenerator();
-            BindSaveDataFactory();
             BindGameProgress();
             BindPlayerLevel();
             BindSoundService();
@@ -59,14 +48,6 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
                 .AsSingle();
         }
 
-        private void BindUIFactory()
-        {
-            Container.Bind<IUIFactory>()
-                .To<UIFactory>()
-                .AsSingle()
-                .WithArguments(Container);
-        }
-
         private void BindGameSettingsSaveLoader()
         {
             Container.Bind<ISettingsSaveLoader>()
@@ -87,29 +68,6 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
                 .To<SoundService>()
                 .AsSingle()
                 .WithArguments(_soundPool);
-        }
-
-        private void BindAudioFactory()
-        {
-            Container.Bind<IAudioFactory>()
-                .To<AudioFactory>()
-                .AsSingle()
-                .WithArguments(Container);
-        }
-
-        private void BindHexagonFactory()
-        {
-            Container.Bind<IHexagonFactory>()
-                .To<HexagonFactory>()
-                .AsSingle()
-                .WithArguments(Container);
-        }
-
-        private void BindSaveDataFactory()
-        {
-            Container.Bind<ISaveDataFactory>()
-                .To<SaveDataFactory>()
-                .AsSingle();
         }
 
         private void BindPlayerLevel()
@@ -141,11 +99,9 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
 
         private void BindStackGenerator()
         {
-            ICoroutineRunner coroutineRunner = CreateCoroutineRunner();
-            
             Container.BindInterfacesTo<StackGenerator>()
                 .AsSingle()
-                .WithArguments(coroutineRunner);
+                .WithArguments(this);
         }
 
         private void BindInputService()
@@ -157,26 +113,13 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
                 Container.BindInterfacesTo<MobileInput>()
                     .AsSingle();
         }
-
-        private void BindGameFactory()
-        {
-            Container.Bind<IGameFactory>()
-                .To<GameFactory>()
-                .AsSingle()
-                .WithArguments(Container);
-        }
+        
 
         private void BindSceneLoader()
         {
             Container.Bind<SceneLoader>()
                 .AsSingle()
                 .WithArguments(this);
-        }
-
-        private void BindGameStateFactory()
-        {
-            Container.Bind<GameStateFactory>()
-                .AsSingle();
         }
 
         private void BindResourceLoader()
@@ -190,13 +133,6 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
         {
             Container.BindInterfacesTo<StaticDataService>()
                 .AsSingle();
-        }
-        
-        private ICoroutineRunner CreateCoroutineRunner()
-        {
-            GameObject go = new("CoroutineRunner");
-            DontDestroyOnLoad(go);
-            return go.AddComponent<CoroutineRunner>();
         }
     }
 }

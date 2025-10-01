@@ -41,6 +41,22 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
                 onStacksGenerated));
         }
 
+        private IEnumerator GenerateStacksRoutine(Vector3[] spawnPositions, HexagonStackConfig stackConfig,
+            float delayBetweenStacks, Action<List<HexagonStack>> onStacksGenerated = null)
+        {
+            List<HexagonStack> generatedStacks = new();
+
+            foreach (Vector3 position in spawnPositions)
+            {
+                HexagonStack stack = GenerateStack(position, stackConfig);
+                generatedStacks.Add(stack);
+
+                yield return new WaitForSeconds(delayBetweenStacks);
+            }
+
+            onStacksGenerated?.Invoke(generatedStacks);
+        }
+
         public HexagonStack GenerateStack(Vector3 spawnPosition, HexagonStackConfig stackConfig,
             HexagonTileType[] hexagons = null)
         {
@@ -68,22 +84,6 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts
                 SpawnHexagon(i, hexagonStack, tiles, stackConfig.OffsetBetweenTiles);
 
             return hexagonStack;
-        }
-
-        private IEnumerator GenerateStacksRoutine(Vector3[] spawnPositions, HexagonStackConfig stackConfig,
-            float delayBetweenStacks, Action<List<HexagonStack>> onStacksGenerated = null)
-        {
-            List<HexagonStack> generatedStacks = new();
-
-            foreach (Vector3 position in spawnPositions)
-            {
-                HexagonStack stack = GenerateStack(position, stackConfig);
-                generatedStacks.Add(stack);
-
-                yield return new WaitForSeconds(delayBetweenStacks);
-            }
-
-            onStacksGenerated?.Invoke(generatedStacks);
         }
 
         private void SpawnHexagon(int index, HexagonStack hexagonStack,
