@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Sources.Features.HexagonSort.GridSystem.Scripts
+namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
 {
     [CreateAssetMenu(menuName = "StaticData/GridRotationConfig", fileName = "GridRotationConfig", order = 0)]
     public class GridRotationConfig : ScriptableObject

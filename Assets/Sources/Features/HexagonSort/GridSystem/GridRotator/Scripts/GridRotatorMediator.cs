@@ -3,7 +3,7 @@ using Sources.Features.HexagonSort.Merge.Scripts;
 using UnityEngine;
 using Zenject;
 
-namespace Sources.Features.HexagonSort.GridSystem.Scripts
+namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
 {
     public class GridRotatorMediator : MonoBehaviour
     {

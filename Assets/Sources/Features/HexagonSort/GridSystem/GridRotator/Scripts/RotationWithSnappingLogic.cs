@@ -2,7 +2,7 @@
 using Sources.Common.CodeBase.Infrastructure.Utilities;
 using UnityEngine;
 
-namespace Sources.Features.HexagonSort.GridSystem.Scripts
+namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
 {
     public class RotationWithSnappingLogic
     {
@@ -11,17 +11,15 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         public event Action<float> ReturnToPreviousAngle;
 
         private Vector2 _previousCursorPosition;
-        private float _currentAngle;
         private float _targetAngle;
         private float _previousAngle;
         private float _rotationSensitivity;
-        private bool _isRotating;
-        
+
         private readonly float _snapThreshold;
         private readonly float _snapAngle;
         private readonly int _rotationDirection;
 
-        public float CurrentAngle => _currentAngle;
+        public float CurrentAngle { get; private set; }
 
         public RotationWithSnappingLogic(float rotationSensitivity, float snapAngle,
             float snapThreshold, bool clockwiseRotation)
@@ -34,49 +32,40 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 
         public void ActivateRotation(Vector2 cursorPosition)
         {
-            _isRotating = true;
             _previousCursorPosition = cursorPosition;
-            _previousAngle = _currentAngle;
+            _previousAngle = CurrentAngle;
         }
 
         public void ActivateSnapping() => 
             Snapping();
 
-        public void UpdateRotation(Vector2 cursorPosition)
-        {
-            if (_isRotating)
-                RotateToCursor(cursorPosition);
-        }
-
-        private void RotateToCursor(Vector2 cursorPosition)
+        public void RotateToCursor(Vector2 cursorPosition)
         {
             Vector2 delta = cursorPosition - _previousCursorPosition;
             float angleDelta = delta.x * _rotationSensitivity * Time.fixedDeltaTime * _rotationDirection;
             
-            _currentAngle += angleDelta;
-            _currentAngle = AngleUtils.NormalizeAngle(_currentAngle);
+            CurrentAngle += angleDelta;
+            CurrentAngle = AngleUtils.NormalizeAngle(CurrentAngle);
 
             _previousCursorPosition = cursorPosition;
 
-            OnAngleChanged?.Invoke(_currentAngle);
+            OnAngleChanged?.Invoke(CurrentAngle);
         }
 
         private void Snapping()
         {
-            _isRotating = false;
-
-            float targetSnapAngle = AngleUtils.FindClosestSnapAngle(_currentAngle, _snapAngle);
-            float angleDiff = AngleUtils.GetAngleDifference(_currentAngle, targetSnapAngle);
+            float targetSnapAngle = AngleUtils.FindClosestSnapAngle(CurrentAngle, _snapAngle);
+            float angleDiff = AngleUtils.GetAngleDifference(CurrentAngle, targetSnapAngle);
 
             if (angleDiff <= _snapThreshold)
             {
-                _currentAngle = targetSnapAngle;
-                SnapToNextAngle?.Invoke(_currentAngle);
+                CurrentAngle = targetSnapAngle;
+                SnapToNextAngle?.Invoke(CurrentAngle);
             }
             else
             {
-                _currentAngle = _previousAngle;
-                ReturnToPreviousAngle?.Invoke(_currentAngle);
+                CurrentAngle = _previousAngle;
+                ReturnToPreviousAngle?.Invoke(CurrentAngle);
             }
         }
     }

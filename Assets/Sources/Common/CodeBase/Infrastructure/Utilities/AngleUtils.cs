@@ -15,6 +15,9 @@ namespace Sources.Common.CodeBase.Infrastructure.Utilities
             return targetSnapAngle;
         }
 
+        public static bool IsAngleReached(float currentAngle, float targetAngle) =>
+            Mathf.Abs(Mathf.DeltaAngle(currentAngle, targetAngle)) < 0.1f;
+        
         public static float NormalizeAngle(float angle)
         {
             angle %= 360f;
