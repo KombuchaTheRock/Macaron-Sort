@@ -5,7 +5,7 @@ using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 
 namespace Sources.Features.HexagonSort.Merge.Scripts
 {
-    public class StackMergeCandidate : IComparable<StackMergeCandidate>
+    public class MergeCandidate : IComparable<MergeCandidate>
     {
         private static int _nextId = 1;
         
@@ -16,7 +16,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
         public GridCell Cell { get; private set; }
         public bool IsMonoType { get; private set; }
 
-        public StackMergeCandidate(int sameHexagonCount, HexagonStack stack, bool isMonoType, GridCell cell)
+        public MergeCandidate(int sameHexagonCount, HexagonStack stack, bool isMonoType, GridCell cell)
         {
             _uniqueId = _nextId++;
             _sameHexagonCount = sameHexagonCount;
@@ -26,7 +26,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             IsMonoType = isMonoType;
         }
 
-        public int CompareTo(StackMergeCandidate other)
+        public int CompareTo(MergeCandidate other)
         {
             if (ReferenceEquals(this, other))
                 return 0;

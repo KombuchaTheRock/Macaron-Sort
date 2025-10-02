@@ -2,14 +2,14 @@
 
 namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
 {
-    public class GridResizing
+    public class GridResize
     {
         private Vector3 _targetScale = Vector3.one;
         
         private readonly Transform _transform;
         private GridRotationConfig _config;
 
-        public GridResizing(Transform transform, GridRotationConfig config)
+        public GridResize(Transform transform, GridRotationConfig config)
         {
             _config = config;
             _transform = transform;

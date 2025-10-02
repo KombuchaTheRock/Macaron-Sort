@@ -17,3 +17,4 @@ MonoBehaviour:
   <SnapSpeed>k__BackingField: 5
   <ReturnSpeed>k__BackingField: 6
   <RotationSensitivity>k__BackingField: 7
+  <ClockwiseRotation>k__BackingField: 1

@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 {
-    public class StacksSpawner : IDisposable, IStacksSpawner
+    public class StacksPlacer : IDisposable, IStacksSpawner
     {
         private List<HexagonStack> _generatedStacks = new();
         private Transform _stacksRoot;
@@ -25,7 +25,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private readonly Vector3[] _spawnPositions;
         private readonly float _delayBetweenStacks;
 
-        public StacksSpawner(IStackMover stackMover, IStackGenerator stackGenerator, IStaticDataService staticData,
+        public StacksPlacer(IStackMover stackMover, IStackGenerator stackGenerator, IStaticDataService staticData,
             IHexagonFactory hexagonFactory, ICoroutineRunner coroutineRunner)
         {
             _coroutineRunner = coroutineRunner;

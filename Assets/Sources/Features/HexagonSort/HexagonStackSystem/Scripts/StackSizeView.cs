@@ -16,7 +16,8 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
         private HexagonStack _stack;
         private TweenerCore<Vector3, Vector3, VectorOptions> _scaleAnimation;
         private IGameSettings _gameSettings;
-
+        private int _lastSize;
+        
         [Inject]
         private void Construct(IGameSettings gameSettings)
         {
@@ -34,11 +35,11 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
 
         private void OnDestroy() => 
             _stack.SizeChanged -= OnSizeChanged;
-
+        
         private void OnSizeChanged() => 
-            ChangeText();
+            UpdateSize();
 
-        private void ChangeText()
+        private void UpdateSize()
         {
             int sameHexagonsCount = 0;
             
@@ -80,9 +81,9 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
 
         private void TextScaleAnim(float from, float to, Action onCompleted = null)
         {
-            _scaleAnimation?.Complete();
+            _scaleAnimation?.Kill();
 
-            _scaleAnimation = _text.transform.DOScale(to, 0.2f)
+            _scaleAnimation = _text.transform.DOScale(to, 0.1f)
                 .From(from)
                 .SetEase(Ease.InOutSine)
                 .SetLink(_text.gameObject)

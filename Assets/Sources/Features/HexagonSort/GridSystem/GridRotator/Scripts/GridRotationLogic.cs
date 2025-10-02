@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
 {
-    public class RotationWithSnappingLogic
+    public class GridRotationLogic
     {
         public event Action<float> OnAngleChanged;
         public event Action<float> SnapToNextAngle;
@@ -21,7 +21,7 @@ namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
 
         public float CurrentAngle { get; private set; }
 
-        public RotationWithSnappingLogic(float rotationSensitivity, float snapAngle,
+        public GridRotationLogic(float rotationSensitivity, float snapAngle,
             float snapThreshold, bool clockwiseRotation)
         {
             _snapAngle = snapAngle;

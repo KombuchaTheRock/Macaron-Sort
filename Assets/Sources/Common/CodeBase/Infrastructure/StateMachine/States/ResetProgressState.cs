@@ -1,8 +1,6 @@
-﻿using Sources.Common.CodeBase.Services;
-using Sources.Common.CodeBase.Services.Factories.GameFactory;
+﻿using Sources.Common.CodeBase.Services.Factories.GameFactory;
 using Sources.Common.CodeBase.Services.Factories.HexagonFactory;
 using Sources.Common.CodeBase.Services.PlayerProgress;
-using Sources.Common.CodeBase.Services.Settings;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using UnityEngine;
@@ -27,10 +25,14 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 
         public void Enter(bool newProgress)
         {
-            ClearProgress();
+            ClearStacks();
             LoadOrInitializeNewProgress(newProgress);
 
             _stateMachine.Enter<GameLoopState>();
+        }
+
+        public void Exit()
+        {
         }
 
         private void LoadOrInitializeNewProgress(bool newProgress)
@@ -48,7 +50,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _progressService.ApplyProgress();
         }
 
-        private void ClearProgress()
+        private void ClearStacks()
         {
             foreach (GridCell gridCell in _gameFactory.GridCells)
                 gridCell.RemoveStack();
@@ -59,10 +61,6 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 
             _hexagonFactory.SettingsReaders.Clear();
             _hexagonFactory.Stacks.Clear();
-        }
-
-        public void Exit()
-        {
         }
     }
 }

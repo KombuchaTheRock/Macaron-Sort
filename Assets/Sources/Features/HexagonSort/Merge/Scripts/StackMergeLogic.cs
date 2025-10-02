@@ -91,19 +91,25 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             return hexagonToMerge;
         }
 
-        public void RemoveHexagonsFromStack(HexagonStack stack, List<Hexagon> hexagonToMerge)
+        public void RemoveHexagonsFromStack(HexagonStack stack, List<Hexagon> mergedHexagons)
         {
-            foreach (Hexagon hexagon in hexagonToMerge)
+            foreach (Hexagon hexagon in mergedHexagons)
             {
                 if (stack.Contains(hexagon))
                     stack.Remove(hexagon);
             }
         }
+        
+        public void AddHexagonsToStack(HexagonStack stack, List<Hexagon> mergedHexagons)
+        {
+            foreach (Hexagon hexagon in mergedHexagons) 
+                stack.Add(hexagon);
+        }
 
-        public Coroutine CheckStackForComplete(StackMergeCandidate mergeCandidate) =>
+        public Coroutine CheckStackForComplete(MergeCandidate mergeCandidate) =>
             _coroutineRunner.StartCoroutine(CheckStackForCompleteRoutine(mergeCandidate));
 
-        private IEnumerator CheckStackForCompleteRoutine(StackMergeCandidate mergeCandidate)
+        private IEnumerator CheckStackForCompleteRoutine(MergeCandidate mergeCandidate)
         {
             Tween deleteAnimation = null;
 
@@ -114,61 +120,64 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
                 mergeCandidate.Stack.TopHexagon.TileType,
                 out bool isMonoType);
 
-            if (isMonoType == false || similarHexagons.Count < HexagonsCountForComplete)
+            if (similarHexagons.Count < HexagonsCountForComplete)
                 yield break;
 
             float delay = 0;
 
-            Sequence overallSequence = DOTween.Sequence();
-
-            while (similarHexagons.Count > 0)
+            foreach (Hexagon hexagon in similarHexagons)
             {
                 deleteAnimation =
-                    HexagonDeleteAnimation(similarHexagons.First(), delay, 0.2f, DeleteAnimationCompleted);
+                    HexagonDeleteAnimation(hexagon, delay, 0.2f, DeleteAnimationCompleted);
+
                 deleteAnimation.Play();
-
                 delay += 0.03f;
-
-                similarHexagons.RemoveAt(0);
             }
-
-            overallSequence.Play();
 
             yield return deleteAnimation.WaitForCompletion();
 
+            int score = CalculateScore(similarHexagons);
             StackCompletePopUp(mergeCandidate);
 
-            CompleteStack(mergeCandidate);
+            foreach (Hexagon hexagon in similarHexagons)
+            {
+                if (mergeCandidate.Stack.Contains(hexagon))
+                {
+                    mergeCandidate.Stack.Remove(hexagon);
+                    Object.Destroy(hexagon.gameObject);
+                }
+            }
+
+            if (isMonoType)
+                DeleteStack(mergeCandidate);
+
+            StackCompleted?.Invoke(score);
         }
 
-        private static void StackCompletePopUp(StackMergeCandidate mergeCandidate)
+        private static void StackCompletePopUp(MergeCandidate mergeCandidate)
         {
             Vector3 popUpPosition = mergeCandidate.Stack.TopHexagon.transform.position;
-            
+
             GameObject popUp = Resources.Load<GameObject>("StackGenerator/Prefab/StackCountPopUp");
-            
+
             TextMeshPro popUpText = popUp.GetComponentInChildren<TextMeshPro>();
             popUpText.text = mergeCandidate.Stack.Hexagons.Count.ToString();
-            
+
             Object.Instantiate(popUp, popUpPosition, popUp.transform.rotation, mergeCandidate.Cell.transform);
         }
 
-        private void CompleteStack(StackMergeCandidate mergeCandidate)
+        private int CalculateScore(List<Hexagon> hexagons) =>
+            hexagons.Sum(hexagon => hexagon.Score);
+
+        private void DeleteStack(MergeCandidate mergeCandidate)
         {
-            int score = 0;
-
-            foreach (Hexagon hexagon in mergeCandidate.Stack.Hexagons)
-                score += hexagon.Score;
-
             mergeCandidate.Cell.SetStack(null);
 
             if (mergeCandidate.Stack != null)
                 Object.Destroy(mergeCandidate.Stack.gameObject);
-            
-            StackCompleted?.Invoke(score);
         }
 
-        public IEnumerator MergeRoutine(StackMergeCandidate mergeCandidate, List<Hexagon> hexagonForMerge)
+        public IEnumerator MergeRoutine(MergeCandidate mergeCandidate, List<Hexagon> hexagonForMerge)
         {
             float offsetBetweenTiles = mergeCandidate.Stack.OffsetBetweenTiles;
             float initialY = mergeCandidate.Stack.Hexagons[^1].transform.position.y + offsetBetweenTiles;
@@ -183,7 +192,6 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
                 float targetY = initialY + i * offsetBetweenTiles;
 
-                mergeCandidate.Stack.Add(hexagon);
                 hexagon.SetParent(mergeCandidate.Stack.transform);
 
                 float duration = 0.4f;

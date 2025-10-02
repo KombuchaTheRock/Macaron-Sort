@@ -7,7 +7,7 @@ namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
     {
         private readonly Transform _transform;
         
-        private RotationWithSnappingLogic _rotation;
+        private GridRotationLogic _gridRotation;
         private GridRotationConfig _config;
         
         private float _targetAngle;
@@ -15,10 +15,10 @@ namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
         private bool _isSnapping;
         private bool _isReturning;
 
-        public GridRotationVisual(Transform transform, RotationWithSnappingLogic rotation, GridRotationConfig config)
+        public GridRotationVisual(Transform transform, GridRotationLogic gridRotation, GridRotationConfig config)
         {
             _transform = transform;
-            _rotation = rotation;
+            _gridRotation = gridRotation;
             _config = config;
             
             SubscribeUpdates();
@@ -26,16 +26,16 @@ namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
 
         public void CleanUp()
         {
-            _rotation.OnAngleChanged -= OnAngleChanged;
-            _rotation.SnapToNextAngle -= OnSnapToNextAngle;
-            _rotation.ReturnToPreviousAngle -= OnSnapToPreviousAngle;
+            _gridRotation.OnAngleChanged -= OnAngleChanged;
+            _gridRotation.SnapToNextAngle -= OnSnapToNextAngle;
+            _gridRotation.ReturnToPreviousAngle -= OnSnapToPreviousAngle;
         }
 
         private void SubscribeUpdates()
         {
-            _rotation.OnAngleChanged += OnAngleChanged;
-            _rotation.SnapToNextAngle += OnSnapToNextAngle;
-            _rotation.ReturnToPreviousAngle += OnSnapToPreviousAngle;
+            _gridRotation.OnAngleChanged += OnAngleChanged;
+            _gridRotation.SnapToNextAngle += OnSnapToNextAngle;
+            _gridRotation.ReturnToPreviousAngle += OnSnapToPreviousAngle;
         }
 
         public void HandleSnappingRotation()

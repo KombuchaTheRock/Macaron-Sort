@@ -7,16 +7,17 @@ namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
     public class GridRotator : MonoBehaviour
     {
         private IInputService _input;
-        private GridRotationConfig _config;
 
-        private RotationWithSnappingLogic _rotation;
-        private GridResizing _gridResizing;
+        private GridRotationConfig _config;
+        private GridRotationLogic _gridRotation;
+        private GridResize _gridResize;
         private GridRotationVisual _gridRotationVisual;
         private float _targetAngle;
         private float _currentVisualAngle;
         private bool _isSnapping;
         private bool _isReturning;
         private bool _isRotating;
+        private bool CanRotate => _input.IsCursorHold && _isRotating;
 
         [Inject]
         private void Construct(IInputService input) =>
@@ -25,13 +26,13 @@ namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
         public void Initialize(GridRotationConfig config)
         {
             _config = config;
-            _rotation = new RotationWithSnappingLogic(_config.RotationSensitivity,
+            _gridRotation = new GridRotationLogic(_config.RotationSensitivity,
                 _config.SnapAnchorAngle,
                 _config.SnapThreshold,
                 _config.ClockwiseRotation);
 
-            _gridResizing = new GridResizing(transform, _config);
-            _gridRotationVisual = new GridRotationVisual(transform, _rotation, _config);
+            _gridResize = new GridResize(transform, _config);
+            _gridRotationVisual = new GridRotationVisual(transform, _gridRotation, _config);
             
             SubscribeUpdates();
         }
@@ -39,19 +40,19 @@ namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
         private void Update()
         {
             _gridRotationVisual.HandleSnappingRotation();
-            _gridResizing.HandleGridResizing(_input.IsCursorHold, _rotation.CurrentAngle);
+            _gridResize.HandleGridResizing(_input.IsCursorHold, _gridRotation.CurrentAngle);
         }
 
         private void FixedUpdate()
         {
-            if (_input.IsCursorHold && _isRotating) 
-                _rotation.RotateToCursor(_input.CursorPosition);
+            if (CanRotate) 
+                _gridRotation.RotateToCursor(_input.CursorPosition);
         }
 
         private void OnDisable()
         {
             _gridRotationVisual.ApplyTargetAngleRotation();
-            _gridResizing.ResetScale();
+            _gridResize.ResetScale();
         }
 
         private void OnDestroy() =>
@@ -60,13 +61,13 @@ namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
         private void OnCursorDown()
         {
              _isRotating = true;
-            _rotation.ActivateRotation(_input.CursorPosition);
+            _gridRotation.ActivateRotation(_input.CursorPosition);
         }
 
         private void OnCursorUp()
         {
             _isRotating = false;
-            _rotation.ActivateSnapping();
+            _gridRotation.ActivateSnapping();
         }
 
         private void SubscribeUpdates()

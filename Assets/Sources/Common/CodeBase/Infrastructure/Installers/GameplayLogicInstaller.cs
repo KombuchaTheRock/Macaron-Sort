@@ -29,7 +29,7 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
 
         private void BindStacksSpawner()
         {
-            Container.BindInterfacesTo<StacksSpawner>()
+            Container.BindInterfacesTo<StacksPlacer>()
                 .AsSingle()
                 .WithArguments(this);
         }

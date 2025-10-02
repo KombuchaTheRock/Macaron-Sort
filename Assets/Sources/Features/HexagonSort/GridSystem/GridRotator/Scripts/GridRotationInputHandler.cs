@@ -4,14 +4,14 @@ namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
 {
     public class GridRotationInputHandler
     {
-        private readonly RotationWithSnappingLogic _rotation;
+        private readonly GridRotationLogic _gridRotation;
         private readonly IInputService _input;
 
         public bool IsRotating { get; private set; }
 
-        public GridRotationInputHandler(RotationWithSnappingLogic rotation, IInputService input)
+        public GridRotationInputHandler(GridRotationLogic gridRotation, IInputService input)
         {
-            _rotation = rotation;
+            _gridRotation = gridRotation;
             _input = input;
         }
 
@@ -30,13 +30,13 @@ namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
         private void OnCursorDown()
         {
             IsRotating = true;
-            _rotation.ActivateRotation(_input.CursorPosition);
+            _gridRotation.ActivateRotation(_input.CursorPosition);
         }
 
         private void OnCursorUp()
         {
             IsRotating = false;
-            _rotation.ActivateSnapping();
+            _gridRotation.ActivateSnapping();
         }
     }
 }
