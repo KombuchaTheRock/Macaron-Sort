@@ -9,27 +9,26 @@ namespace Sources.Common.CodeBase.Services.SoundService
         [SerializeField] private AudioSource _audioSource;
         
         private Coroutine _coroutine;
-        
+
         public AudioClip PlayingClip { get; private set; }
         
         public void PlayWithCallback(AudioClip clip, Action onSoundPlayed)
         {
             PlayingClip = clip;
-            _coroutine = StartCoroutine(PlayWithCallbackRoutine(clip, onSoundPlayed));
+            
+            _audioSource.PlayOneShot(clip);
+            _coroutine = StartCoroutine(PlayWithCallbackRoutine(clip.length, onSoundPlayed));
         }
 
-        public void Stop()
+        public void StopCallbackRoutine()
         {
             if (_coroutine != null) 
                 StopCoroutine(_coroutine);
-            
-            _audioSource.Stop();
         }
         
-        private IEnumerator PlayWithCallbackRoutine(AudioClip clip, Action onSoundPlayed)
+        private IEnumerator PlayWithCallbackRoutine(float clipLength, Action onSoundPlayed)
         {
-            _audioSource.PlayOneShot(clip);
-            yield return new WaitForSeconds(clip.length);
+            yield return new WaitForSeconds(clipLength);
             
             onSoundPlayed?.Invoke();
         }

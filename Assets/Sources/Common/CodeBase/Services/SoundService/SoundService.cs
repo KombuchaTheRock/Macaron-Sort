@@ -1,7 +1,6 @@
 ﻿using Sources.Common.CodeBase.Paths;
 using Sources.Common.CodeBase.Services.ResourceLoader;
 using Sources.Common.CodeBase.Services.WindowService;
-using UnityEngine;
 using UnityEngine.Audio;
 
 namespace Sources.Common.CodeBase.Services.SoundService
@@ -45,7 +44,7 @@ namespace Sources.Common.CodeBase.Services.SoundService
             
             if (_soundPool.TryGetSoundSourceBySound(sound, out SoundSource foundedSource))
             {
-                foundedSource.Stop();
+                foundedSource.StopCallbackRoutine();
                 soundSource = foundedSource;
             }
             else
@@ -56,7 +55,7 @@ namespace Sources.Common.CodeBase.Services.SoundService
             return soundSource;
         }
 
-        private void Stop(SoundSource soundSource) =>
+        private void Stop(SoundSource soundSource) => 
             _soundPool.ReturnToPool(soundSource);
     }
 }

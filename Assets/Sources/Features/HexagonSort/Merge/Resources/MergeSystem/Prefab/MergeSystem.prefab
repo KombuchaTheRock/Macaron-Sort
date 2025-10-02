@@ -60,7 +60,7 @@ MonoBehaviour:
   _mergeSystem: {fileID: 3247302076246780025}
   _mergeSound:
     <AudioClip>k__BackingField: {fileID: 8300000, guid: 04689fe4457ae59459fcf170265777a4, type: 3}
-    <CanBeReplaceableBySame>k__BackingField: 0
+    <CanBeReplaceableBySame>k__BackingField: 1
   _hexagonDeleteSound:
     <AudioClip>k__BackingField: {fileID: 8300000, guid: f113d6f77eb97ed4fbe7792f40431703, type: 3}
-    <CanBeReplaceableBySame>k__BackingField: 0
+    <CanBeReplaceableBySame>k__BackingField: 1

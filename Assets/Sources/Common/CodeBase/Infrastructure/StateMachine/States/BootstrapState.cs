@@ -1,6 +1,5 @@
 ﻿
 using Sources.Common.CodeBase.Services;
-using Sources.Common.CodeBase.Services.StaticData;
 
 namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 {
@@ -9,7 +8,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private readonly IGameStateMachine _stateMachine;
         private readonly SceneLoader _sceneLoader;
 
-        public BootstrapState(IGameStateMachine stateMachine, SceneLoader sceneLoader, IStaticDataService staticData)
+        public BootstrapState(IGameStateMachine stateMachine, SceneLoader sceneLoader)
         {
             _stateMachine = stateMachine;
             _sceneLoader = sceneLoader;

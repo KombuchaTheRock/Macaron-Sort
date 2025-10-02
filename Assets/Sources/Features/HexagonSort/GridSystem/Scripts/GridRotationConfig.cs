@@ -10,5 +10,6 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         [field: SerializeField] public float SnapSpeed { get; private set; }
         [field: SerializeField] public float ReturnSpeed { get; private set; }
         [field: SerializeField] public float RotationSensitivity { get; private set; }
+        [field: SerializeField] public bool ClockwiseRotation { get; private set; }
     }
 }

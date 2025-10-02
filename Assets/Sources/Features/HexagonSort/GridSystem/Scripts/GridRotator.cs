@@ -24,7 +24,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         {
             _config = config;
             _rotation = new RotationWithSnappingLogic(_config.RotationSensitivity, _config.SnapAnchorAngle,
-                _config.SnapThreshold);
+                _config.SnapThreshold, _config.ClockwiseRotation);
 
             SubscribeUpdates();
         }
