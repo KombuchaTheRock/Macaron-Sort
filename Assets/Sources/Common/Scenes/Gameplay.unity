@@ -230,7 +230,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _stackStartDraggingSound:
-    <AudioClip>k__BackingField: {fileID: 8300000, guid: 04689fe4457ae59459fcf170265777a4, type: 3}
+    <AudioClip>k__BackingField: {fileID: 8300000, guid: 000e78176018ba94392651c83fac80c1, type: 3}
     <CanBeReplaceableBySame>k__BackingField: 1
   _stackPlacedSound:
     <AudioClip>k__BackingField: {fileID: 8300000, guid: 4bbdbff2bad303940b846f10f2ba4a28, type: 3}

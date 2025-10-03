@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Sources.Common.CodeBase.Infrastructure;
@@ -8,29 +9,44 @@ using Sources.Features.HexagonSort.HexagonTile.Scripts;
 
 namespace Sources.Features.HexagonSort.Merge.Scripts
 {
-    public class MergeCascadeLogic
+    public class MergeLogic
     {
+        public event Action MergeAnimationCompleted;
+        public event Action HexagonDeleteAnimationCompleted;
+        public event Action<int> StackCompleted;
+
         private readonly ICoroutineRunner _coroutineRunner;
-        private readonly HexagonGrid _hexagonGrid;
+        private readonly HashSet<GridCell> _updatedCells;
         private readonly StackMerge _merge;
         private readonly StackCompletion _stackCompletion;
         private readonly NeighbourStacksFinding _neighbourFinding;
         private readonly MergePriority _mergePriority;
 
-        public MergeCascadeLogic(ICoroutineRunner coroutineRunner, HexagonGrid hexagonGrid)
+        public MergeLogic(ICoroutineRunner coroutineRunner, HexagonGrid hexagonGrid,
+            HashSet<GridCell> updatedCells)
         {
             MergeAnimation mergeAnimation = new();
 
             _coroutineRunner = coroutineRunner;
-            _hexagonGrid = hexagonGrid;
-            
+            _updatedCells = updatedCells;
+
             _merge = new StackMerge(mergeAnimation);
             _stackCompletion = new StackCompletion(10);
             _neighbourFinding = new NeighbourStacksFinding(hexagonGrid);
             _mergePriority = new MergePriority();
+            
+            SubscribeUpdates();
         }
-        
-        private IEnumerator CheckForMergeRoutine(GridCell cell)
+
+        public void CleanUp()
+        {
+            _stackCompletion.StackCompleted -= OnStackCompleted;
+            _stackCompletion.DeleteAnimationCompleted -= OnDeleteAnimationCompleted;
+            
+            _merge.MergeAnimationCompleted -= OnMergeAnimationCompleted;
+        }
+
+        public IEnumerator CheckForMergeRoutine(GridCell cell)
         {
             if (!ShouldProcessCell(cell))
                 yield break;
@@ -45,7 +61,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
         private bool ShouldProcessCell(GridCell cell)
         {
-            //_updatedCells.Remove(cell);
+            _updatedCells.Remove(cell);
             return cell.IsOccupied;
         }
 
@@ -93,8 +109,8 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
         private void UpdateProcessedCells(MergeCandidate from, MergeCandidate to)
         {
-            //_updatedCells.Add(from.Cell);
-            //_updatedCells.Add(to.Cell);
+            _updatedCells.Add(from.Cell);
+            _updatedCells.Add(to.Cell);
         }
 
         private void HideStackSizes(MergeCandidate from, MergeCandidate to)
@@ -122,10 +138,28 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
         private IEnumerator FinalizeMerge(MergeContext context)
         {
-            yield return _coroutineRunner.StartCoroutine(_stackCompletion.CheckStackForCompleteRoutine(context.CompleteCandidate));
+            yield return _coroutineRunner.StartCoroutine(
+                _stackCompletion.CheckStackForCompleteRoutine(context.CompleteCandidate));
             context.CompleteCandidate.Stack.ShowDisplayedSize();
         }
 
+        private void SubscribeUpdates()
+        {
+            _stackCompletion.StackCompleted += OnStackCompleted;
+            _stackCompletion.DeleteAnimationCompleted += OnDeleteAnimationCompleted;
+            
+            _merge.MergeAnimationCompleted += OnMergeAnimationCompleted;
+        }
+
+        private void OnDeleteAnimationCompleted() => 
+            HexagonDeleteAnimationCompleted?.Invoke();
+
+        private void OnMergeAnimationCompleted() => 
+            MergeAnimationCompleted?.Invoke();
+
+        private void OnStackCompleted(int score) => 
+            StackCompleted?.Invoke(score);
+        
         private class MergeContext
         {
             public GridCell Cell { get; set; }
