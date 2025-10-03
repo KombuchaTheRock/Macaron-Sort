@@ -229,12 +229,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8983e92ff5fcefc43a35259b92df73b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stackPlacedSound:
-    <AudioClip>k__BackingField: {fileID: 8300000, guid: 4bbdbff2bad303940b846f10f2ba4a28, type: 3}
-    <CanBeReplaceableBySame>k__BackingField: 0
   _stackStartDraggingSound:
     <AudioClip>k__BackingField: {fileID: 8300000, guid: 04689fe4457ae59459fcf170265777a4, type: 3}
-    <CanBeReplaceableBySame>k__BackingField: 0
+    <CanBeReplaceableBySame>k__BackingField: 1
+  _stackPlacedSound:
+    <AudioClip>k__BackingField: {fileID: 8300000, guid: 4bbdbff2bad303940b846f10f2ba4a28, type: 3}
+    <CanBeReplaceableBySame>k__BackingField: 1
 --- !u!1 &1148785983
 GameObject:
   m_ObjectHideFlags: 0

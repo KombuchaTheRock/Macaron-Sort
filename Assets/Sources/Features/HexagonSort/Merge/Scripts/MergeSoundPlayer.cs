@@ -24,20 +24,20 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
         private void SubscribeUpdates()
         {
-            _mergeSystem.HexagonMergeAnimationCompleted += OnHexagonMergeAnimationCompleted;
+            _mergeSystem.MergeAnimationCompleted += OnMergeAnimationCompleted;
             _mergeSystem.HexagonDeleteAnimationCompleted += OnHexagonDeleteAnimationCompleted;
         }
 
         private void CleanUp()
         {
-            _mergeSystem.HexagonMergeAnimationCompleted -= OnHexagonMergeAnimationCompleted;
+            _mergeSystem.MergeAnimationCompleted -= OnMergeAnimationCompleted;
             _mergeSystem.HexagonDeleteAnimationCompleted -= OnHexagonDeleteAnimationCompleted;
         }
 
         private void OnHexagonDeleteAnimationCompleted() => 
             _soundService.Play(_hexagonDeleteSound);
 
-        private void OnHexagonMergeAnimationCompleted() => 
+        private void OnMergeAnimationCompleted() => 
             _soundService.Play(_mergeSound);
     }
 }

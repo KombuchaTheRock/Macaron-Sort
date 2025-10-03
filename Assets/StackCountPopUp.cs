@@ -1,4 +1,6 @@
 using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
 using UnityEngine;
 
 public class StackCountPopUp : MonoBehaviour
@@ -33,11 +35,21 @@ public class StackCountPopUp : MonoBehaviour
     
     private void DisappearAnimation()
     {
-        transform.DOScale(0f, _animationDuration)
+        Sequence sequence = DOTween.Sequence();
+
+        TweenerCore<Vector3, Vector3, VectorOptions> scaleAnimation = transform.DOScale(0f, _animationDuration)
             .SetDelay(_lifeTime)
             .SetLink(gameObject)
+            .SetEase(_animationEase);
+
+        float yOffset = 2f;
+        Vector3 targetPosition = transform.position + Vector3.up * yOffset;
+        TweenerCore<Vector3, Vector3, VectorOptions> moveAnimation = transform.DOMove(targetPosition, _animationDuration)
+            .SetEase(_animationEase);
+
+        sequence.Append(moveAnimation)
+            .Join(scaleAnimation)
             .OnComplete(() => Destroy(gameObject, _lifeTime))
-            .SetEase(_animationEase)
             .Play();
     }
 }

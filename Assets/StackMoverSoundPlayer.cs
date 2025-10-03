@@ -6,8 +6,8 @@ using Zenject;
 
 public class StackMoverSoundPlayer : MonoBehaviour
 {
-    [Space(10), SerializeField] private Sound _stackPlacedSound;
     [SerializeField] private Sound _stackStartDraggingSound;
+    [Space(10), SerializeField] private Sound _stackPlacedSound;
 
     private ISoundService _soundService;
     private IStackMover _stackMover;

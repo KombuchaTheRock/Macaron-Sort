@@ -52,6 +52,8 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
         public void Add(Hexagon hexagon)
         {
             hexagon.transform.rotation = transform.rotation;
+            hexagon.SetParent(transform);
+            
             _hexagons.Add(hexagon);
             ChangeColliderSize(hexagon.Height);
 
@@ -64,6 +66,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
         public void Remove(Hexagon hexagon)
         {
             _hexagons.Remove(hexagon);
+            hexagon.SetParent(null);
             ChangeColliderSize(hexagon.Height);
 
             SizeChanged?.Invoke();
