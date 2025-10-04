@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Sources.Common.CodeBase.Services;
 using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Common.CodeBase.Services.PlayerProgress.Data;
 using Sources.Common.CodeBase.Services.StaticData;
@@ -17,7 +16,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         [SerializeField] private HexagonGrid _hexagonGrid;
 
         private IGameProgressService _gameProgress;
-        private MergeSystem _mergeSystem;
+        private IStackMerger _stackMerger;
         private List<GridCell> _cells;
         private IStackGenerator _stackGenerator;
         private IStaticDataService _staticData;
@@ -25,22 +24,21 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 
         [Inject]
         private void Construct(IGameProgressService gameProgress, IStackGenerator stackGenerator,
-            IStaticDataService staticData, IPlayerLevel playerLevel)
+            IStaticDataService staticData, IPlayerLevel playerLevel, IStackMerger stackMerger)
         {
             _playerLevel = playerLevel;
             _staticData = staticData;
             _stackGenerator = stackGenerator;
             _gameProgress = gameProgress;
+            _stackMerger = stackMerger;
         }
 
-        public void Initialize(MergeSystem mergeSystem)
+        private void Awake()
         {
-            _mergeSystem = mergeSystem;
             _cells = _hexagonGrid.Cells;
-
             SubscribeUpdates();
         }
-
+        
         private void OnDestroy() => 
             CleanUp();
 
@@ -52,10 +50,10 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
                 return;
 
             foreach (PlacedStackData placedStack in placedStacks) 
-                GenerateStack(placedStack);
+                LoadStack(placedStack);
         }
 
-        private void GenerateStack(PlacedStackData placedStack)
+        private void LoadStack(PlacedStackData placedStack)
         {
             HexagonStackConfig stackConfig = _staticData.ForHexagonStack(HexagonStackTemplate.Default);
             float offsetAboveGridGrid = _staticData.GameConfig.StackMoverConfig.PlaceOffsetAboveGrid;
@@ -79,8 +77,8 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 
             _playerLevel.ControlPointAchieved += SaveControlPointData;
             
-            _mergeSystem.MergeStarted += UpdateGridPersistentData;
-            _mergeSystem.MergeFinished += UpdateGridPersistentData;
+            _stackMerger.MergeStarted += UpdateGridPersistentData;
+            _stackMerger.MergeFinished += UpdateGridPersistentData;
         }
 
         private void CleanUp()
@@ -88,8 +86,8 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
             foreach (GridCell gridCell in _cells)
                 gridCell.StackRemoved -= UpdateGridPersistentData;
 
-            _mergeSystem.MergeStarted -= UpdateGridPersistentData;
-            _mergeSystem.MergeFinished -= UpdateGridPersistentData;
+            _stackMerger.MergeStarted -= UpdateGridPersistentData;
+            _stackMerger.MergeFinished -= UpdateGridPersistentData;
         }
 
         private void SaveControlPointData()

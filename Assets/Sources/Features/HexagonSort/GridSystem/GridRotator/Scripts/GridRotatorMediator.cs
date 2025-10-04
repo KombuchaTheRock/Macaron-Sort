@@ -1,4 +1,5 @@
-﻿using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
+﻿using System;
+using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
 using UnityEngine;
 using Zenject;
@@ -10,17 +11,17 @@ namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
         [SerializeField] private GridRotator _gridRotator;
         
         private IStackMover _stackMover;
-        private MergeSystem _mergeSystem;
+        private IStackMerger _stackMerger;
 
         [Inject]
-        private void Construct(IStackMover stackMover) => 
-            _stackMover = stackMover;
-
-        public void Initialize(MergeSystem mergeSystem)
+        private void Construct(IStackMover stackMover, IStackMerger stackMerger)
         {
-            _mergeSystem = mergeSystem;
-            SubscribeUpdates();
+            _stackMover = stackMover;
+            _stackMerger = stackMerger;
         }
+
+        private void Awake() => 
+            SubscribeUpdates();
 
         private void OnDestroy() => 
             CleanUp();
@@ -30,8 +31,8 @@ namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
             _stackMover.DragStarted += OnDragStarted;
             _stackMover.DragFinished += OnDragFinished;
 
-            _mergeSystem.MergeStarted += OnMergeStarted;
-            _mergeSystem.MergeFinished += OnMergeFinished;
+            _stackMerger.MergeStarted += OnMergeStarted;
+            _stackMerger.MergeFinished += OnMergeFinished;
         }
 
         private void CleanUp()
@@ -39,8 +40,8 @@ namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
             _stackMover.DragStarted -= OnDragStarted;
             _stackMover.DragFinished -= OnDragFinished;
 
-            _mergeSystem.MergeStarted -= OnMergeStarted;
-            _mergeSystem.MergeFinished -= OnMergeFinished;
+            _stackMerger.MergeStarted -= OnMergeStarted;
+            _stackMerger.MergeFinished -= OnMergeFinished;
         }
 
         private void OnMergeStarted() =>
@@ -57,7 +58,7 @@ namespace Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts
 
         private void UpdateGridRotatorEnabled()
         {
-            if (_stackMover.IsDragging || _mergeSystem.IsMerging)
+            if (_stackMover.IsDragging || _stackMerger.IsMerging)
                 _gridRotator.enabled = false;
             else
                 _gridRotator.enabled = true;

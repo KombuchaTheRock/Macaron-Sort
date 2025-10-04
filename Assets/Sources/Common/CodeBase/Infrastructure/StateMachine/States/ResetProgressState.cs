@@ -1,4 +1,5 @@
-﻿using Sources.Common.CodeBase.Services.Factories.GameFactory;
+﻿using System.Linq;
+using Sources.Common.CodeBase.Services.Factories.GameFactory;
 using Sources.Common.CodeBase.Services.Factories.HexagonFactory;
 using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
@@ -55,9 +56,8 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             foreach (GridCell gridCell in _gameFactory.GridCells)
                 gridCell.RemoveStack();
 
-            foreach (HexagonStack stack in _hexagonFactory.Stacks)
-                if (stack != null)
-                    Object.Destroy(stack.gameObject);
+            foreach (HexagonStack stack in _hexagonFactory.Stacks.Where(stack => stack != null))
+                Object.Destroy(stack.gameObject);
 
             _hexagonFactory.SettingsReaders.Clear();
             _hexagonFactory.Stacks.Clear();

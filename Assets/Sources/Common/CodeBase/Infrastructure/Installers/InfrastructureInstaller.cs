@@ -6,8 +6,6 @@ using Sources.Common.CodeBase.Services.Settings;
 using Sources.Common.CodeBase.Services.SoundService;
 using Sources.Common.CodeBase.Services.StaticData;
 using Sources.Common.CodeBase.Services.WindowService;
-using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
-using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using UnityEngine;
 using Zenject;
 
@@ -24,8 +22,6 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
             BindStaticDataService();
             BindPauseService();
             BindInputService();
-            BindStackGenerator();
-            BindGridGenerator();
             BindGameProgress();
             BindPlayerLevel();
             BindSoundService();
@@ -88,18 +84,6 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
 
             Container.Bind<IGameProgressService>()
                 .To<GameProgressService>()
-                .AsSingle();
-        }
-
-        private void BindGridGenerator()
-        {
-            Container.BindInterfacesTo<GridGenerator>()
-                .AsSingle();
-        }
-
-        private void BindStackGenerator()
-        {
-            Container.BindInterfacesTo<StackGenerator>()
                 .AsSingle();
         }
 

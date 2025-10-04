@@ -22,9 +22,6 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
 
         private List<Hexagon> _hexagons = new();
 
-        private void Awake() =>
-            _stackSizeView.Initialize(this);
-
         public void ActivateSpawnAnimation() =>
             _movement.StartAnimation(transform.position);
 

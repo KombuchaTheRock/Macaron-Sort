@@ -6,7 +6,6 @@ using Sources.Common.CodeBase.Services.StaticData;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
-using Sources.Features.HexagonSort.Merge.Scripts;
 using UnityEngine;
 using Zenject;
 
@@ -20,7 +19,6 @@ namespace Sources.Common.CodeBase.Services.Factories.GameFactory
         private Transform _instanceRoot;
 
         public List<IProgressReader> ProgressReaders { get; private set; }
-        public MergeSystem MergeSystem { get; private set; }
         public List<GridCell> GridCells { get; private set; }
 
         public GameFactory(IInstantiator instantiator, IResourceLoader resourceLoader, IStaticDataService staticData) :
@@ -48,17 +46,6 @@ namespace Sources.Common.CodeBase.Services.Factories.GameFactory
             RegisterProgressReaders(hexagonGrid.gameObject);
 
             return hexagonGrid;
-        }
-
-        public MergeSystem CreateMergeSystem(HexagonGrid hexagonGrid)
-        {
-            MergeSystem mergeSystem =
-                Instantiate<MergeSystem>(AssetsPaths.MergeSystemPrefab, Vector3.zero, _instanceRoot);
-
-            mergeSystem.Initialize(hexagonGrid);
-            MergeSystem = mergeSystem;
-
-            return mergeSystem;
         }
 
         public GridCell CreateGridCell(Vector3 position, Vector2Int positionOnGrid, Transform parent, Color normalColor,

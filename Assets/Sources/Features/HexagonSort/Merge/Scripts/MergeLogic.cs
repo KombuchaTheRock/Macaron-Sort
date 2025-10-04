@@ -96,7 +96,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
             UpdateProcessedCells(from, to);
 
-            List<Hexagon> hexagonsForMerge = StackAnalyze.GetSimilarHexagons(from.Stack, context.TopHexagonType);
+            List<Hexagon> hexagonsForMerge = HexagonStackUtils.GetSimilarHexagons(from.Stack, context.TopHexagonType);
 
             HideStackSizes(from, to);
             yield return ExecuteMerge(to, hexagonsForMerge);
@@ -124,10 +124,13 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             yield return _coroutineRunner.StartCoroutine(_merge.MergeRoutine(to, hexagonsForMerge));
         }
 
-        private void TransferHexagons(MergeCandidate from, MergeCandidate to, List<Hexagon> hexagonsForMerge)
+        private void TransferHexagons(MergeCandidate from, MergeCandidate to, List<Hexagon> hexagons)
         {
-            StackAnalyze.RemoveHexagonsFromStack(from.Stack, hexagonsForMerge);
-            StackAnalyze.AddHexagonsToStack(to.Stack, hexagonsForMerge);
+            foreach (Hexagon hexagon in hexagons.Where(from.Stack.Contains))
+            {
+                from.Stack.Remove(hexagon);
+                to.Stack.Add(hexagon);
+            }
         }
 
         private void ShowStackSizeIfExists(MergeCandidate candidate)

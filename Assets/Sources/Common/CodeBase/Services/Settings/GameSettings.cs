@@ -80,7 +80,7 @@ namespace Sources.Common.CodeBase.Services.Settings
 
         public void ApplySettings()
         {
-           GameSettingsData = new(_soundEnabled, _numbersOnTilesEnabled);
+           GameSettingsData = new GameSettingsData(_soundEnabled, _numbersOnTilesEnabled);
 
             foreach (ISettingsReader settingsReader in _hexagonFactory.SettingsReaders) 
                 settingsReader?.LoadSettings(GameSettingsData);

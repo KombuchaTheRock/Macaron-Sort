@@ -3,6 +3,7 @@ using System.Linq;
 using Sources.Common.CodeBase.Infrastructure;
 using Sources.Common.CodeBase.Paths;
 using Sources.Common.CodeBase.Services.ResourceLoader;
+using Sources.Common.CodeBase.Services.SoundService;
 using Sources.Common.CodeBase.Services.WindowService;
 using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
@@ -18,6 +19,7 @@ namespace Sources.Common.CodeBase.Services.StaticData
         private readonly IResourceLoader _resourceLoader;
 
         public GameConfig GameConfig { get; private set; }
+        public SoundsStaticData SoundsData { get; private set; }
 
         public StaticDataService(IResourceLoader resourceLoader)
         {
@@ -27,6 +29,7 @@ namespace Sources.Common.CodeBase.Services.StaticData
 
         private void LoadStaticData()
         {
+            SoundsData = _resourceLoader.LoadAsset<SoundsStaticData>(StaticDataPaths.SoundsStaticData);
             GameConfig = _resourceLoader.LoadAsset<GameConfig>(StaticDataPaths.GameConfig);
 
             _stackStaticData = _resourceLoader.LoadAllAssets<HexagonStackConfig>(StaticDataPaths.StackConfig)

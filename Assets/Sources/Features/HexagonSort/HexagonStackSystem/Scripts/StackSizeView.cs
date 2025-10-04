@@ -11,9 +11,9 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
 {
     public class StackSizeView : MonoBehaviour, ISettingsReader
     {
+        [SerializeField] private HexagonStack _stack;
         [SerializeField] private TextMeshPro _text;
         
-        private HexagonStack _stack;
         private TweenerCore<Vector3, Vector3, VectorOptions> _scaleAnimation;
         private IGameSettings _gameSettings;
         private int _lastSize;
@@ -24,14 +24,11 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
             _gameSettings = gameSettings;
         }
 
+        private void Awake() => 
+            _stack.SizeChanged += OnSizeChanged;
+
         private void Start() => 
             LoadSettings(_gameSettings.GameSettingsData);
-
-        public void Initialize(HexagonStack stack)
-        {
-            _stack = stack;
-            _stack.SizeChanged += OnSizeChanged;
-        }
 
         private void OnDestroy() => 
             _stack.SizeChanged -= OnSizeChanged;

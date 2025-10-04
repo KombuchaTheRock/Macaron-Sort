@@ -5,7 +5,7 @@ using Sources.Features.HexagonSort.HexagonTile.Scripts;
 
 namespace Sources.Features.HexagonSort.Merge.Scripts
 {
-    public static class StackAnalyze
+    public static class HexagonStackUtils
     {
         public static List<Hexagon> GetSimilarHexagons(HexagonStack stack, HexagonTileType topTileType)
         {
@@ -40,18 +40,6 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             }
 
             return isMonoType;
-        }
-
-        public static void RemoveHexagonsFromStack(HexagonStack stack, List<Hexagon> hexagons)
-        {
-            foreach (Hexagon hexagon in hexagons.Where(stack.Contains)) 
-                stack.Remove(hexagon);
-        }
-        
-        public static void AddHexagonsToStack(HexagonStack stack, List<Hexagon> hexagons)
-        {
-            foreach (Hexagon hexagon in hexagons) 
-                stack.Add(hexagon);
         }
         
         public static int CalculateScore(List<Hexagon> hexagons) =>

@@ -8,26 +8,26 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
     public class ScoreCollector : MonoBehaviour
     {
         private IPlayerLevel _playerLevel;
-        private MergeSystem _mergeSystem;
+        private IStackMerger _stackMerger;
 
         [Inject]
-        private void Construct(IPlayerLevel playerLevel) => 
-            _playerLevel = playerLevel;
-
-        public void Initialize(MergeSystem mergeSystem)
+        private void Construct(IPlayerLevel playerLevel, IStackMerger stackMerger)
         {
-            _mergeSystem = mergeSystem;
-            SubscribeUpdates();
+            _playerLevel = playerLevel;
+            _stackMerger = stackMerger;
         }
+
+        private void Awake() => 
+            SubscribeUpdates();
 
         private void OnDestroy() =>
             CleanUp();
 
         private void SubscribeUpdates() =>
-            _mergeSystem.StackCompleted += OnStackCompleted;
+            _stackMerger.StackCompleted += OnStackCompleted;
 
         private void CleanUp() =>
-            _mergeSystem.StackCompleted -= OnStackCompleted;
+            _stackMerger.StackCompleted -= OnStackCompleted;
 
         private void OnStackCompleted(int score) => 
             _playerLevel.AddScore(score);

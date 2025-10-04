@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Sources.Common.CodeBase.Infrastructure.StateMachine;
 using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
 using Sources.Features.HexagonSort.Merge.Scripts;
@@ -13,18 +14,19 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         [SerializeField] private HexagonGrid _hexagonGrid;
         [SerializeField] private GameOverScreen _gameOverScreen;
         
-        private MergeSystem _mergeSystem;
+        private IStackMerger _stackMerger;
         private IGameStateMachine _stateMachine;
 
         [Inject]
-        private void Construct(IGameStateMachine stateMachine) => 
-            _stateMachine = stateMachine;
-
-        public void Initialize(MergeSystem mergeSystem)
+        private void Construct(IGameStateMachine stateMachine, IStackMerger stackMerger)
         {
-            _mergeSystem = mergeSystem;
+            _stateMachine = stateMachine;
+            _stackMerger = stackMerger;
+        }
+
+        private void Awake()
+        {
             _gameOverScreen.gameObject.SetActive(false);
-            
             SubscribeUpdates();
         }
 
@@ -33,13 +35,13 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 
         private void SubscribeUpdates()
         {
-            _mergeSystem.MergeFinished += OnMergeFinished;
+            _stackMerger.MergeFinished += OnMergeFinished;
             _gameOverScreen.ToControlPointButton.onClick.AddListener(ResetProgressToControlPoint);
         }
 
         private void CleanUp()
         {
-            _mergeSystem.MergeFinished -= OnMergeFinished;
+            _stackMerger.MergeFinished -= OnMergeFinished;
             _gameOverScreen.ToControlPointButton.onClick.RemoveListener(ResetProgressToControlPoint);
         }
 

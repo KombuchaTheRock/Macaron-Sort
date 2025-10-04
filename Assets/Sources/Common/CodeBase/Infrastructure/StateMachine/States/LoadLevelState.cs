@@ -19,10 +19,11 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private readonly IStaticDataService _staticData;
         private readonly IGameProgressService _progressService;
         private readonly IGameSettings _gameSettings;
+        private readonly IStackMerger _stackMerger;
         private readonly SceneLoader _sceneLoader;
 
         public LoadLevelState(IGameStateMachine stateMachine, SceneLoader sceneLoader, IGameFactory factory, IUIFactory uiFactory, IGridGenerator gridGenerator, IStaticDataService staticData,
-            IGameProgressService progressService, IGameSettings gameSettings)
+            IGameProgressService progressService, IGameSettings gameSettings, IStackMerger stackMerger)
         {
             _stateMachine = stateMachine;
             _sceneLoader = sceneLoader;
@@ -32,6 +33,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _staticData = staticData;
             _progressService = progressService;
             _gameSettings = gameSettings;
+            _stackMerger = stackMerger;
         }
 
         public void Enter(string levelName) => 
@@ -54,40 +56,12 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _uiFactory.CreateUIRoot();
             
             HexagonGrid hexagonGrid = GenerateGrid();
-            MergeSystem mergeSystem = _factory.CreateMergeSystem(hexagonGrid);
-
-            InitializeGridRotatorMediator(hexagonGrid, mergeSystem);
-            InitializeGridSaveLoader(hexagonGrid, mergeSystem);
-            InitializeGameFinisher(hexagonGrid, mergeSystem);
-            InitializeScoreCollector(hexagonGrid, mergeSystem);
-
+            
+            _stackMerger.Initialize(hexagonGrid);
             _progressService.ApplyProgress();
             _gameSettings.ApplySettings();
         }
-
-        private static void InitializeScoreCollector(HexagonGrid hexagonGrid, MergeSystem mergeSystem)
-        {
-            ScoreCollector scoreCollector = hexagonGrid.GetComponent<ScoreCollector>();
-            scoreCollector.Initialize(mergeSystem);
-        }
-
-        private static void InitializeGridRotatorMediator(HexagonGrid hexagonGrid, MergeSystem mergeSystem)
-        {
-            GridRotatorMediator gridRotatorMediator = hexagonGrid.GetComponent<GridRotatorMediator>();
-            gridRotatorMediator.Initialize(mergeSystem);
-        }
-
-        private void InitializeGameFinisher(HexagonGrid hexagonGrid, MergeSystem mergeSystem)
-        {
-            GameFinisher gameFinisher = hexagonGrid.GetComponent<GameFinisher>();
-            gameFinisher.Initialize(mergeSystem);
-        }
-
-        private void InitializeGridSaveLoader(HexagonGrid hexagonGrid, MergeSystem mergeSystem)
-        {
-            HexagonGridSaveLoader hexagonGridSaveLoader = hexagonGrid.GetComponent<HexagonGridSaveLoader>();
-            hexagonGridSaveLoader.Initialize(mergeSystem);
-        }
+        
 
         private HexagonGrid GenerateGrid()
         {

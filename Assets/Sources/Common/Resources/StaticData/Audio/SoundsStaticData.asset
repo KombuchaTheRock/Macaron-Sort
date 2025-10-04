@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c48526a392041089f5f4ff0ee2a4f62, type: 3}
+  m_Name: SoundsStaticData
+  m_EditorClassIdentifier: 
+  <StackStartDraggingSound>k__BackingField:
+    <AudioClip>k__BackingField: {fileID: 8300000, guid: 000e78176018ba94392651c83fac80c1, type: 3}
+    <CanBeReplaceableBySame>k__BackingField: 0
+  <StackPlacedSound>k__BackingField:
+    <AudioClip>k__BackingField: {fileID: 8300000, guid: 4bbdbff2bad303940b846f10f2ba4a28, type: 3}
+    <CanBeReplaceableBySame>k__BackingField: 0
+  <MergeSound>k__BackingField:
+    <AudioClip>k__BackingField: {fileID: 8300000, guid: 04689fe4457ae59459fcf170265777a4, type: 3}
+    <CanBeReplaceableBySame>k__BackingField: 0
+  <HexagonDeleteSound>k__BackingField:
+    <AudioClip>k__BackingField: {fileID: 8300000, guid: f113d6f77eb97ed4fbe7792f40431703, type: 3}
+    <CanBeReplaceableBySame>k__BackingField: 0

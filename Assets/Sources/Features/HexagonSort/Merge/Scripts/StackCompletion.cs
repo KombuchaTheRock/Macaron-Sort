@@ -33,11 +33,11 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             Tween deleteAnimation = null;
             HexagonTileType topHexagonTileType = mergeCandidate.Stack.TopHexagon.TileType;
             
-            List<Hexagon> similarHexagons = StackAnalyze.GetSimilarHexagons(mergeCandidate.Stack,
+            List<Hexagon> similarHexagons = HexagonStackUtils.GetSimilarHexagons(mergeCandidate.Stack,
                 topHexagonTileType);
 
             bool isMonoType =
-                StackAnalyze.CheckForMonoType(mergeCandidate.Stack, topHexagonTileType);
+                HexagonStackUtils.CheckForMonoType(mergeCandidate.Stack, topHexagonTileType);
             
             if (similarHexagons.Count < _hexagonsCountForComplete)
                 yield break;
@@ -55,7 +55,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
             yield return deleteAnimation.WaitForCompletion();
 
-            int score = StackAnalyze.CalculateScore(similarHexagons);
+            int score = HexagonStackUtils.CalculateScore(similarHexagons);
             StackCompletePopUp(mergeCandidate);
 
             DeleteHexagons(mergeCandidate.Stack, similarHexagons);

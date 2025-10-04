@@ -1,4 +1,5 @@
 ﻿using Sources.Common.CodeBase.Services.SoundService;
+using Sources.Common.CodeBase.Services.StaticData;
 using UnityEngine;
 using Zenject;
 
@@ -6,15 +7,17 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 {
     public class MergeSoundPlayer : MonoBehaviour
     {
-        [SerializeField] private MergeSystem _mergeSystem;
-        [Space(20), SerializeField] private Sound _mergeSound;
-        [SerializeField] private Sound _hexagonDeleteSound;
-
         private ISoundService _soundService;
+        private SoundsStaticData _sounds;
+        private IStackMerger _stackMerger;
 
         [Inject]
-        private void Construct(ISoundService soundService) => 
+        private void Construct(ISoundService soundService, IStaticDataService staticData, IStackMerger stackMerger)
+        {
+            _sounds = staticData.SoundsData;
             _soundService = soundService;
+            _stackMerger = stackMerger;
+        }
 
         private void Awake() => 
             SubscribeUpdates();
@@ -24,20 +27,20 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
         private void SubscribeUpdates()
         {
-            _mergeSystem.MergeAnimationCompleted += OnMergeAnimationCompleted;
-            _mergeSystem.HexagonDeleteAnimationCompleted += OnHexagonDeleteAnimationCompleted;
+            _stackMerger.MergeAnimationCompleted += OnMergeAnimationCompleted;
+            _stackMerger.HexagonDeleteAnimationCompleted += OnHexagonDeleteAnimationCompleted;
         }
 
         private void CleanUp()
         {
-            _mergeSystem.MergeAnimationCompleted -= OnMergeAnimationCompleted;
-            _mergeSystem.HexagonDeleteAnimationCompleted -= OnHexagonDeleteAnimationCompleted;
+            _stackMerger.MergeAnimationCompleted -= OnMergeAnimationCompleted;
+            _stackMerger.HexagonDeleteAnimationCompleted -= OnHexagonDeleteAnimationCompleted;
         }
 
         private void OnHexagonDeleteAnimationCompleted() => 
-            _soundService.Play(_hexagonDeleteSound);
+            _soundService.Play(_sounds.HexagonDeleteSound);
 
         private void OnMergeAnimationCompleted() => 
-            _soundService.Play(_mergeSound);
+            _soundService.Play(_sounds.MergeSound);
     }
 }
