@@ -5,7 +5,7 @@ namespace Sources.Common.CodeBase.Services.WindowService
 {
     public class WindowBase : MonoBehaviour
     {
-        [SerializeField] protected Button CloseButton;
+        [SerializeField] protected Button[] CloseButtons;
 
         private void Awake()
         {
@@ -14,7 +14,8 @@ namespace Sources.Common.CodeBase.Services.WindowService
 
         protected virtual void OnAwake()
         {
-            CloseButton.onClick.AddListener(OnCloseButtonClicked);
+            foreach (Button closeButton in CloseButtons) 
+                closeButton.onClick.AddListener(OnCloseButtonClicked);
         }
 
         protected virtual void OnCloseButtonClicked() =>

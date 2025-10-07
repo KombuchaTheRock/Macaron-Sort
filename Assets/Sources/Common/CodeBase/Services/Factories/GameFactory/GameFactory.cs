@@ -33,7 +33,7 @@ namespace Sources.Common.CodeBase.Services.Factories.GameFactory
         public void CreateInstanceRoot() =>
             _instanceRoot = CreateRootObject(InstanceRootName);
 
-        public void CreateHUD() =>
+        public GameObject CreateHUD() =>
             Instantiate(AssetsPaths.HUD, Vector3.zero, _instanceRoot);
 
         public HexagonGrid CreateHexagonGrid()

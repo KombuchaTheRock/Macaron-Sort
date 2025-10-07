@@ -16,6 +16,13 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
             BindStackMover();
             BindStacksSpawner();
             BindStackMerger();
+            BindBoosterActivator();
+        }
+
+        private void BindBoosterActivator()
+        {
+            Container.BindInterfacesTo<BoosterActivator>()
+                .AsSingle();
         }
 
         private void BindStackMerger()
@@ -54,7 +61,7 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
 
         private void BindStacksSpawner()
         {
-            Container.BindInterfacesTo<StacksPlacer>()
+            Container.BindInterfacesTo<StackSpawner>()
                 .AsSingle()
                 .WithArguments(this);
         }

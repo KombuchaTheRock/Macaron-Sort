@@ -7,6 +7,7 @@ using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
+using UnityEngine;
 
 namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 {
@@ -20,10 +21,11 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private readonly IGameProgressService _progressService;
         private readonly IGameSettings _gameSettings;
         private readonly IStackMerger _stackMerger;
+        private readonly IBoosterActivator _boosterActivator;
         private readonly SceneLoader _sceneLoader;
 
         public LoadLevelState(IGameStateMachine stateMachine, SceneLoader sceneLoader, IGameFactory factory, IUIFactory uiFactory, IGridGenerator gridGenerator, IStaticDataService staticData,
-            IGameProgressService progressService, IGameSettings gameSettings, IStackMerger stackMerger)
+            IGameProgressService progressService, IGameSettings gameSettings, IStackMerger stackMerger, IBoosterActivator boosterActivator)
         {
             _stateMachine = stateMachine;
             _sceneLoader = sceneLoader;
@@ -34,6 +36,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _progressService = progressService;
             _gameSettings = gameSettings;
             _stackMerger = stackMerger;
+            _boosterActivator = boosterActivator;
         }
 
         public void Enter(string levelName) => 
@@ -52,16 +55,18 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private void InitializeGameWorld()
         {
             _factory.CreateInstanceRoot();
-            _factory.CreateHUD();
             _uiFactory.CreateUIRoot();
+            
+            GameObject hud = _factory.CreateHUD();
+            BoosterPicker boosterPicker = hud.GetComponentInChildren<BoosterPicker>();
             
             HexagonGrid hexagonGrid = GenerateGrid();
             
+            _boosterActivator.Initialize(boosterPicker);
             _stackMerger.Initialize(hexagonGrid);
             _progressService.ApplyProgress();
             _gameSettings.ApplySettings();
         }
-        
 
         private HexagonGrid GenerateGrid()
         {

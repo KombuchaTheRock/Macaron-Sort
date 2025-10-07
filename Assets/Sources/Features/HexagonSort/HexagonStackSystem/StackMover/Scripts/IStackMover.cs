@@ -9,5 +9,8 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
         event Action DragFinished;
         event Action<GridCell> StackPlaced;
         bool IsDragging { get; }
+        GridCell InitialCell { get; }
+        void ActivateOnGridSelection();
+        void DeactivateOnGridSelection();
     }
 }

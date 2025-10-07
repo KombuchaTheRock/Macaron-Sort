@@ -13,6 +13,6 @@ namespace Sources.Common.CodeBase.Services.Factories.GameFactory
         List<GridCell> GridCells { get; }
         List<IProgressReader> ProgressReaders { get; }
         HexagonGrid CreateHexagonGrid();
-        void CreateHUD();
+        GameObject CreateHUD();
     }
 }

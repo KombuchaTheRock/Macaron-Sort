@@ -13,9 +13,9 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
             _groundLayerMask = groundLayerMask;
         }
 
-        public int GetLayerBy(Ray groundCheckRay, out RaycastHit hit)
+        public static int GetLayerBy(Ray groundCheckRay, out RaycastHit hit, float maxDistance, LayerMask groundLayerMask)
         {
-            Physics.Raycast(groundCheckRay, out RaycastHit raycastHit, _maxRaycastDistance, _groundLayerMask);
+            Physics.Raycast(groundCheckRay, out RaycastHit raycastHit, maxDistance, groundLayerMask);
             hit = raycastHit;
 
             return hit.transform.gameObject.layer;

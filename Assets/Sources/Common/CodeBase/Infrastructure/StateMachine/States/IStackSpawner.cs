@@ -1,7 +1,7 @@
 ﻿namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 {
-    public interface IStacksSpawner
+    public interface IStackSpawner
     {
-        void SpawnStacks();
+        void SpawnNewStacks();
     }
 }

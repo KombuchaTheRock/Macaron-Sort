@@ -1,5 +1,5 @@
-﻿using Sources.Common.CodeBase.Services;
-using Sources.Common.CodeBase.Services.StaticData;
+﻿using Sources.Common.CodeBase.Services.StaticData;
+using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using UnityEngine;
 using Zenject;
@@ -8,40 +8,78 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 {
     public class StackSelectionLogic : IStackSelectionLogic, IInitializable
     {
-        private readonly IStaticDataService _staticData;
-        private  float _maxRaycastDistance;
-        private  LayerMask _stackLayerMask;
+        private float _maxRaycastDistance;
+        private LayerMask _stackLayerMask;
+        private LayerMask _gridLayerMask;
         private StackMoverConfig _config;
 
-        public StackSelectionLogic(IStaticDataService staticData) => 
+        private readonly IStaticDataService _staticData;
+
+        public StackSelectionLogic(IStaticDataService staticData) =>
             _staticData = staticData;
 
         public void Initialize()
         {
             _config = _staticData.GameConfig.StackMoverConfig;
             _stackLayerMask = 1 << _config.StackLayer;
+            _gridLayerMask = 1 << _config.GridLayer;
         }
 
         public HexagonStack SelectedStack { get; private set; }
 
-        public bool TrySelectStack(Ray ray, out HexagonStack stack)
+        public bool TrySelectFreeStack(Ray ray, out HexagonStack stack)
         {
+            Debug.Log("TrySelectFreeStack");
+            
             if (Physics.Raycast(ray, out RaycastHit hit, _config.MaxRaycastDistance, _stackLayerMask))
             {
                 stack = hit.collider.GetComponentInParent<HexagonStack>();
-                
+
                 if (stack.CanMove)
                 {
                     SelectedStack = stack;
                     return true;
                 }
             }
-        
+
             stack = null;
             return false;
         }
 
-        public void ResetSelection() => 
+        public bool TrySelectStackOnGrid(Ray ray, out HexagonStack stack, out GridCell gridCell)
+        {
+            Debug.Log("TrySelectStackOnGrid");
+            
+            if (Physics.Raycast(ray, out RaycastHit hit, _config.MaxRaycastDistance, _stackLayerMask))
+            {
+                stack = hit.collider.GetComponentInParent<HexagonStack>();
+
+                Debug.Log(stack.CanMove);
+                
+                if (stack.CanMove == false)
+                {
+                    SelectedStack = stack;
+                    gridCell = GetCellUnderStack(stack);
+
+                    return true;
+                }
+            }
+
+            stack = null;
+            gridCell = null;
+
+            return false;
+        }
+
+        public void ResetSelection() =>
             SelectedStack = null;
+
+        private GridCell GetCellUnderStack(HexagonStack stack)
+        {
+            Ray checkRay = new(stack.transform.position, Vector3.down);
+            Physics.Raycast(checkRay, out RaycastHit hit, _config.MaxRaycastDistance, _gridLayerMask);
+
+            return hit.collider.GetComponent<GridCell>();
+        }
     }
 }

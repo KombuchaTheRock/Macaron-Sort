@@ -10,5 +10,6 @@ namespace Sources.Common.CodeBase.Paths
         public const string SoundSource = "Audio/AudioSource";
         public const string MasterMixer = "Audio/Master";
         public const string UIRoot = "UI/Prefab/UIRoot";
+        public const string BoosterActivator = "";
     }
 }

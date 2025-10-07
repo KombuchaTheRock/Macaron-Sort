@@ -4,19 +4,19 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 {
     public class GameLoopState : IState
     {
-        private readonly IStacksSpawner _stacksSpawner;
+        private readonly IStackSpawner _stackSpawner;
         private readonly IStackMerger _stackMerger;
 
-        public GameLoopState(IStacksSpawner stacksSpawner, IStackMerger stackMerger)
+        public GameLoopState(IStackSpawner stackSpawner, IStackMerger stackMerger)
         {
-            _stacksSpawner = stacksSpawner;
+            _stackSpawner = stackSpawner;
             _stackMerger = stackMerger;
         }
 
         public void Enter()
         {
             _stackMerger.UpdateOccupiedCells();
-            _stacksSpawner.SpawnStacks();
+            _stackSpawner.SpawnNewStacks();
         }
 
         public void Exit()

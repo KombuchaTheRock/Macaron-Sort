@@ -8,10 +8,11 @@ using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 {
-    public class StacksPlacer : IDisposable, IStacksSpawner
+    public class StackSpawner : IDisposable, IStackSpawner
     {
         private List<HexagonStack> _generatedStacks = new();
         private Transform _stacksRoot;
@@ -25,7 +26,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private readonly Vector3[] _spawnPositions;
         private readonly float _delayBetweenStacks;
 
-        public StacksPlacer(IStackMover stackMover, IStackGenerator stackGenerator, IStaticDataService staticData,
+        public StackSpawner(IStackMover stackMover, IStackGenerator stackGenerator, IStaticDataService staticData,
             IHexagonFactory hexagonFactory, ICoroutineRunner coroutineRunner)
         {
             _coroutineRunner = coroutineRunner;
@@ -42,6 +43,31 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         public void Dispose() => 
             CleanUp();
 
+        public void SpawnNewStacks()
+        {
+            _stacksRoot ??= _hexagonFactory.CreateStacksRoot();
+
+            if (_stackGenerateRoutine != null)
+                return;
+            //_coroutineRunner.StopCoroutine(_stackGenerateRoutine);
+
+            if (_generatedStacks.Count > 0) 
+                DeleteGeneratedStacks();
+            
+            _stackGenerateRoutine = _coroutineRunner.StartCoroutine(SpawnStacksRoutine(_spawnPositions,
+                _stackConfig,
+                _delayBetweenStacks,
+                OnStacksGenerated));
+        }
+
+        private void DeleteGeneratedStacks()
+        {
+            foreach (HexagonStack stack in _generatedStacks) 
+                Object.Destroy(stack.gameObject);
+            
+            _generatedStacks.Clear();
+        }
+        
         private void SubscribeUpdates() =>
             _stackMover.StackPlaced += OnStackPlaced;
 
@@ -53,20 +79,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _generatedStacks.Remove(cell.Stack);
 
             if (_generatedStacks.Count <= 0)
-                SpawnStacks();
-        }
-
-        public void SpawnStacks()
-        {
-            _stacksRoot ??= _hexagonFactory.CreateStacksRoot();
-
-            if (_stackGenerateRoutine != null)
-                _coroutineRunner.StopCoroutine(_stackGenerateRoutine);
-
-            _stackGenerateRoutine = _coroutineRunner.StartCoroutine(SpawnStacksRoutine(_spawnPositions,
-                _stackConfig,
-                _delayBetweenStacks,
-                OnStacksGenerated));
+                SpawnNewStacks();
         }
 
         private IEnumerator SpawnStacksRoutine(Vector3[] spawnPositions, HexagonStackConfig stackConfig,
@@ -85,7 +98,10 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             onStacksGenerated?.Invoke(generatedStacks);
         }
 
-        private void OnStacksGenerated(List<HexagonStack> stacks) =>
+        private void OnStacksGenerated(List<HexagonStack> stacks)
+        {
+            _stackGenerateRoutine = null;
             _generatedStacks = stacks;
+        }
     }
 }

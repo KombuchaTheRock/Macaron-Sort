@@ -22,9 +22,10 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
         {
             if (CanMove == false)
                 return;
-            
+
             Vector3 pointOutsideScreen = Camera.main.ViewportToWorldPoint(new Vector3(1.1f, 0.5f, 0));
             Vector3 startPosition = new(pointOutsideScreen.x, transform.position.y, pointOutsideScreen.z);
+
             
             transform.DOMove(initialPosition, 0.5f)
                 .From(startPosition)
@@ -32,7 +33,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
                 .OnComplete(() => FinishMoveAnimation())
                 .SetLink(gameObject);
         }
-        
+
         public void FollowingTarget(Vector3 target, float speed)
         {
             if (CanMove == false)
@@ -49,19 +50,22 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 
             float transitionDuration = (transform.position - targetPosition).magnitude / speed;
             _transitionToInitialAnim?.Complete();
-
+            
             DisableMovement();
-            _transitionToInitialAnim = TransitionToInitialAnim(targetPosition, onComplete, transitionDuration);
+            
+            _transitionToInitialAnim = MoveAnimation(transform.position, targetPosition, transitionDuration, Ease.OutQuad,
+                () => FinishMoveAnimation(onComplete));
+            _transitionToInitialAnim.Play();
         }
 
-        private TweenerCore<Vector3, Vector3, VectorOptions> TransitionToInitialAnim(Vector3 targetPosition,
-            Action onComplete, float transitionDuration)
+        private TweenerCore<Vector3, Vector3, VectorOptions> MoveAnimation(Vector3 from, Vector3 to,
+            float transitionDuration, Ease ease = Ease.Linear, Action onComplete = null)
         {
             return transform
-                .DOMove(targetPosition, transitionDuration)
-                .SetEase(Ease.OutQuad)
-                .Play()
-                .OnComplete(() => FinishMoveAnimation(onComplete))
+                .DOMove(to, transitionDuration)
+                .From(from)
+                .SetEase(ease)
+                .OnComplete(() => onComplete?.Invoke())
                 .SetLink(gameObject);
         }
 

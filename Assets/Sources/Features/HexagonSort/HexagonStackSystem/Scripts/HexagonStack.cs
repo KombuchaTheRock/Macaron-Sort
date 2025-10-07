@@ -37,6 +37,9 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
         public void SetOffsetBetweenTiles(float offset) =>
             OffsetBetweenTiles = offset;
 
+        public void EnableMovement() =>
+        _movement.EnableMovement();
+        
         public void DisableMovement() =>
             _movement.DisableMovement();
 
