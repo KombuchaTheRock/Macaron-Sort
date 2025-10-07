@@ -12,5 +12,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
         GridCell InitialCell { get; }
         void ActivateOnGridSelection();
         void DeactivateOnGridSelection();
+        void Activate();
+        void Deactivate();
     }
 }

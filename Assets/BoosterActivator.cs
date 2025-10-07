@@ -2,6 +2,7 @@ using System;
 using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
+using Sources.Features.HexagonSort.StackSelector;
 using UnityEngine;
 
 public class BoosterActivator : IDisposable, IBoosterActivator
@@ -9,14 +10,17 @@ public class BoosterActivator : IDisposable, IBoosterActivator
     private BoosterPicker _boosterPicker;
     private IStackMover _stackMover;
     private readonly IStackSpawner _stackSpawner;
+    private readonly IStackCompleter _stackCompleter;
 
     private bool _arrowBoosterActive;
     private bool _reverseBoosterActive;
+    private bool _rocketBoosterActive;
 
-    public BoosterActivator(IStackMover stackMover, IStackSpawner stackSpawner)
+    public BoosterActivator(IStackMover stackMover, IStackSpawner stackSpawner, IStackCompleter stackCompleter)
     {
         _stackMover = stackMover;
         _stackSpawner = stackSpawner;
+        _stackCompleter = stackCompleter;
     }
 
     public void Initialize(BoosterPicker boosterPicker)
@@ -65,7 +69,10 @@ public class BoosterActivator : IDisposable, IBoosterActivator
 
     private void ActivateRocketBooster()
     {
+        _rocketBoosterActive = true;
         
+        _stackCompleter.Activate();
+        _stackMover.Deactivate();
     }
 
     private void ActivateReverseBooster()
@@ -81,8 +88,20 @@ public class BoosterActivator : IDisposable, IBoosterActivator
 
     private void SubscribeUpdates()
     {
+        _stackCompleter.StackCompleted += OnStackCompleted;
         _stackMover.StackPlaced += OnStackPlaced;
         _boosterPicker.BoosterPicked += OnBoosterPicked;
+    }
+
+    private void OnStackCompleted(int score)
+    {
+        if (_rocketBoosterActive)
+        {
+            _stackMover.Activate();
+            _stackCompleter.Deactivate();
+            
+            _rocketBoosterActive = false;
+        }
     }
 
     private void CleanUp()

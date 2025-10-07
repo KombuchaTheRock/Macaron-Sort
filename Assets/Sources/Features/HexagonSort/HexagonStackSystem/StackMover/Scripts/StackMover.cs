@@ -21,13 +21,14 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
         private IStackSelectionLogic _selectionLogic;
         private IStackPlacementLogic _placementLogic;
 
-        public GridCell InitialCell { get; private set; } 
+        public GridCell InitialCell { get; private set; }
         public bool IsDragging { get; private set; }
 
         private bool CanDrag => _input.IsCursorHold && _currentStack != null;
         private Ray CheckingRay => RaycastUtils.GetClickedRay(_input.CursorPosition);
 
         private bool _onGridSelectionEnabled;
+        private bool _isActive;
 
         public StackMover(IInputService inputService,
             IStackDraggingLogic draggingLogic,
@@ -39,9 +40,16 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
             _selectionLogic = selectionLogic;
             _placementLogic = placementLogic;
             _onGridSelectionEnabled = false;
+            _isActive = true;
 
             SubscribeUpdates();
         }
+
+        public void Activate() =>
+            _isActive = true;
+
+        public void Deactivate() =>
+            _isActive = false;
 
         public void ActivateOnGridSelection() =>
             _onGridSelectionEnabled = true;
@@ -54,12 +62,18 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 
         public void Tick()
         {
+            if (_isActive == false)
+                return;
+
             if (CanDrag)
                 _draggingLogic.Drag(_currentStack, CheckingRay);
         }
 
         private void OnCursorUp()
         {
+            if (_isActive == false)
+                return;
+            
             if (_currentStack == null)
                 return;
 
@@ -81,7 +95,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
                 else
                     _placementLogic.ReturnToInitialPosition(_currentStack, _currentStack.InitialPosition);
             }
-            
+
             _currentStack = null;
 
             _draggingLogic.ResetCell();
@@ -93,15 +107,18 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 
         private void OnCursorDown()
         {
-            if (TrySelectStack(out HexagonStack stack, out GridCell cell) == false)
+            if (_isActive == false)
                 return;
             
+            if (TrySelectStack(out HexagonStack stack, out GridCell cell) == false)
+                return;
+
             stack.SetInitialPosition(stack.transform.position);
             _currentStack = stack;
-    
+
             if (_onGridSelectionEnabled)
                 InitialCell = cell;
-        
+
             IsDragging = true;
             DragStarted?.Invoke();
         }
@@ -109,12 +126,12 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
         private bool TrySelectStack(out HexagonStack stack, out GridCell cell)
         {
             cell = null;
-            
-            return _onGridSelectionEnabled 
+
+            return _onGridSelectionEnabled
                 ? _selectionLogic.TrySelectStackOnGrid(CheckingRay, out stack, out cell)
                 : _selectionLogic.TrySelectFreeStack(CheckingRay, out stack);
         }
-        
+
         private void SubscribeUpdates()
         {
             _input.CursorDown += OnCursorDown;

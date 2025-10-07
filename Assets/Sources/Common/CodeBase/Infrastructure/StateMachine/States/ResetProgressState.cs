@@ -32,6 +32,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         public void Enter(bool newProgress)
         {
             _stackSpawner.StopSpawn();
+            _stackMover.Activate();
             
             ClearStacks();
             LoadOrInitializeNewProgress(newProgress);

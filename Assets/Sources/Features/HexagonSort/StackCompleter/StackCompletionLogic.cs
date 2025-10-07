@@ -22,15 +22,7 @@ public class StackCompletionLogic : IStackCompletionLogic
 
     private readonly HexagonDeleteAnimation _completeAnimation = new();
 
-    public StackCompletionLogic(ICoroutineRunner coroutineRunner)
-    {
-        _coroutineRunner = coroutineRunner;
-    }
-    
-    public void CompleteStack(HexagonStack stack, GridCell gridCell) => 
-        _coroutineRunner.StartCoroutine(CompleteStackRoutine(stack, gridCell));
-
-    private IEnumerator CompleteStackRoutine(HexagonStack stack, GridCell gridCell)
+    public IEnumerator CompleteStackRoutine(HexagonStack stack, GridCell gridCell)
     {
         Tween deleteAnimation = DeleteAnimation(stack.Hexagons.ToList());
         yield return deleteAnimation.WaitForCompletion();
@@ -45,7 +37,7 @@ public class StackCompletionLogic : IStackCompletionLogic
 
     private void DeleteStack(HexagonStack stack, GridCell gridCell)
     {
-        foreach (Hexagon hexagon in stack.Hexagons)
+        foreach (Hexagon hexagon in stack.Hexagons.ToList())
         {
             stack.Remove(hexagon);
             Object.Destroy(hexagon.gameObject);
@@ -54,12 +46,14 @@ public class StackCompletionLogic : IStackCompletionLogic
         gridCell.SetStack(null);
     }
 
-    private Tween DeleteAnimation(List<Hexagon> similarHexagons)
+    private Tween DeleteAnimation(List<Hexagon> hexagons)
     {
         float delay = 0;
         Tween deleteAnimation = null;
 
-        foreach (Hexagon hexagon in similarHexagons)
+        hexagons.Reverse();
+        
+        foreach (Hexagon hexagon in hexagons)
         {
             deleteAnimation =
                 _completeAnimation.DeleteAnimation(hexagon, delay, 0.2f, DeleteAnimationCompleted);
