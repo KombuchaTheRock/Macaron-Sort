@@ -4,6 +4,7 @@ using Sources.Common.CodeBase.Services.Factories.HexagonFactory;
 using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using UnityEngine;
 
 namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
@@ -14,21 +15,28 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private readonly IHexagonFactory _hexagonFactory;
         private readonly IGameFactory _gameFactory;
         private readonly IGameProgressService _progressService;
+        private readonly IStackMover _stackMover;
+        private readonly IStackSpawner _stackSpawner;
 
         public ResetProgressState(IGameStateMachine stateMachine, IHexagonFactory hexagonFactory,
-            IGameFactory gameFactory, IGameProgressService progressService)
+            IGameFactory gameFactory, IGameProgressService progressService, IStackMover stackMover, IStackSpawner stackSpawner)
         {
             _stateMachine = stateMachine;
             _hexagonFactory = hexagonFactory;
             _gameFactory = gameFactory;
             _progressService = progressService;
+            _stackMover = stackMover;
+            _stackSpawner = stackSpawner;
         }
 
         public void Enter(bool newProgress)
         {
+            _stackSpawner.StopSpawn();
+            
             ClearStacks();
             LoadOrInitializeNewProgress(newProgress);
 
+            _stackMover.DeactivateOnGridSelection();
             _stateMachine.Enter<GameLoopState>();
         }
 

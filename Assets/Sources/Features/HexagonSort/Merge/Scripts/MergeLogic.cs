@@ -25,12 +25,12 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
         public MergeLogic(ICoroutineRunner coroutineRunner, HexagonGrid hexagonGrid,
             HashSet<GridCell> updatedCells)
         {
-            MergeAnimation mergeAnimation = new();
+            GameplayAnimations gameplayAnimations = new();
 
             _coroutineRunner = coroutineRunner;
             _updatedCells = updatedCells;
 
-            _merge = new StackMerge(mergeAnimation);
+            _merge = new StackMerge(gameplayAnimations);
             _stackCompletion = new StackCompletion(10);
             _neighbourFinding = new NeighbourStacksFinding(hexagonGrid);
             _mergePriority = new MergePriority();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using UnityEngine;
@@ -25,6 +26,9 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
         public void ActivateSpawnAnimation() =>
             _movement.StartAnimation(transform.position);
 
+        public Tween ActivateRemoveAnimation(Action onCompleted = null, Ease ease = Ease.Unset) =>
+        _movement.RemoveAnimation(onCompleted, ease);
+        
         public void ShowDisplayedSize() =>
             _stackSizeView.Show();
 

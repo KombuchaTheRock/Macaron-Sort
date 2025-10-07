@@ -3,5 +3,6 @@
     public interface IStackSpawner
     {
         void SpawnNewStacks();
+        void StopSpawn();
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
+using Sources.Common.CodeBase.Infrastructure.Extensions;
 using Sources.Common.CodeBase.Services.Factories.HexagonFactory;
 using Sources.Common.CodeBase.Services.StaticData;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
@@ -36,11 +38,22 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _stackConfig = staticData.ForHexagonStack(HexagonStackTemplate.Default);
             _spawnPositions = staticData.GameConfig.LevelConfig.StackSpawnPoints.ToArray();
             _delayBetweenStacks = staticData.GameConfig.StacksSpawnerConfig.DelayBetweenStacks;
-            
+
             SubscribeUpdates();
         }
 
-        public void Dispose() => 
+        public void StopSpawn()
+        {
+            if (_stackGenerateRoutine != null)
+            {
+                _coroutineRunner.StopCoroutine(_stackGenerateRoutine);
+                _stackGenerateRoutine = null;
+            }
+            
+            _generatedStacks.Clear();
+        }
+
+        public void Dispose() =>
             CleanUp();
 
         public void SpawnNewStacks()
@@ -49,29 +62,31 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 
             if (_stackGenerateRoutine != null)
                 return;
-            //_coroutineRunner.StopCoroutine(_stackGenerateRoutine);
 
-            if (_generatedStacks.Count > 0) 
-                DeleteGeneratedStacks();
-            
             _stackGenerateRoutine = _coroutineRunner.StartCoroutine(SpawnStacksRoutine(_spawnPositions,
                 _stackConfig,
                 _delayBetweenStacks,
                 OnStacksGenerated));
         }
 
-        private void DeleteGeneratedStacks()
+        private IEnumerator DeleteGeneratedStacks(float delayBetweenStacks)
         {
-            foreach (HexagonStack stack in _generatedStacks) 
-                Object.Destroy(stack.gameObject);
-            
+            Tween removeAnimation = null;
+            foreach (HexagonStack stack in _generatedStacks)
+            {
+                removeAnimation = stack.ActivateRemoveAnimation(() => Object.Destroy(stack.gameObject), Ease.InQuart);
+                yield return new WaitForSeconds(delayBetweenStacks);
+            }
+
+            yield return new DOTweenCYInstruction.WaitForCompletion(removeAnimation);
+
             _generatedStacks.Clear();
         }
-        
+
         private void SubscribeUpdates() =>
             _stackMover.StackPlaced += OnStackPlaced;
 
-        private void CleanUp() => 
+        private void CleanUp() =>
             _stackMover.StackPlaced -= OnStackPlaced;
 
         private void OnStackPlaced(GridCell cell)
@@ -85,6 +100,9 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private IEnumerator SpawnStacksRoutine(Vector3[] spawnPositions, HexagonStackConfig stackConfig,
             float delayBetweenStacks, Action<List<HexagonStack>> onStacksGenerated = null)
         {
+            if (_generatedStacks.Count > 0)
+                yield return _coroutineRunner.StartCoroutine(DeleteGeneratedStacks(delayBetweenStacks));
+
             List<HexagonStack> generatedStacks = new();
 
             foreach (Vector3 position in spawnPositions)

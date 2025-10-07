@@ -16,43 +16,21 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
         public event Action<int> StackCompleted;
         public event Action DeleteAnimationCompleted;
 
-        private readonly MergeAnimation _mergeAnimation;
+        private readonly GameplayAnimations _gameplayAnimations;
         private int _hexagonsCountForComplete;
 
         public StackCompletion(int hexagonsCountForComplete)
         {
             _hexagonsCountForComplete = hexagonsCountForComplete;
-            _mergeAnimation = new MergeAnimation();
+            _gameplayAnimations = new GameplayAnimations();
         }
 
         public IEnumerator CheckStackForCompleteRoutine(MergeCandidate mergeCandidate)
         {
-            if (mergeCandidate.Stack.Hexagons.Count < _hexagonsCountForComplete)
+            if (CanComplete(mergeCandidate.Stack, out List<Hexagon> similarHexagons) == false)
                 yield break;
 
-            Tween deleteAnimation = null;
-            HexagonTileType topHexagonTileType = mergeCandidate.Stack.TopHexagon.TileType;
-            
-            List<Hexagon> similarHexagons = HexagonStackUtils.GetSimilarHexagons(mergeCandidate.Stack,
-                topHexagonTileType);
-
-            bool isMonoType =
-                HexagonStackUtils.CheckForMonoType(mergeCandidate.Stack, topHexagonTileType);
-            
-            if (similarHexagons.Count < _hexagonsCountForComplete)
-                yield break;
-
-            float delay = 0;
-
-            foreach (Hexagon hexagon in similarHexagons)
-            {
-                deleteAnimation =
-                    _mergeAnimation.HexagonDeleteAnimation(hexagon, delay, 0.2f, DeleteAnimationCompleted);
-
-                deleteAnimation.Play();
-                delay += 0.03f;
-            }
-
+            Tween deleteAnimation = DeleteAnimation(similarHexagons);
             yield return deleteAnimation.WaitForCompletion();
 
             int score = HexagonStackUtils.CalculateScore(similarHexagons);
@@ -60,10 +38,42 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
             DeleteHexagons(mergeCandidate.Stack, similarHexagons);
             
-            if (isMonoType)
+            if (mergeCandidate.Stack.Hexagons.Count <= 0)
                 DeleteStack(mergeCandidate);
 
             StackCompleted?.Invoke(score);
+        }
+
+        private bool CanComplete(HexagonStack stack, out List<Hexagon> similarHexagons)
+        {
+            similarHexagons = null;
+            
+            if (stack.Hexagons.Count < _hexagonsCountForComplete)
+                return false;
+
+            HexagonTileType topHexagonTileType = stack.TopHexagon.TileType;
+            
+            similarHexagons = HexagonStackUtils.GetSimilarHexagons(stack,
+                topHexagonTileType);
+            
+            return similarHexagons.Count >= _hexagonsCountForComplete;
+        }
+        
+        private Tween DeleteAnimation(List<Hexagon> similarHexagons)
+        {
+            float delay = 0;
+            Tween deleteAnimation = null;
+            
+            foreach (Hexagon hexagon in similarHexagons)
+            {
+                deleteAnimation =
+                    _gameplayAnimations.HexagonDeleteAnimation(hexagon, delay, 0.2f, DeleteAnimationCompleted);
+
+                deleteAnimation.Play();
+                delay += 0.03f;
+            }
+
+            return deleteAnimation;
         }
 
         private void DeleteStack(MergeCandidate mergeCandidate)

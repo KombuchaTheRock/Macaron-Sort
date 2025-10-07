@@ -10,10 +10,10 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
     {
         public event Action MergeAnimationCompleted;
         
-        private readonly MergeAnimation _mergeAnimation;
+        private readonly GameplayAnimations _gameplayAnimations;
 
-        public StackMerge(MergeAnimation mergeAnimation) =>
-            _mergeAnimation = mergeAnimation;
+        public StackMerge(GameplayAnimations gameplayAnimations) =>
+            _gameplayAnimations = gameplayAnimations;
 
         public IEnumerator MergeRoutine(MergeCandidate mergeCandidate, List<Hexagon> hexagonForMerge)
         {
@@ -32,7 +32,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
                 float duration = 0.4f;
                 
-                Tween mergeTween = _mergeAnimation.HexagonMergeAnimation(mergeCandidate.Stack, 
+                Tween mergeTween = _gameplayAnimations.HexagonMergeAnimation(mergeCandidate.Stack, 
                     targetY, 
                     hexagon,
                     duration, 

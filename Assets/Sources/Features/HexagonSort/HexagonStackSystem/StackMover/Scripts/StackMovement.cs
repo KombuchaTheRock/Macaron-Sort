@@ -2,6 +2,7 @@
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
+using Sources.Common.CodeBase.Infrastructure.Extensions;
 using UnityEngine;
 
 namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
@@ -25,15 +26,32 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 
             Vector3 pointOutsideScreen = Camera.main.ViewportToWorldPoint(new Vector3(1.1f, 0.5f, 0));
             Vector3 startPosition = new(pointOutsideScreen.x, transform.position.y, pointOutsideScreen.z);
-
             
-            transform.DOMove(initialPosition, 0.5f)
-                .From(startPosition)
-                .Play()
-                .OnComplete(() => FinishMoveAnimation())
-                .SetLink(gameObject);
+            TweenerCore<Vector3, Vector3, VectorOptions> startAnimation = MoveAnimation(startPosition,
+                initialPosition,
+                0.5f,
+                Ease.Unset,
+                () => FinishMoveAnimation());
+
+            startAnimation.Play();
         }
 
+        public Tween RemoveAnimation(Action onCompleted = null, Ease ease = Ease.Unset)
+        {
+            Vector3 pointOutsideScreen = Camera.main.ViewportToWorldPoint(new Vector3(-0.1f, 0.6f, 0));
+            Vector3 endPosition = new(pointOutsideScreen.x, transform.position.y, pointOutsideScreen.z);
+
+            TweenerCore<Vector3, Vector3, VectorOptions> removeAnimation = MoveAnimation(transform.position,
+                endPosition,
+                0.5f,
+                ease,
+                () => onCompleted?.Invoke());
+            
+            removeAnimation.Play();
+            
+            return removeAnimation;
+        }
+        
         public void FollowingTarget(Vector3 target, float speed)
         {
             if (CanMove == false)
@@ -59,10 +77,10 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
         }
 
         private TweenerCore<Vector3, Vector3, VectorOptions> MoveAnimation(Vector3 from, Vector3 to,
-            float transitionDuration, Ease ease = Ease.Linear, Action onComplete = null)
+            float duration, Ease ease = Ease.Linear, Action onComplete = null)
         {
             return transform
-                .DOMove(to, transitionDuration)
+                .DOMove(to, duration)
                 .From(from)
                 .SetEase(ease)
                 .OnComplete(() => onComplete?.Invoke())

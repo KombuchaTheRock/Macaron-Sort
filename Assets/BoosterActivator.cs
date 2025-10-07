@@ -50,6 +50,7 @@ public class BoosterActivator : IDisposable, IBoosterActivator
         switch (boosterType)
         {
             case BoosterType.RocketBooster:
+                ActivateRocketBooster();
                 break;
             case BoosterType.ArrowBooster:
                 ActivateArrowBooster();
@@ -60,6 +61,11 @@ public class BoosterActivator : IDisposable, IBoosterActivator
             default:
                 throw new ArgumentOutOfRangeException(nameof(boosterType), boosterType, null);
         }
+    }
+
+    private void ActivateRocketBooster()
+    {
+        
     }
 
     private void ActivateReverseBooster()

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Sources.Features.HexagonSort.Merge.Scripts
 {
-    public class MergeAnimation
+    public class GameplayAnimations
     {
         public Tween HexagonMergeAnimation(HexagonStack stack, float targetY,
             Hexagon hexagon, float duration, float delay, Action onCompleted = null)
