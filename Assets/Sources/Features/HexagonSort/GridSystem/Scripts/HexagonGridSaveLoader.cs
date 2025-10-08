@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Common.CodeBase.Services.PlayerProgress.Data;
 using Sources.Common.CodeBase.Services.StaticData;
@@ -6,6 +7,7 @@ using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
+using Sources.Features.HexagonSort.StackSelector;
 using UnityEngine;
 using Zenject;
 
@@ -13,6 +15,8 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 {
     public class HexagonGridSaveLoader : MonoBehaviour, IProgressReader
     {
+        public event Action<int> GridDataUpdated;
+        
         [SerializeField] private HexagonGrid _hexagonGrid;
 
         private IGameProgressService _gameProgress;
@@ -21,11 +25,13 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         private IStackGenerator _stackGenerator;
         private IStaticDataService _staticData;
         private IPlayerLevel _playerLevel;
+        private IStackCompleter _stackCompleter;
 
         [Inject]
         private void Construct(IGameProgressService gameProgress, IStackGenerator stackGenerator,
-            IStaticDataService staticData, IPlayerLevel playerLevel, IStackMerger stackMerger)
+            IStaticDataService staticData, IPlayerLevel playerLevel, IStackMerger stackMerger, IStackCompleter stackCompleter)
         {
+            _stackCompleter = stackCompleter;
             _playerLevel = playerLevel;
             _staticData = staticData;
             _stackGenerator = stackGenerator;
@@ -76,10 +82,15 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
                 gridCell.StackRemoved += UpdateGridPersistentData;
 
             _playerLevel.ControlPointAchieved += SaveControlPointData;
-            
+
             _stackMerger.MergeStarted += UpdateGridPersistentData;
             _stackMerger.MergeFinished += UpdateGridPersistentData;
+
+            _stackCompleter.StackCompleted += OnStackCompleted;
         }
+
+        private void OnStackCompleted(int score) => 
+            UpdateGridPersistentData();
 
         private void CleanUp()
         {
@@ -88,12 +99,14 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 
             _stackMerger.MergeStarted -= UpdateGridPersistentData;
             _stackMerger.MergeFinished -= UpdateGridPersistentData;
+            
+            _stackCompleter.StackCompleted -= OnStackCompleted;
         }
 
         private void SaveControlPointData()
         {
             StacksData stacksControlPointData = _gameProgress.GameProgress.ControlPointProgressData.WorldData.StacksData;
-            stacksControlPointData.UpdateStacksOnGridData(_cells);
+            stacksControlPointData.UpdateStacksOnGridData(_hexagonGrid.Cells);
 
             _gameProgress.SaveControlPointProgressAsync();
         }
@@ -101,7 +114,9 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         private void UpdateGridPersistentData()
         {
             StacksData stacksPersistentData = _gameProgress.GameProgress.PersistentProgressData.WorldData.StacksData;
-            stacksPersistentData.UpdateStacksOnGridData(_cells);
+            stacksPersistentData.UpdateStacksOnGridData(_hexagonGrid.Cells);
+            
+            GridDataUpdated?.Invoke(stacksPersistentData.StacksOnGrid.Count);
         }
     }
 }

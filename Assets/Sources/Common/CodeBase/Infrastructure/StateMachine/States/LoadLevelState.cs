@@ -4,7 +4,6 @@ using Sources.Common.CodeBase.Services.Settings;
 using Sources.Common.CodeBase.Services.StaticData;
 using Sources.Common.CodeBase.Services.WindowService;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
-using Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
 using UnityEngine;
@@ -57,14 +56,17 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _factory.CreateInstanceRoot();
             _uiFactory.CreateUIRoot();
             
+            
             GameObject hud = _factory.CreateHUD();
             BoosterPicker boosterPicker = hud.GetComponentInChildren<BoosterPicker>();
-            
             HexagonGrid hexagonGrid = GenerateGrid();
             
-            _boosterActivator.Initialize(boosterPicker);
-            _stackMerger.Initialize(hexagonGrid);
             _progressService.ApplyProgress();
+            
+            boosterPicker.Initialize(hexagonGrid); 
+            _boosterActivator.Initialize(boosterPicker, hexagonGrid);
+            _stackMerger.Initialize(hexagonGrid);
+            
             _gameSettings.ApplySettings();
         }
 

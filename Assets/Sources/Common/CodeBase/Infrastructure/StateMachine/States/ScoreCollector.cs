@@ -1,5 +1,6 @@
 ﻿using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Features.HexagonSort.Merge.Scripts;
+using Sources.Features.HexagonSort.StackSelector;
 using UnityEngine;
 using Zenject;
 
@@ -9,10 +10,12 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
     {
         private IPlayerLevel _playerLevel;
         private IStackMerger _stackMerger;
+        private IStackCompleter _stackCompleter;
 
         [Inject]
-        private void Construct(IPlayerLevel playerLevel, IStackMerger stackMerger)
+        private void Construct(IPlayerLevel playerLevel, IStackMerger stackMerger, IStackCompleter stackCompleter)
         {
+            _stackCompleter = stackCompleter;
             _playerLevel = playerLevel;
             _stackMerger = stackMerger;
         }
@@ -23,11 +26,17 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private void OnDestroy() =>
             CleanUp();
 
-        private void SubscribeUpdates() =>
+        private void SubscribeUpdates()
+        {
+            _stackCompleter.StackCompleted += OnStackCompleted;
             _stackMerger.StackCompleted += OnStackCompleted;
+        }
 
-        private void CleanUp() =>
+        private void CleanUp()
+        {
             _stackMerger.StackCompleted -= OnStackCompleted;
+            _stackCompleter.StackCompleted -= OnStackCompleted;
+        }
 
         private void OnStackCompleted(int score) => 
             _playerLevel.AddScore(score);

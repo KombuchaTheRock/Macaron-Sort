@@ -16,6 +16,8 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 {
     public class StackSpawner : IDisposable, IStackSpawner
     {
+        public event Action StacksSpawned;
+        
         private List<HexagonStack> _generatedStacks = new();
         private Transform _stacksRoot;
         private Coroutine _stackGenerateRoutine;
@@ -120,6 +122,8 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         {
             _stackGenerateRoutine = null;
             _generatedStacks = stacks;
+            
+            StacksSpawned?.Invoke();
         }
     }
 }

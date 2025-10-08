@@ -1,1 +1,1 @@
-{"<PlayerData>k__BackingField":{"_score":0,"_level":1},"<WorldData>k__BackingField":{"<StacksData>k__BackingField":{"<StacksOnGrid>k__BackingField":[],"<FreeStacks>k__BackingField":[]}}}
+{"<PlayerData>k__BackingField":{"_score":33,"_level":1},"<WorldData>k__BackingField":{"<StacksData>k__BackingField":{"<StacksOnGrid>k__BackingField":[{"<Tiles>k__BackingField":[2,0,3,3,3],"<PositionOnGrid>k__BackingField":{"x":-1,"y":0}},{"<Tiles>k__BackingField":[2,3,0],"<PositionOnGrid>k__BackingField":{"x":0,"y":-1}}],"<FreeStacks>k__BackingField":[]}}}

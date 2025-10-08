@@ -22,6 +22,8 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress.Data
         
         public void UpdateStacksOnGridData(List<GridCell> cells)
         {
+            Debug.Log("UpdateStacksOnGridData");
+            
             StacksOnGrid.Clear();
 
             foreach (GridCell cell in cells)

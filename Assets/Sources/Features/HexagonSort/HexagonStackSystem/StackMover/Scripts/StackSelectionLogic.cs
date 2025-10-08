@@ -29,8 +29,6 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 
         public bool TrySelectFreeStack(Ray ray, out HexagonStack stack)
         {
-            Debug.Log("TrySelectFreeStack");
-            
             if (Physics.Raycast(ray, out RaycastHit hit, _config.MaxRaycastDistance, _stackLayerMask))
             {
                 stack = hit.collider.GetComponentInParent<HexagonStack>();
@@ -48,8 +46,6 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 
         public bool TrySelectStackOnGrid(Ray ray, out HexagonStack stack, out GridCell gridCell)
         {
-            Debug.Log("TrySelectStackOnGrid");
-            
             if (Physics.Raycast(ray, out RaycastHit hit, _config.MaxRaycastDistance, _stackLayerMask))
             {
                 stack = hit.collider.GetComponentInParent<HexagonStack>();
