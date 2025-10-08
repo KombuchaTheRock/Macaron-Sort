@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
+using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Common.CodeBase.Services.PlayerProgress.Data;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 public class BoosterPicker : MonoBehaviour
 {
@@ -14,7 +17,14 @@ public class BoosterPicker : MonoBehaviour
 
     private HexagonGridSaveLoader _gridSaveLoader;
     private StacksData _stacksData;
+    private List<PlacedStackData> _stacksOnGrid;
 
+    [Inject]
+    private void Construct(IGameProgressService progressService)
+    {
+        _stacksOnGrid = progressService.GameProgress.PersistentProgressData.WorldData.StacksData.StacksOnGrid;
+    }
+    
     public void Initialize(HexagonGrid hexagonGrid)
     {
         _gridSaveLoader = hexagonGrid.GetComponent<HexagonGridSaveLoader>();
@@ -24,13 +34,13 @@ public class BoosterPicker : MonoBehaviour
 
     private void SubscribeUpdates()
     {
-        _gridSaveLoader.GridDataUpdated += OnGridDataUpdated;
+        _gridSaveLoader.GridDataUpdated += UpdateButtonEnabled;
         SubscribeButtons();
     }
 
-    private void OnGridDataUpdated(int stacksOnGridCount)
+    public void UpdateButtonEnabled()
     {
-        if (stacksOnGridCount <= 0)
+        if (_stacksOnGrid.Count <= 0)
         {
             _rocketBoosterActivator.interactable = false;
             _arrowBoosterActivator.interactable = false;

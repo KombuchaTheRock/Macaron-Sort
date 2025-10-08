@@ -15,7 +15,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 {
     public class HexagonGridSaveLoader : MonoBehaviour, IProgressReader
     {
-        public event Action<int> GridDataUpdated;
+        public event Action GridDataUpdated;
         
         [SerializeField] private HexagonGrid _hexagonGrid;
 
@@ -116,7 +116,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
             StacksData stacksPersistentData = _gameProgress.GameProgress.PersistentProgressData.WorldData.StacksData;
             stacksPersistentData.UpdateStacksOnGridData(_hexagonGrid.Cells);
             
-            GridDataUpdated?.Invoke(stacksPersistentData.StacksOnGrid.Count);
+            GridDataUpdated?.Invoke();
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Sources.Common.CodeBase.Services.PlayerProgress.Data;
 using Sources.Common.CodeBase.Services.StaticData;
 
@@ -17,7 +19,9 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
 
         public PersistentProgressData CreatePersistentProgressData()
         {
-            return new PersistentProgressData(new PlayerData(_initialScore, _initialLevel), new WorldData(
+            List<BoosterCount> boosterCounts = GetInitialBoosterCounts();
+
+            return new PersistentProgressData(new PlayerData(_initialScore, _initialLevel, boosterCounts), new WorldData(
                 new StacksData(
                     new List<PlacedStackData>(),
                     new List<FreeStackDataData>())
@@ -27,12 +31,26 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
 
         public ControlPointProgressData CreateControlPointProgressData()
         {
-            return new ControlPointProgressData(new PlayerData(_initialScore, _initialLevel), new WorldData(
+            List<BoosterCount> boosterCounts = GetInitialBoosterCounts();
+            
+            return new ControlPointProgressData(new PlayerData(_initialScore, _initialLevel, boosterCounts), new WorldData(
                     new StacksData(
                         new List<PlacedStackData>(),
                         new List<FreeStackDataData>())
                 )
             );
+        }
+
+        private List<BoosterCount> GetInitialBoosterCounts()
+        {
+            List<BoosterCount> boosterCounts = new BoosterCount[]
+            {
+                new(BoosterType.ArrowBooster, 10),
+                new(BoosterType.RocketBooster, 10),
+                new(BoosterType.ReverseBooster, 10),
+            }.ToList();
+            
+            return boosterCounts;
         }
     }
 }

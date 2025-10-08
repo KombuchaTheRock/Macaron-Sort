@@ -48,7 +48,7 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
             if (progressResult.ReachedControlPoint)
                 SaveControlPointData();
 
-            _gameProgressService.GameProgress.PersistentProgressData.PlayerData.UpdateData(this);
+            _gameProgressService.GameProgress.PersistentProgressData.PlayerData.UpdateLevelData(this);
             ScoreChanged?.Invoke(Score);
         }
 
@@ -61,7 +61,7 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
 
         private void SaveControlPointData()
         {
-            _gameProgressService.GameProgress.ControlPointProgressData.PlayerData.UpdateData(this);
+            _gameProgressService.GameProgress.ControlPointProgressData.PlayerData.UpdateLevelData(this);
             _gameProgressService.SaveControlPointProgressAsync();
 
             ControlPointAchieved?.Invoke();

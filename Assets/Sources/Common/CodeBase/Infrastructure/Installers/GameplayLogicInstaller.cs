@@ -18,7 +18,14 @@ namespace Sources.Common.CodeBase.Infrastructure.Installers
             BindStacksSpawner();
             BindStackMerger();
             BindStackCompleter();
+            BindBoosterCounter();
             BindBoosterActivator();
+        }
+
+        private void BindBoosterCounter()
+        {
+            Container.BindInterfacesTo<BoosterCounter>()
+                .AsSingle();
         }
 
         private void BindStackCompleter()

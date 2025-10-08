@@ -89,8 +89,9 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
         {
             int level = controlPointProgressData.PlayerData.Level;
             int score = controlPointProgressData.PlayerData.Score;
+            IReadOnlyList<BoosterCount> boosters = controlPointProgressData.PlayerData.Boosters;
 
-            PlayerData playerData = new(score, level);
+            PlayerData playerData = new(score, level, boosters.ToList());
 
             List<PlacedStackData> stacksOnGrid = controlPointProgressData.WorldData.StacksData.StacksOnGrid.ToList();
             List<FreeStackDataData> freeStacks = controlPointProgressData.WorldData.StacksData.FreeStacks.ToList();

@@ -11,26 +11,29 @@ public class BoosterActivator : IDisposable, IBoosterActivator
     private bool _arrowBoosterActive;
     private bool _reverseBoosterActive;
     private bool _rocketBoosterActive;
-    
+
     private BoosterPicker _boosterPicker;
     private GridRotator _gridRotator;
-    
+
     private readonly IStackMover _stackMover;
     private readonly IStackSpawner _stackSpawner;
     private readonly IStackCompleter _stackCompleter;
+    private readonly IBoosterCounter _boosterCounter;
 
-    public BoosterActivator(IStackMover stackMover, IStackSpawner stackSpawner, IStackCompleter stackCompleter)
+    public BoosterActivator(IStackMover stackMover, IStackSpawner stackSpawner, IStackCompleter stackCompleter,
+        IBoosterCounter boosterCounter)
     {
         _stackMover = stackMover;
         _stackSpawner = stackSpawner;
         _stackCompleter = stackCompleter;
+        _boosterCounter = boosterCounter;
     }
 
     public void Initialize(BoosterPicker boosterPicker, HexagonGrid hexagonGrid)
     {
         _gridRotator = hexagonGrid.GetComponent<GridRotator>();
         _boosterPicker = boosterPicker;
-        
+
         _arrowBoosterActive = false;
         _reverseBoosterActive = false;
         _rocketBoosterActive = false;
@@ -38,7 +41,7 @@ public class BoosterActivator : IDisposable, IBoosterActivator
         SubscribeUpdates();
     }
 
-    public void Dispose() => 
+    public void Dispose() =>
         CleanUp();
 
     public void Reset()
@@ -46,30 +49,39 @@ public class BoosterActivator : IDisposable, IBoosterActivator
         _stackSpawner.StopSpawn();
         _stackMover.Activate();
         _stackMover.DeactivateOnGridSelection();
-        
+
         _stackCompleter.Deactivate();
-        
+
         _arrowBoosterActive = false;
         _reverseBoosterActive = false;
         _rocketBoosterActive = false;
-        
+
         _gridRotator.enabled = true;
-        _boosterPicker.EnableInteractable();
+        //EnableButtons();
     }
 
     private void OnBoosterPicked(BoosterType boosterType)
     {
-        _boosterPicker.DisableInteractable();
-        
+        //_boosterPicker.DisableInteractable();
+
         switch (boosterType)
         {
             case BoosterType.RocketBooster:
+                if (_rocketBoosterActive || HasBooster(boosterType) == false)
+                    break;
+                
                 ActivateRocketBooster();
                 break;
             case BoosterType.ArrowBooster:
+                if (_arrowBoosterActive || HasBooster(boosterType) == false)
+                    break;
+                
                 ActivateArrowBooster();
                 break;
             case BoosterType.ReverseBooster:
+                if (_reverseBoosterActive || HasBooster(boosterType) == false)
+                    break;
+                
                 ActivateReverseBooster();
                 break;
             default:
@@ -77,10 +89,13 @@ public class BoosterActivator : IDisposable, IBoosterActivator
         }
     }
 
+    private bool HasBooster(BoosterType boosterType) => 
+        _boosterCounter.BoostersCount[boosterType] > 0;
+
     private void ActivateRocketBooster()
     {
         _rocketBoosterActive = true;
-        
+
         _gridRotator.enabled = false;
         _stackCompleter.Activate();
         _stackMover.Deactivate();
@@ -101,47 +116,58 @@ public class BoosterActivator : IDisposable, IBoosterActivator
 
     private void OnStackPlaced(GridCell gridCell)
     {
-        if (_arrowBoosterActive == false) 
+        if (_arrowBoosterActive == false)
             return;
-        
+
         FinishArrowBooster();
-        _boosterPicker.EnableInteractable();
+        
+        // EnableButtons();
+    }
+
+    private void EnableButtons()
+    {
+     //   _boosterPicker.EnableInteractable();
+        _boosterPicker.UpdateButtonEnabled();
     }
 
     private void OnStackCompleted(int score)
     {
-        if (_rocketBoosterActive == false) 
+        if (_rocketBoosterActive == false)
             return;
-        
+
         _gridRotator.enabled = true;
         FinishRocketBooster();
-        _boosterPicker.EnableInteractable();
+        
+        // EnableButtons();
     }
 
     private void OnStacksSpawned()
     {
         if (_reverseBoosterActive == false)
             return;
-        
+
         _reverseBoosterActive = false;
-        _boosterPicker.EnableInteractable();
+        _boosterCounter.RemoveBooster(BoosterType.ReverseBooster);
+        // EnableButtons();
     }
 
     private void FinishArrowBooster()
     {
         _stackMover.DeactivateOnGridSelection();
         _stackMover.InitialCell.SetStack(null);
-        
+
         _gridRotator.enabled = true;
         _arrowBoosterActive = false;
+        _boosterCounter.RemoveBooster(BoosterType.ArrowBooster);
     }
 
     private void FinishRocketBooster()
     {
         _stackMover.Activate();
         _stackCompleter.Deactivate();
-            
+
         _rocketBoosterActive = false;
+        _boosterCounter.RemoveBooster(BoosterType.RocketBooster);
     }
 
     private void SubscribeUpdates()
@@ -149,7 +175,7 @@ public class BoosterActivator : IDisposable, IBoosterActivator
         _stackCompleter.StackCompleted += OnStackCompleted;
         _stackMover.StackPlaced += OnStackPlaced;
         _stackSpawner.StacksSpawned += OnStacksSpawned;
-        
+
         _boosterPicker.BoosterPicked += OnBoosterPicked;
     }
 
