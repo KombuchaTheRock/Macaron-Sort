@@ -26,7 +26,7 @@ public class BoosterCounter : IDisposable, IBoosterCounter
 
     public void AddBoosterAmount(BoosterType boosterType, int amount)
     {
-        BoostersCount.Add(boosterType, amount);
+        BoostersCount[boosterType] += amount;
         
         UpdateBoosterPersistentData();
         BoosterCountChanged?.Invoke(BoostersCount);
@@ -69,12 +69,21 @@ public class BoosterCounter : IDisposable, IBoosterCounter
     private void SubscribeUpdates()
     {
         _gameProgressService.ProgressLoaded += OnProgressLoaded;
-        _playerLevel.ControlPointAchieved += UpdateBoosterControlPointData;
+        _playerLevel.ControlPointAchieved += OnControlPointAchieved;
+    }
+
+    private void OnControlPointAchieved()
+    {
+        // AddBoosterAmount(BoosterType.ArrowBooster, 5);
+        // AddBoosterAmount(BoosterType.RocketBooster, 5);
+        // AddBoosterAmount(BoosterType.ReverseBooster, 5);
+        
+        UpdateBoosterControlPointData();
     }
 
     private void CleanUp()
     {
         _gameProgressService.ProgressLoaded -= OnProgressLoaded;
-        _playerLevel.ControlPointAchieved -= UpdateBoosterControlPointData;
+        _playerLevel.ControlPointAchieved -= OnControlPointAchieved;
     }
 }

@@ -17,12 +17,12 @@ public class BoosterPicker : MonoBehaviour
 
     private HexagonGridSaveLoader _gridSaveLoader;
     private StacksData _stacksData;
-    private List<PlacedStackData> _stacksOnGrid;
+    private IGameProgressService _progressService;
 
     [Inject]
     private void Construct(IGameProgressService progressService)
     {
-        _stacksOnGrid = progressService.GameProgress.PersistentProgressData.WorldData.StacksData.StacksOnGrid;
+        _progressService = progressService;
     }
     
     public void Initialize(HexagonGrid hexagonGrid)
@@ -40,7 +40,7 @@ public class BoosterPicker : MonoBehaviour
 
     public void UpdateButtonEnabled()
     {
-        if (_stacksOnGrid.Count <= 0)
+        if (_progressService.GameProgress.PersistentProgressData.WorldData.StacksData.StacksOnGrid.Count <= 0)
         {
             _rocketBoosterActivator.interactable = false;
             _arrowBoosterActivator.interactable = false;

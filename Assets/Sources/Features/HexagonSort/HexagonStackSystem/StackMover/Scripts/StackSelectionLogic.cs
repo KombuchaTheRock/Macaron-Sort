@@ -49,8 +49,6 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
             if (Physics.Raycast(ray, out RaycastHit hit, _config.MaxRaycastDistance, _stackLayerMask))
             {
                 stack = hit.collider.GetComponentInParent<HexagonStack>();
-
-                Debug.Log(stack.CanMove);
                 
                 if (stack.CanMove == false)
                 {
