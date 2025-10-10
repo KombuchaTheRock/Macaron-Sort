@@ -8,72 +8,74 @@ using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
-using Sources.Features.HexagonSort.StackCompleter;
 using TMPro;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class StackCompletionLogic : IStackCompletionLogic
+namespace Sources.Features.HexagonSort.StackCompleter
 {
-    public event Action<int> StackCompleted;
-    public event Action DeleteAnimationCompleted;
+    public class StackCompletionLogic : IStackCompletionLogic
+    {
+        public event Action<int> StackCompleted;
+        public event Action DeleteAnimationCompleted;
     
-    private readonly ICoroutineRunner _coroutineRunner;
+        private readonly ICoroutineRunner _coroutineRunner;
 
-    private readonly HexagonDeleteAnimation _completeAnimation = new();
+        private readonly HexagonDeleteAnimation _completeAnimation = new();
 
-    public IEnumerator CompleteStackRoutine(HexagonStack stack, GridCell gridCell)
-    {
-        Tween deleteAnimation = DeleteAnimation(stack.Hexagons.ToList());
-        yield return deleteAnimation.WaitForCompletion();
-
-        int score = HexagonStackUtils.CalculateScore(stack.Hexagons.ToList());
-        
-        StackCompletePopUp(stack, gridCell);
-        DeleteStack(stack, gridCell);
-
-        StackCompleted?.Invoke(score);
-    }
-
-    private void DeleteStack(HexagonStack stack, GridCell gridCell)
-    {
-        foreach (Hexagon hexagon in stack.Hexagons.ToList())
+        public IEnumerator CompleteStackRoutine(HexagonStack stack, GridCell gridCell)
         {
-            stack.Remove(hexagon);
-            Object.Destroy(hexagon.gameObject);
+            Tween deleteAnimation = DeleteAnimation(stack.Hexagons.ToList());
+            yield return deleteAnimation.WaitForCompletion();
+
+            int score = HexagonStackUtils.CalculateScore(stack.Hexagons.ToList());
+        
+            StackCompletePopUp(stack, gridCell);
+            DeleteStack(stack, gridCell);
+
+            StackCompleted?.Invoke(score);
         }
 
-        gridCell.SetStack(null);
-    }
-
-    private Tween DeleteAnimation(List<Hexagon> hexagons)
-    {
-        float delay = 0;
-        Tween deleteAnimation = null;
-
-        hexagons.Reverse();
-        
-        foreach (Hexagon hexagon in hexagons)
+        private void DeleteStack(HexagonStack stack, GridCell gridCell)
         {
-            deleteAnimation =
-                _completeAnimation.DeleteAnimation(hexagon, delay, 0.2f, DeleteAnimationCompleted);
+            foreach (Hexagon hexagon in stack.Hexagons.ToList())
+            {
+                stack.Remove(hexagon);
+                Object.Destroy(hexagon.gameObject);
+            }
 
-            deleteAnimation.Play();
-            delay += 0.03f;
+            gridCell.SetStack(null);
         }
 
-        return deleteAnimation;
-    }
+        private Tween DeleteAnimation(List<Hexagon> hexagons)
+        {
+            float delay = 0;
+            Tween deleteAnimation = null;
 
-    private static void StackCompletePopUp(HexagonStack stack, GridCell cell)
-    {
-        Vector3 popUpPosition = stack.TopHexagon.transform.position;
+            hexagons.Reverse();
+        
+            foreach (Hexagon hexagon in hexagons)
+            {
+                deleteAnimation =
+                    _completeAnimation.DeleteAnimation(hexagon, delay, 0.2f, DeleteAnimationCompleted);
 
-        GameObject popUp = Resources.Load<GameObject>("StackGenerator/Prefab/StackCountPopUp");
+                deleteAnimation.Play();
+                delay += 0.03f;
+            }
 
-        TextMeshPro popUpText = popUp.GetComponentInChildren<TextMeshPro>();
-        popUpText.text = stack.Hexagons.Count.ToString();
+            return deleteAnimation;
+        }
 
-        Object.Instantiate(popUp, popUpPosition, popUp.transform.rotation, cell.transform);
+        private static void StackCompletePopUp(HexagonStack stack, GridCell cell)
+        {
+            Vector3 popUpPosition = stack.TopHexagon.transform.position;
+
+            GameObject popUp = Resources.Load<GameObject>("StackGenerator/Prefab/StackCountPopUp");
+
+            TextMeshPro popUpText = popUp.GetComponentInChildren<TextMeshPro>();
+            popUpText.text = stack.Hexagons.Count.ToString();
+
+            Object.Instantiate(popUp, popUpPosition, popUp.transform.rotation, cell.transform);
+        }
     }
 }

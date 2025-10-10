@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Sources.Common.CodeBase.Services.PlayerProgress.Data;
 using Sources.Common.CodeBase.Services.StaticData;
+using Sources.Features.HexagonSort.BoosterSystem.Activation;
 
 namespace Sources.Common.CodeBase.Services.PlayerProgress
 {

@@ -1,6 +1,6 @@
 ﻿using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Features.HexagonSort.Merge.Scripts;
-using Sources.Features.HexagonSort.StackSelector;
+using Sources.Features.HexagonSort.StackCompleter;
 using UnityEngine;
 using Zenject;
 

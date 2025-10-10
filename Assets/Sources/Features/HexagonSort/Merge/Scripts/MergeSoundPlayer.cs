@@ -1,6 +1,6 @@
 ﻿using Sources.Common.CodeBase.Services.SoundService;
 using Sources.Common.CodeBase.Services.StaticData;
-using Sources.Features.HexagonSort.StackSelector;
+using Sources.Features.HexagonSort.StackCompleter;
 using UnityEngine;
 using Zenject;
 

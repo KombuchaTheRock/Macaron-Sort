@@ -1,9 +1,11 @@
 using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
+using Sources.Features.HexagonSort.BoosterSystem.Activation;
+using Sources.Features.HexagonSort.BoosterSystem.Counter;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
-using Sources.Features.HexagonSort.StackSelector;
+using Sources.Features.HexagonSort.StackCompleter;
 using Zenject;
 
 namespace Sources.Common.CodeBase.Infrastructure.Installers

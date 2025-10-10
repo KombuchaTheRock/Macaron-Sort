@@ -5,5 +5,7 @@
         void CreateUIRoot();
         void CreateGameOverWindow();
         void CreatePauseWindow();
+        void CreateRocketBoosterWindow();
+        void CreateArrowBoosterWindow();
     }
 }

@@ -1,0 +1,111 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &1651251283234104161
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6825693522992868889, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8412146295578024520, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: _boosterIcon
+      value: 
+      objectReference: {fileID: 21300000, guid: c0ea51c1aa7f96c4699c51be77dd1c04, type: 3}
+    - target: {fileID: 8412146295578024520, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: _boosterName
+      value: ROCKET
+      objectReference: {fileID: 0}
+    - target: {fileID: 8412146295578024520, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: _boosterDescription
+      value: Click any stack on field to remove it
+      objectReference: {fileID: 0}
+    - target: {fileID: 8660171027718034053, guid: 488810fb84b091c4da0f769571718680, type: 3}
+      propertyPath: m_Name
+      value: RocketBooster
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 488810fb84b091c4da0f769571718680, type: 3}

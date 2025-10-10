@@ -22,6 +22,12 @@ namespace Sources.Common.CodeBase.Services.WindowService
                 case WindowID.Pause:
                     _uiFactory.CreatePauseWindow();
                     break;
+                case WindowID.RocketBooster:
+                    _uiFactory.CreateRocketBoosterWindow();
+                    break;
+                case WindowID.ArrowBooster:
+                    _uiFactory.CreateArrowBoosterWindow();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(windowID), windowID, null);
             }

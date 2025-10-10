@@ -4,5 +4,7 @@ namespace Sources.Common.CodeBase.Services.WindowService
     {
         GameOver = 0,
         Pause = 1,
+        RocketBooster = 2,
+        ArrowBooster = 3
     }
 }

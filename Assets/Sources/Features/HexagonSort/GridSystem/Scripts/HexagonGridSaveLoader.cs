@@ -7,7 +7,7 @@ using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackGenerator.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
-using Sources.Features.HexagonSort.StackSelector;
+using Sources.Features.HexagonSort.StackCompleter;
 using UnityEngine;
 using Zenject;
 

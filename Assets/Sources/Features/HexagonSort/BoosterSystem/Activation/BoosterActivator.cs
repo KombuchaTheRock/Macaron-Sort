@@ -1,0 +1,129 @@
+using System;
+using System.Collections.Generic;
+using Sources.Common.CodeBase.Infrastructure.StateMachine.States;
+using Sources.Common.CodeBase.Services.WindowService;
+using Sources.Features.HexagonSort.BoosterSystem.Boosters;
+using Sources.Features.HexagonSort.BoosterSystem.Counter;
+using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts;
+using Sources.Features.HexagonSort.GridSystem.Scripts;
+using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
+using Sources.Features.HexagonSort.StackCompleter;
+
+namespace Sources.Features.HexagonSort.BoosterSystem.Activation
+{
+    public class BoosterActivator : IDisposable, IBoosterActivator
+    {
+        private Dictionary<BoosterType, IBooster> _boosters;
+
+        private BoosterPicker _boosterPicker;
+        private GridRotator _gridRotator;
+
+        private readonly IStackMover _stackMover;
+        private readonly IStackSpawner _stackSpawner;
+        private readonly IStackCompleter _stackCompleter;
+        private readonly IWindowService _windowService;
+        private readonly BoosterContext _context;
+
+        private IBooster _activeBooster;
+        
+        public BoosterActivator(IStackMover stackMover, IStackSpawner stackSpawner, IStackCompleter stackCompleter,
+            IBoosterCounter boosterCounter, IWindowService windowService)
+        {
+            _context = new BoosterContext
+            {
+                StackMover = stackMover,
+                StackSpawner = stackSpawner,
+                StackCompleter = stackCompleter,
+                BoosterCounter = boosterCounter
+            };
+
+            _stackMover = stackMover;
+            _stackSpawner = stackSpawner;
+            _stackCompleter = stackCompleter;
+            _windowService = windowService;
+
+            _boosters = new Dictionary<BoosterType, IBooster>
+            {
+                [BoosterType.RocketBooster] = new RocketBooster(_context),
+                [BoosterType.ArrowBooster] = new ArrowBooster(_context),
+                [BoosterType.ReverseBooster] = new ReverseBooster(_context)
+            };
+        }
+
+        public void Initialize(BoosterPicker boosterPicker, HexagonGrid hexagonGrid)
+        {
+            _gridRotator = hexagonGrid.GetComponent<GridRotator>();
+            _boosterPicker = boosterPicker;
+
+            _context.GridRotator = _gridRotator;
+
+            SubscribeUpdates();
+        }
+
+        public void Dispose() =>
+            CleanUp();
+
+        public void Reset()
+        {
+            foreach (IBooster booster in _boosters.Values) 
+                booster.TryFinish();
+        
+            _stackSpawner.StopSpawn();
+        }
+
+        private void OnBoosterPicked(BoosterType boosterType)
+        {
+            if (_activeBooster != null)
+                return;
+
+            if (_boosters[boosterType].TryActivate())
+            {
+                _activeBooster = _boosters[boosterType];
+
+                switch (boosterType)
+                {
+                    case BoosterType.RocketBooster:
+                        _windowService.Open(WindowID.RocketBooster);
+                        break;
+                    case BoosterType.ArrowBooster:
+                        _windowService.Open(WindowID.ArrowBooster);
+                        break;
+                }
+            }
+        }
+
+        private void OnStackPlaced(GridCell gridCell) => 
+            FinishBooster(BoosterType.ArrowBooster);
+
+        private void OnStackCompleted(int score) => 
+            FinishBooster(BoosterType.RocketBooster);
+
+        private void OnStacksSpawned() => 
+            FinishBooster(BoosterType.ReverseBooster);
+
+        private void FinishBooster(BoosterType boosterType)
+        {
+            _boosters[boosterType].TryFinish();
+            _activeBooster = null;
+        }
+
+        private void SubscribeUpdates()
+        {
+            _stackCompleter.StackCompleted += OnStackCompleted;
+            _stackMover.StackPlaced += OnStackPlaced;
+            _stackSpawner.StacksSpawned += OnStacksSpawned;
+
+            _boosterPicker.BoosterPicked += OnBoosterPicked;
+        }
+
+        private void CleanUp()
+        {
+            _stackCompleter.StackCompleted -= OnStackCompleted;
+            _stackMover.StackPlaced -= OnStackPlaced;
+            _stackSpawner.StacksSpawned -= OnStacksSpawned;
+        
+            _boosterPicker.BoosterPicked -= OnBoosterPicked;
+        }
+    }
+}

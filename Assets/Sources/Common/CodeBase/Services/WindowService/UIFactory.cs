@@ -41,5 +41,17 @@ namespace Sources.Common.CodeBase.Services.WindowService
             WindowConfig config = _staticData.ForWindow(WindowID.Pause);
             Instantiate(config.Prefab.gameObject, _uiRoot );
         }
+        
+        public void CreateRocketBoosterWindow()
+        {
+            WindowConfig config = _staticData.ForWindow(WindowID.RocketBooster);
+            Instantiate(config.Prefab.gameObject, _uiRoot );
+        }
+        
+        public void CreateArrowBoosterWindow()
+        {
+            WindowConfig config = _staticData.ForWindow(WindowID.ArrowBooster);
+            Instantiate(config.Prefab.gameObject, _uiRoot );
+        }
     }
 }

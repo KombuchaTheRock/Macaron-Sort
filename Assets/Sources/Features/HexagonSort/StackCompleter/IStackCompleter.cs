@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sources.Features.HexagonSort.StackSelector
+namespace Sources.Features.HexagonSort.StackCompleter
 {
     public interface IStackCompleter
     {

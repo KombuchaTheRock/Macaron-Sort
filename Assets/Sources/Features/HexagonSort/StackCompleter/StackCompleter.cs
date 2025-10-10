@@ -7,7 +7,7 @@ using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using UnityEngine;
 
-namespace Sources.Features.HexagonSort.StackSelector
+namespace Sources.Features.HexagonSort.StackCompleter
 {
     public class StackCompleter : IDisposable, IStackCompleter
     {
