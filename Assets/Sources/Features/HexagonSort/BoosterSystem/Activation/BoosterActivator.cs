@@ -26,7 +26,8 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
         private readonly BoosterContext _context;
 
         private IBooster _activeBooster;
-        
+        private BoosterWindow _currentBoosterWindow;
+
         public BoosterActivator(IStackMover stackMover, IStackSpawner stackSpawner, IStackCompleter stackCompleter,
             IBoosterCounter boosterCounter, IWindowService windowService)
         {
@@ -70,6 +71,7 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
                 booster.TryFinish();
         
             _stackSpawner.StopSpawn();
+            //_boosterPicker.LoadButtonsInteractable();
         }
 
         private void OnBoosterPicked(BoosterType boosterType)
@@ -80,16 +82,31 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
             if (_boosters[boosterType].TryActivate())
             {
                 _activeBooster = _boosters[boosterType];
-
+                //_boosterPicker.DisableButtons();
+                
                 switch (boosterType)
                 {
                     case BoosterType.RocketBooster:
-                        _windowService.Open(WindowID.RocketBooster);
+                        _currentBoosterWindow = (BoosterWindow)_windowService.Open(WindowID.RocketBooster);
+                        _currentBoosterWindow.CloseButtonClicked += OnCloseButtonClicked;
                         break;
                     case BoosterType.ArrowBooster:
-                        _windowService.Open(WindowID.ArrowBooster);
+                        _currentBoosterWindow = (BoosterWindow)_windowService.Open(WindowID.ArrowBooster);
+                        _currentBoosterWindow.CloseButtonClicked += OnCloseButtonClicked;
                         break;
                 }
+            }
+        }
+
+        private void OnCloseButtonClicked()
+        {
+            if (_activeBooster is ICancellableBooster cancellableBooster)
+            {
+                cancellableBooster.Cancel();
+                _activeBooster = null;
+                _currentBoosterWindow.CloseButtonClicked -= OnCloseButtonClicked;
+                _currentBoosterWindow = null;
+                //_boosterPicker.LoadButtonsInteractable();
             }
         }
 
@@ -104,8 +121,15 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
 
         private void FinishBooster(BoosterType boosterType)
         {
+            if (_currentBoosterWindow != null) 
+                _currentBoosterWindow.CloseWindow();
+            
             _boosters[boosterType].TryFinish();
+            
             _activeBooster = null;
+            _currentBoosterWindow = null;
+            
+            _boosterPicker.LoadButtonsInteractable();
         }
 
         private void SubscribeUpdates()
@@ -124,6 +148,9 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
             _stackSpawner.StacksSpawned -= OnStacksSpawned;
         
             _boosterPicker.BoosterPicked -= OnBoosterPicked;
+
+            if (_currentBoosterWindow != null) 
+                _currentBoosterWindow.CloseButtonClicked -= OnCloseButtonClicked;
         }
     }
 }

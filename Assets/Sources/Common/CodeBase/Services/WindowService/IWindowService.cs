@@ -2,6 +2,6 @@
 {
     public interface IWindowService
     {
-        void Open(WindowID windowID);
+        WindowBase Open(WindowID windowID);
     }
 }

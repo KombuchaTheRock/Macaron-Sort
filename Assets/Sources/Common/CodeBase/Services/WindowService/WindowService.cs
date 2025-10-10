@@ -9,25 +9,21 @@ namespace Sources.Common.CodeBase.Services.WindowService
         public WindowService(IUIFactory uiFactory) => 
             _uiFactory = uiFactory;
 
-        public void Open(WindowID windowID) => 
+        public WindowBase Open(WindowID windowID) => 
             CreateWindow(windowID);
 
-        private void CreateWindow(WindowID windowID)
+        private WindowBase CreateWindow(WindowID windowID)
         {
             switch (windowID)
             {
                 case WindowID.GameOver:
-                    _uiFactory.CreateGameOverWindow();
-                    break;
+                    return _uiFactory.CreateGameOverWindow();
                 case WindowID.Pause:
-                    _uiFactory.CreatePauseWindow();
-                    break;
+                    return _uiFactory.CreatePauseWindow();
                 case WindowID.RocketBooster:
-                    _uiFactory.CreateRocketBoosterWindow();
-                    break;
+                    return _uiFactory.CreateRocketBoosterWindow();
                 case WindowID.ArrowBooster:
-                    _uiFactory.CreateArrowBoosterWindow();
-                    break;
+                    return _uiFactory.CreateArrowBoosterWindow();
                 default:
                     throw new ArgumentOutOfRangeException(nameof(windowID), windowID, null);
             }

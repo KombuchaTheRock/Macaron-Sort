@@ -30,28 +30,28 @@ namespace Sources.Common.CodeBase.Services.WindowService
             Object.Destroy(tempParent);
         }
 
-        public void CreateGameOverWindow()
+        public WindowBase CreateGameOverWindow()
         {
             WindowConfig config = _staticData.ForWindow(WindowID.GameOver);
-            Instantiate(config.Prefab.gameObject, _uiRoot );
+            return Instantiate<WindowBase>(config.Prefab.gameObject, _uiRoot );
         }
 
-        public void CreatePauseWindow()
+        public WindowBase CreatePauseWindow()
         {
             WindowConfig config = _staticData.ForWindow(WindowID.Pause);
-            Instantiate(config.Prefab.gameObject, _uiRoot );
+            return Instantiate<WindowBase>(config.Prefab.gameObject, _uiRoot );
         }
         
-        public void CreateRocketBoosterWindow()
+        public WindowBase CreateRocketBoosterWindow()
         {
             WindowConfig config = _staticData.ForWindow(WindowID.RocketBooster);
-            Instantiate(config.Prefab.gameObject, _uiRoot );
+            return Instantiate<WindowBase>(config.Prefab.gameObject, _uiRoot );
         }
         
-        public void CreateArrowBoosterWindow()
+        public WindowBase CreateArrowBoosterWindow()
         {
             WindowConfig config = _staticData.ForWindow(WindowID.ArrowBooster);
-            Instantiate(config.Prefab.gameObject, _uiRoot );
+            return Instantiate<WindowBase>(config.Prefab.gameObject, _uiRoot );
         }
     }
 }

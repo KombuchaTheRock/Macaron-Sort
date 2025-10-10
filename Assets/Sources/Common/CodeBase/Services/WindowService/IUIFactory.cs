@@ -3,9 +3,9 @@
     public interface IUIFactory
     {
         void CreateUIRoot();
-        void CreateGameOverWindow();
-        void CreatePauseWindow();
-        void CreateRocketBoosterWindow();
-        void CreateArrowBoosterWindow();
+        WindowBase CreateGameOverWindow();
+        WindowBase CreatePauseWindow();
+        WindowBase CreateRocketBoosterWindow();
+        WindowBase CreateArrowBoosterWindow();
     }
 }

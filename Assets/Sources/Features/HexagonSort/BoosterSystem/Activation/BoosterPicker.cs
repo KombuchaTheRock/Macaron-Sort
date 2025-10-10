@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Common.CodeBase.Services.PlayerProgress.Data;
+using Sources.Features.HexagonSort.BoosterSystem.Counter;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,13 +19,19 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
         [SerializeField] private Button _arrowBoosterActivator;
         [SerializeField] private Button _reverseBoosterActivator;
 
+        private Dictionary<BoosterType, Button> _boosterButtons;
+        private Dictionary<BoosterType, bool> _buttonsInteractable = new();
+        
         private HexagonGridSaveLoader _gridSaveLoader;
         private StacksData _stacksData;
         private IGameProgressService _progressService;
+        private IBoosterCounter _boosterCounter;
+        private Dictionary<BoosterType, int> _boosterCounts;
 
         [Inject]
-        private void Construct(IGameProgressService progressService)
+        private void Construct(IGameProgressService progressService, IBoosterCounter boosterCounter)
         {
+            _boosterCounter = boosterCounter;
             _progressService = progressService;
         }
     
@@ -30,48 +39,89 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
         {
             _gridSaveLoader = hexagonGrid.GetComponent<HexagonGridSaveLoader>();
 
+            _buttonsInteractable = new Dictionary<BoosterType, bool>
+            {
+                [BoosterType.ArrowBooster] = _arrowBoosterActivator.interactable,
+                [BoosterType.RocketBooster] = _rocketBoosterActivator.interactable,
+                [BoosterType.ReverseBooster] = _reverseBoosterActivator.interactable,
+            };
+            
+            _boosterButtons = new Dictionary<BoosterType, Button>
+            {
+                [BoosterType.ArrowBooster] = _arrowBoosterActivator,
+                [BoosterType.RocketBooster] = _rocketBoosterActivator,
+                [BoosterType.ReverseBooster] = _reverseBoosterActivator,
+            };
+            
+            _boosterCounts = _boosterCounter.BoostersCount;
+            
+            UpdateButtonEnabled();
+            
+            foreach (KeyValuePair<BoosterType, int> boosterCount in _boosterCounts) 
+                _boosterButtons[boosterCount.Key].interactable = boosterCount.Value > 0;
+            
             SubscribeUpdates();
         }
 
         private void SubscribeUpdates()
         {
+            _boosterCounter.BoosterCountChanged += OnBoosterCountChanged;
             _gridSaveLoader.GridDataUpdated += UpdateButtonEnabled;
             SubscribeButtons();
         }
 
-        public void UpdateButtonEnabled()
+        private void OnBoosterCountChanged(Dictionary<BoosterType, int> boosterCounts)
         {
-            if (_progressService.GameProgress.PersistentProgressData.WorldData.StacksData.StacksOnGrid.Count <= 0)
+            foreach (KeyValuePair<BoosterType, int> boosterCount in _boosterCounts) 
+                _boosterButtons[boosterCount.Key].interactable = boosterCount.Value > 0;
+        }
+
+        private void UpdateButtonEnabled()
+        {
+            if (ZeroStacksOnGrid)
             {
                 _rocketBoosterActivator.interactable = false;
                 _arrowBoosterActivator.interactable = false;
             }
             else
             {
-                _rocketBoosterActivator.interactable = true;
-                _arrowBoosterActivator.interactable = true;
+                _rocketBoosterActivator.interactable = _boosterCounts[BoosterType.RocketBooster] > 0;
+                _arrowBoosterActivator.interactable = _boosterCounts[BoosterType.ArrowBooster] > 0;
             }
         }
 
+        private bool ZeroStacksOnGrid => _progressService.GameProgress.PersistentProgressData.WorldData.StacksData.StacksOnGrid.Count <= 0;
+
+        public void DisableButtons()
+        {
+            SaveButtonsInteractable();
+            
+            foreach (Button button in _boosterButtons.Values) 
+                button.interactable = false;
+        }
+
+        public void LoadButtonsInteractable()
+        {
+            foreach (KeyValuePair<BoosterType, Button> button in _boosterButtons) 
+                button.Value.interactable = _buttonsInteractable[button.Key];
+
+            foreach (KeyValuePair<BoosterType, int> boosterCount in _boosterCounts) 
+                _boosterButtons[boosterCount.Key].interactable = boosterCount.Value > 0;
+            
+            UpdateButtonEnabled();
+        }
+        
+        private void SaveButtonsInteractable()
+        {
+            foreach (KeyValuePair<BoosterType, Button> boosterButton in _boosterButtons) 
+                _buttonsInteractable[boosterButton.Key] = boosterButton.Value.interactable;
+        }
+        
         private void SubscribeButtons()
         {
             _reverseBoosterActivator.onClick.AddListener(() => SwitchBoosterTo(BoosterType.ReverseBooster));
             _rocketBoosterActivator.onClick.AddListener(() => SwitchBoosterTo(BoosterType.RocketBooster));
             _arrowBoosterActivator.onClick.AddListener(() => SwitchBoosterTo(BoosterType.ArrowBooster));
-        }
-
-        public void EnableInteractable()
-        {
-            _rocketBoosterActivator.interactable = true;
-            _arrowBoosterActivator.interactable = true;
-            _reverseBoosterActivator.interactable = true;
-        }
-
-        public void DisableInteractable()
-        {
-            _rocketBoosterActivator.interactable = false;
-            _arrowBoosterActivator.interactable = false;
-            _reverseBoosterActivator.interactable = false;
         }
 
         private void SwitchBoosterTo(BoosterType boosterType)

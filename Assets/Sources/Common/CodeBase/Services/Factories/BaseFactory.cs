@@ -32,6 +32,13 @@ namespace Sources.Common.CodeBase.Services.Factories
 
             return instantiatedPrefab;
         }
+        
+        protected T Instantiate<T>(GameObject prefab, Transform parent)
+        {
+            T instantiatedPrefab = _instantiator.InstantiatePrefabForComponent<T>(prefab, parent);
+
+            return instantiatedPrefab;
+        }
 
         protected T Instantiate<T>(string assetPath, Vector3 at, Transform parent = null) where T : Component
         {
