@@ -16,10 +16,10 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
         public event Action<int> StackCompleted;
 
         private readonly ICoroutineRunner _coroutineRunner;
+        private readonly HexagonGrid _hexagonGrid;
         private readonly HashSet<GridCell> _updatedCells;
         private readonly StackMerge _merge;
         private readonly StackCompletion _stackCompletion;
-        private readonly NeighbourStacksFinding _neighbourFinding;
         private readonly MergePriority _mergePriority;
 
         public MergeLogic(ICoroutineRunner coroutineRunner, HexagonGrid hexagonGrid,
@@ -28,13 +28,13 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             GameplayAnimations gameplayAnimations = new();
 
             _coroutineRunner = coroutineRunner;
+            _hexagonGrid = hexagonGrid;
             _updatedCells = updatedCells;
 
             _merge = new StackMerge(gameplayAnimations);
             _stackCompletion = new StackCompletion(10);
-            _neighbourFinding = new NeighbourStacksFinding(hexagonGrid);
             _mergePriority = new MergePriority();
-            
+
             SubscribeUpdates();
         }
 
@@ -42,17 +42,17 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
         {
             _stackCompletion.StackCompleted -= OnStackCompleted;
             _stackCompletion.DeleteAnimationCompleted -= OnDeleteAnimationCompleted;
-            
+
             _merge.MergeAnimationCompleted -= OnMergeAnimationCompleted;
         }
 
         public IEnumerator CheckForMergeRoutine(GridCell cell)
         {
-            if (!ShouldProcessCell(cell))
+            if (ShouldProcessCell(cell) == false)
                 yield break;
 
             MergeContext mergeContext = PrepareMergeContext(cell);
-            if (!mergeContext.HasNeighbours)
+            if (mergeContext.HasNeighbours == false)
                 yield break;
 
             yield return ProcessAllMerges(mergeContext);
@@ -68,7 +68,9 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
         private MergeContext PrepareMergeContext(GridCell cell)
         {
             HexagonTileType topHexagonType = cell.Stack.TopHexagon.TileType;
-            List<GridCell> neighboursCells = _neighbourFinding.GetNeighboursByType(cell.PositionOnGrid, topHexagonType);
+            
+            List<GridCell> neighboursCells =
+                NeighbourCellsFindingUtility.GetNeighboursByType(cell.PositionOnGrid, topHexagonType, _hexagonGrid);
             SortedSet<MergeCandidate> neighbourStacks = _mergePriority.GetMergeCandidates(neighboursCells);
 
             return new MergeContext
@@ -83,9 +85,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
         private IEnumerator ProcessAllMerges(MergeContext context)
         {
             while (context.NeighbourStacks.Count > 0)
-            {
                 yield return ProcessSingleMerge(context);
-            }
         }
 
         private IEnumerator ProcessSingleMerge(MergeContext context)
@@ -99,7 +99,9 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             List<Hexagon> hexagonsForMerge = HexagonStackUtils.GetSimilarHexagons(from.Stack, context.TopHexagonType);
 
             HideStackSizes(from, to);
+            
             yield return ExecuteMerge(to, hexagonsForMerge);
+            
             TransferHexagons(from, to, hexagonsForMerge);
             ShowStackSizeIfExists(from);
 
@@ -150,19 +152,19 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
         {
             _stackCompletion.StackCompleted += OnStackCompleted;
             _stackCompletion.DeleteAnimationCompleted += OnDeleteAnimationCompleted;
-            
+
             _merge.MergeAnimationCompleted += OnMergeAnimationCompleted;
         }
 
-        private void OnDeleteAnimationCompleted() => 
+        private void OnDeleteAnimationCompleted() =>
             HexagonDeleteAnimationCompleted?.Invoke();
 
-        private void OnMergeAnimationCompleted() => 
+        private void OnMergeAnimationCompleted() =>
             MergeAnimationCompleted?.Invoke();
 
-        private void OnStackCompleted(int score) => 
+        private void OnStackCompleted(int score) =>
             StackCompleted?.Invoke(score);
-        
+
         private class MergeContext
         {
             public GridCell Cell { get; set; }

@@ -14,8 +14,8 @@ namespace Sources.Common.CodeBase.Services.StaticData
     {
         private Dictionary<HexagonStackTemplate, HexagonStackConfig> _stackStaticData;
         private Dictionary<HexagonTileType, HexagonTileData> _hexagonTileStaticData;
-        private Dictionary<WindowID,WindowConfig> _windowConfigs;
-        
+        private Dictionary<WindowID, WindowConfig> _windowConfigs;
+
         private readonly IResourceLoader _resourceLoader;
 
         public GameConfig GameConfig { get; private set; }
@@ -34,23 +34,24 @@ namespace Sources.Common.CodeBase.Services.StaticData
 
             _stackStaticData = _resourceLoader.LoadAllAssets<HexagonStackConfig>(StaticDataPaths.StackConfig)
                 .ToDictionary(x => x.Template, x => x);
-            
-            _hexagonTileStaticData = _resourceLoader.LoadAsset<HexagonTileStaticData>(StaticDataPaths.HexagonTileStaticData)
+
+            _hexagonTileStaticData = _resourceLoader
+                .LoadAsset<HexagonTileStaticData>(StaticDataPaths.HexagonTileStaticData)
                 .Configs
                 .ToDictionary(x => x.TileType, x => x);
-            
+
             _windowConfigs = _resourceLoader
                 .LoadAsset<WindowStaticData>(StaticDataPaths.WindowStaticData)
                 .Configs
                 .ToDictionary(x => x.WindowID, x => x);
         }
 
-        public WindowConfig ForWindow(WindowID windowID) => 
+        public WindowConfig ForWindow(WindowID windowID) =>
             _windowConfigs.GetValueOrDefault(windowID);
-        
+
         public HexagonStackConfig ForHexagonStack(HexagonStackTemplate gridTemplate) =>
             _stackStaticData.GetValueOrDefault(gridTemplate);
-        
+
         public HexagonTileData ForHexagonTle(HexagonTileType tileType) =>
             _hexagonTileStaticData.GetValueOrDefault(tileType);
     }

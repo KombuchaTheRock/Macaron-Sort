@@ -1,4 +1,3 @@
-
 using Cysharp.Threading.Tasks;
 using Sources.Common.CodeBase.Services.PlayerProgress;
 

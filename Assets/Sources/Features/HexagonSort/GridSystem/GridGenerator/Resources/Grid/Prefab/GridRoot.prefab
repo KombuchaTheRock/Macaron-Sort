@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 3586061436392673283}
   - component: {fileID: 2292158548429369541}
   - component: {fileID: 7462590085719370532}
+  - component: {fileID: 315185656949691347}
   m_Layer: 0
   m_Name: GridRoot
   m_TagString: Untagged
@@ -140,6 +141,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5845c7e92424280af7e2e438ab68361, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &315185656949691347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5789678530455995809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 308751b30e824f73836a7d422f7b6cb7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hexagonGrid: {fileID: 186360926803980998}
+  _gizmosEdgeCellRadius: 0.1
+  _cellsToAddCount: 10
 --- !u!1001 &6779319314712635058
 PrefabInstance:
   m_ObjectHideFlags: 0

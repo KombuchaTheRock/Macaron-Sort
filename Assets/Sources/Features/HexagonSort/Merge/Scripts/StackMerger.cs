@@ -7,6 +7,7 @@ using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using Unity.VisualScripting;
+using UnityEngine;
 
 namespace Sources.Features.HexagonSort.Merge.Scripts
 {
@@ -58,6 +59,8 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
         private void OnStackPlaced(GridCell cell)
         {
+            Debug.Log("OnStackPlaced");
+            
             _updatedCells.Add(cell);
 
             if (IsMerging == false)

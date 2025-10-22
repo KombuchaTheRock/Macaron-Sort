@@ -38,7 +38,6 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
         public void RemoveStack()
         {
             Stack = null;
-            
             StackRemoved?.Invoke();
         }
 
