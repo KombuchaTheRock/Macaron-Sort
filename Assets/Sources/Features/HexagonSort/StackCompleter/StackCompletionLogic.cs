@@ -44,7 +44,7 @@ namespace Sources.Features.HexagonSort.StackCompleter
                 Object.Destroy(hexagon.gameObject);
             }
 
-            gridCell.SetStack(null);
+            gridCell.FreeCell();
         }
 
         private Tween DeleteAnimation(List<Hexagon> hexagons)

@@ -95,9 +95,12 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
 
             List<PlacedStackData> stacksOnGrid = controlPointProgressData.WorldData.StacksData.StacksOnGrid.ToList();
             List<FreeStackDataData> freeStacks = controlPointProgressData.WorldData.StacksData.FreeStacks.ToList();
+            List<CellData> cellData = controlPointProgressData.WorldData.GridData.Cells.ToList();
+            
             StacksData stacksData = new(stacksOnGrid, freeStacks);
-
-            WorldData worldData = new(stacksData);
+            GridData gridData = new(cellData);
+            
+            WorldData worldData = new(stacksData, gridData);
 
             PersistentProgressData persistentProgressData =
                 new(playerData, worldData);

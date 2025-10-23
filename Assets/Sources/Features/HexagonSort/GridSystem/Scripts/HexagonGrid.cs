@@ -10,7 +10,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         private Dictionary<Vector2Int, GridCell> _hexagonGrid = new();
 
         public Grid GridComponent { get; private set; }
-        public List<GridCell> Cells => _hexagonGrid.Select(x => x.Value).ToList();
+        public List<GridCell> Cells => _hexagonGrid.Values.ToList();
 
         public void Initialize(Grid grid) =>
             GridComponent = grid;
@@ -18,9 +18,12 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         public void AddCell(Vector2Int cell, GridCell gridCell) =>
             _hexagonGrid.Add(cell, gridCell);
 
-        public void RemoveCell(GridCell gridCell) =>
+        public void RemoveCell(GridCell gridCell)
+        {
             _hexagonGrid.Remove(gridCell.PositionOnGrid);
-        
+            Destroy(gridCell.gameObject);
+        }
+
         public bool IsCellOnGrid(Vector2Int cell) =>
             _hexagonGrid.ContainsKey(cell);
 

@@ -11,15 +11,18 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
         public event Action StackRemoved;
         
         [SerializeField] private MeshColor _meshColor;
-
+        [SerializeField] private GridCellLockView _gridCellLockView;
+        
         private Color[] _normal;
         private Color _highlight;
 
         public Vector2Int PositionOnGrid { get; private set; }
         public HexagonStack Stack { get; private set; }
 
-        public bool IsOccupied => Stack != null;
-
+        public bool IsOccupied => Stack != null || _isBlocked;
+        
+        private bool _isBlocked;
+                                  
         private void Start() => 
             DisableHighlight();
 
@@ -31,11 +34,23 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
 
         public void InitializeGridPosition(Vector2Int gridPosition) =>
         PositionOnGrid = gridPosition;
+
+        public void Block()
+        {
+            _isBlocked = true;
+            _gridCellLockView.Show();
+        }
+
+        public void Unblock()
+        {
+            _isBlocked = false;
+            _gridCellLockView.Hide();
+        }
         
-        public void SetStack(HexagonStack stack) => 
+        public void OccupyCell(HexagonStack stack) => 
             Stack = stack;
 
-        public void RemoveStack()
+        public void FreeCell()
         {
             Stack = null;
             StackRemoved?.Invoke();

@@ -20,7 +20,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 
         public void PlaceOnGrid(HexagonStack stack, GridCell cell)
         {
-            cell.SetStack(stack);
+            cell.OccupyCell(stack);
             cell.DisableHighlight();
             stack.DisableMovement();
         

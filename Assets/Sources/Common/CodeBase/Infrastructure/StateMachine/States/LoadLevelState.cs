@@ -1,5 +1,7 @@
-﻿using Sources.Common.CodeBase.Services.Factories.GameFactory;
+﻿using System.Collections.Generic;
+using Sources.Common.CodeBase.Services.Factories.GameFactory;
 using Sources.Common.CodeBase.Services.PlayerProgress;
+using Sources.Common.CodeBase.Services.PlayerProgress.Data;
 using Sources.Common.CodeBase.Services.Settings;
 using Sources.Common.CodeBase.Services.StaticData;
 using Sources.Common.CodeBase.Services.WindowService;
@@ -74,7 +76,12 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private HexagonGrid GenerateGrid()
         {
             GridConfig gridConfig = _staticData.GameConfig.GridConfig;
-            HexagonGrid hexagonGrid = _gridGenerator.GenerateGrid(gridConfig.Grid, gridConfig.Size, gridConfig.CellConfig);
+
+            List<CellData> cellData = _progressService.GameProgress.PersistentProgressData.WorldData.GridData.Cells;
+            bool savedGridExists = cellData.Count > 0;
+            
+            HexagonGrid hexagonGrid = savedGridExists ? _gridGenerator.GenerateSavedGrid(gridConfig.Grid, gridConfig.CellConfig, cellData) : 
+                _gridGenerator.GenerateNewGrid(gridConfig.Grid, gridConfig.Size, gridConfig.CellConfig);
             
             return hexagonGrid;
         }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Sources.Common.CodeBase.Infrastructure.Utilities;
 using Sources.Common.CodeBase.Services.Factories.GameFactory;
+using Sources.Common.CodeBase.Services.PlayerProgress.Data;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
 using UnityEngine;
 
@@ -15,14 +16,11 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
         public GridGenerator(IGameFactory gameFactory) =>
             _factory = gameFactory;
 
-        public HexagonGrid GenerateGrid(Grid grid, int gridSize, CellConfig cellConfig)
+        public HexagonGrid GenerateNewGrid(Grid grid, int gridSize, CellConfig cellConfig)
         {
-            _hexagonGrid = _factory.CreateHexagonGrid();
-            _hexagonGrid.Initialize(grid);
-            _gridRoot = _hexagonGrid.transform;
-
-            ConfigureGridComponent(grid, cellConfig);
-            List<GridCell> gridCells = GenerateGridCells(grid, gridSize, cellConfig);
+            InitializeHexagonGrid(grid, cellConfig);
+            
+            List<GridCell> gridCells = GenerateNewGridCells(grid, gridSize, cellConfig);
 
             foreach (GridCell cell in gridCells)
                 _hexagonGrid.AddCell(cell.PositionOnGrid, cell);
@@ -30,17 +28,43 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
             return _hexagonGrid;
         }
 
-        public GridCell GenerateGridCell(Vector2Int positionOnGrid, Vector3 worldPosition, CellConfig cellConfig)
+        public HexagonGrid GenerateSavedGrid(Grid grid, CellConfig cellConfig, List<CellData> cellData)
         {
-            GridCell gridCell =
-                _factory.CreateGridCell(worldPosition, positionOnGrid, _gridRoot, cellConfig.CellColor,
-                    cellConfig.CellHighlightColor);
-            gridCell.gameObject.name = $"({positionOnGrid.x}, {positionOnGrid.y})";
+            InitializeHexagonGrid(grid, cellConfig);
             
-            return gridCell;
+            List<GridCell> gridCells = GenerateGridCellsFromData(grid, cellConfig, cellData);
+            
+            foreach (GridCell cell in gridCells)
+                _hexagonGrid.AddCell(cell.PositionOnGrid, cell);
+            
+            return _hexagonGrid;
         }
 
-        private List<GridCell> GenerateGridCells(Grid grid, int gridSize, CellConfig cellConfig)
+        private void InitializeHexagonGrid(Grid grid, CellConfig cellConfig)
+        {
+            _hexagonGrid = _factory.CreateHexagonGrid();
+            _hexagonGrid.Initialize(grid);
+            _gridRoot = _hexagonGrid.transform;
+
+            ConfigureGridComponent(grid, cellConfig);
+        }
+
+        private List<GridCell> GenerateGridCellsFromData(Grid grid, CellConfig cellConfig, List<CellData> cellData)
+        {
+            List<GridCell> gridCells = new();
+            
+            foreach (CellData cell in cellData)
+            {
+                Vector3 spawnPosition = grid.CellToWorld(new Vector3Int(cell.PositionOnGrid.x, cell.PositionOnGrid.y, 0));
+                
+                GridCell gridCell = GenerateGridCell(cell.PositionOnGrid, spawnPosition, cellConfig);
+                gridCells.Add(gridCell);
+            }
+            
+            return gridCells;
+        }
+        
+        private List<GridCell> GenerateNewGridCells(Grid grid, int gridSize, CellConfig cellConfig)
         {
             List<GridCell> gridCells = new();
             
@@ -60,6 +84,16 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
             }
             
             return gridCells;
+        }
+
+        public GridCell GenerateGridCell(Vector2Int positionOnGrid, Vector3 worldPosition, CellConfig cellConfig)
+        {
+            GridCell gridCell =
+                _factory.CreateGridCell(worldPosition, positionOnGrid, _gridRoot, cellConfig.CellColor,
+                    cellConfig.CellHighlightColor);
+            gridCell.gameObject.name = $"({positionOnGrid.x}, {positionOnGrid.y})";
+            
+            return gridCell;
         }
 
         private static void ConfigureGridComponent(Grid grid, CellConfig cellConfig)

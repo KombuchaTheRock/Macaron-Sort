@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Sources.Common.CodeBase.Infrastructure;
@@ -6,6 +7,7 @@ using Sources.Common.CodeBase.Services.StaticData;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Sources.Features.HexagonSort.GridSystem.Scripts
 {
@@ -28,21 +30,23 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
             _gridGenerator = gridGenerator;
         }
 
-        public void AddCellsToRandomPositions(int cellsToAddCount)
+        public void AddCellsToRandomPositions(int cellsToAddCount, Action onCompleted = null)
         {
             if (_addCellsRoutine != null) 
                 _coroutineRunner.StopCoroutine(_addCellsRoutine);
             
-            _addCellsRoutine = _coroutineRunner.StartCoroutine(AddCellsToRandomPositionsRoutine(cellsToAddCount));
+            _addCellsRoutine = _coroutineRunner.StartCoroutine(AddCellsToRandomPositionsRoutine(cellsToAddCount, onCompleted));
         }
 
-        private IEnumerator AddCellsToRandomPositionsRoutine(int cellsToAddCount)
+        private IEnumerator AddCellsToRandomPositionsRoutine(int cellsToAddCount, Action onCompleted = null)
         {
             for (int i = 0; i < cellsToAddCount; i++)
             {
                 AddCellToRandomPosition();
-                yield return new WaitForSeconds(0.2f);
+                yield return new WaitForSeconds(0.1f);
             }
+            
+            onCompleted?.Invoke();
         }
 
         private void AddCellToRandomPosition()
@@ -53,35 +57,23 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
                 _hexagonGrid.GridComponent.CellToWorld(
                     new Vector3Int(randomPositionOnEdge.x, randomPositionOnEdge.y, 0));
 
+            if (worldPosition.magnitude > 3)
+                return;
+            
             GridCell gridCell = _gridGenerator.GenerateGridCell(randomPositionOnEdge, worldPosition,
                 _staticData.GameConfig.GridConfig.CellConfig);
 
             _hexagonGrid.AddCell(gridCell.PositionOnGrid, gridCell);
         }
 
-        private List<Vector2Int> GetEdgePositions()
-        {
-            List<Vector2Int> edgePositions = new();
-
-            foreach (Vector2Int positionOnGrid in _hexagonGrid.Cells.Select(cell => cell.PositionOnGrid))
-            {
-                Vector2Int[] neighbours = NeighbourCellsFindingUtility.GetNeighbourPositions(positionOnGrid);
-
-                if (IsAllCellsOnGrid(neighbours) == false)
-                    edgePositions.Add(positionOnGrid);
-            }
-
-            return edgePositions;
-        }
-
         private Vector2Int GetRandomPositionOnEdge()
         {
-            _edgePositions = GetEdgePositions();
+            _edgePositions = GridCellsUtility.GetEdgePositions(_hexagonGrid);
             List<Vector2Int> positionsOnEdge = new();
 
             foreach (Vector2Int edgePosition in _edgePositions)
             {
-                Vector2Int[] neighboursOnEdge = NeighbourCellsFindingUtility
+                Vector2Int[] neighboursOnEdge = GridCellsUtility
                     .GetNeighbourPositions(edgePosition)
                     .Where(cell => _hexagonGrid.IsCellOnGrid(cell) == false)
                     .ToArray();
@@ -92,8 +84,5 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 
             return positionsOnEdge[Random.Range(0, positionsOnEdge.Count - 1)];
         }
-
-        private bool IsAllCellsOnGrid(Vector2Int[] cells) =>
-            cells.All(cell => _hexagonGrid.IsCellOnGrid(cell));
     }
 }

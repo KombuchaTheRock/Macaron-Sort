@@ -78,7 +78,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
         private void DeleteStack(MergeCandidate mergeCandidate)
         {
-            mergeCandidate.Cell.SetStack(null);
+            mergeCandidate.Cell.FreeCell();
 
             if (mergeCandidate.Stack is not null)
                 Object.Destroy(mergeCandidate.Stack.gameObject);

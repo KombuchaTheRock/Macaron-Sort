@@ -59,7 +59,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private void ClearStacks()
         {
             foreach (GridCell gridCell in _gameFactory.GridCells)
-                gridCell.RemoveStack();
+                gridCell.FreeCell();
 
             foreach (HexagonStack stack in _hexagonFactory.Stacks.Where(stack => stack != null))
                 Object.Destroy(stack.gameObject);

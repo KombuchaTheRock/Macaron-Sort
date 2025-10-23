@@ -18,27 +18,25 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
             _initialScore = staticData.GameConfig.PlayerDataConfig.InitialScore;
         }
 
-        public PersistentProgressData CreatePersistentProgressData()
+        public PersistentProgressData CreatePersistentProgressData() => 
+            new(GetNewPlayerData(), GetNewWorldData());
+
+        public ControlPointProgressData CreateControlPointProgressData() => 
+            new(GetNewPlayerData(), GetNewWorldData());
+
+        private PlayerData GetNewPlayerData()
         {
             List<BoosterCount> boosterCounts = GetInitialBoosterCounts();
-
-            return new PersistentProgressData(new PlayerData(_initialScore, _initialLevel, boosterCounts), new WorldData(
-                new StacksData(
-                    new List<PlacedStackData>(),
-                    new List<FreeStackDataData>())
-                )
-            );
+            return new PlayerData(_initialScore, _initialLevel, boosterCounts);
         }
 
-        public ControlPointProgressData CreateControlPointProgressData()
+        private static WorldData GetNewWorldData()
         {
-            List<BoosterCount> boosterCounts = GetInitialBoosterCounts();
-            
-            return new ControlPointProgressData(new PlayerData(_initialScore, _initialLevel, boosterCounts), new WorldData(
-                    new StacksData(
-                        new List<PlacedStackData>(),
-                        new List<FreeStackDataData>())
-                )
+            return new WorldData(
+                new StacksData(
+                    new List<PlacedStackData>(),
+                    new List<FreeStackDataData>()),
+                new GridData(new List<CellData>())
             );
         }
 

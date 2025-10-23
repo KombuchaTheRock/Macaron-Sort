@@ -70,7 +70,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             HexagonTileType topHexagonType = cell.Stack.TopHexagon.TileType;
             
             List<GridCell> neighboursCells =
-                NeighbourCellsFindingUtility.GetNeighboursByType(cell.PositionOnGrid, topHexagonType, _hexagonGrid);
+                GridCellsUtility.GetNeighboursByType(cell.PositionOnGrid, topHexagonType, _hexagonGrid);
             SortedSet<MergeCandidate> neighbourStacks = _mergePriority.GetMergeCandidates(neighboursCells);
 
             return new MergeContext

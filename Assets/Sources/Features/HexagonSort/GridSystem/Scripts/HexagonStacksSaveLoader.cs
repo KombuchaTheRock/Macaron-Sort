@@ -13,7 +13,7 @@ using Zenject;
 
 namespace Sources.Features.HexagonSort.GridSystem.Scripts
 {
-    public class HexagonGridSaveLoader : MonoBehaviour, IProgressReader
+    public class HexagonStacksSaveLoader : MonoBehaviour, IProgressReader
     {
         public event Action GridDataUpdated;
         
@@ -73,7 +73,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
                     
             stack.transform.parent = cell.transform;
             stack.DisableMovement();
-            cell.SetStack(stack);
+            cell.OccupyCell(stack);
         }
 
         private void SubscribeUpdates()

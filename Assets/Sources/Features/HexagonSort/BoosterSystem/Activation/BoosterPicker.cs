@@ -22,7 +22,7 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
         private Dictionary<BoosterType, Button> _boosterButtons;
         private Dictionary<BoosterType, bool> _buttonsInteractable = new();
         
-        private HexagonGridSaveLoader _gridSaveLoader;
+        private HexagonStacksSaveLoader _stacksSaveLoader;
         private StacksData _stacksData;
         private IGameProgressService _progressService;
         private IBoosterCounter _boosterCounter;
@@ -37,7 +37,7 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
     
         public void Initialize(HexagonGrid hexagonGrid)
         {
-            _gridSaveLoader = hexagonGrid.GetComponent<HexagonGridSaveLoader>();
+            _stacksSaveLoader = hexagonGrid.GetComponent<HexagonStacksSaveLoader>();
 
             _buttonsInteractable = new Dictionary<BoosterType, bool>
             {
@@ -66,7 +66,7 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
         private void SubscribeUpdates()
         {
             _boosterCounter.BoosterCountChanged += OnBoosterCountChanged;
-            _gridSaveLoader.GridDataUpdated += UpdateButtonEnabled;
+            _stacksSaveLoader.GridDataUpdated += UpdateButtonEnabled;
             SubscribeButtons();
         }
 
