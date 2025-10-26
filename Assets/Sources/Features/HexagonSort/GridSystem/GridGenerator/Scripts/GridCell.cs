@@ -9,21 +9,20 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
     public class GridCell : MonoBehaviour
     {
         public event Action StackRemoved;
-        
+
         [SerializeField] private MeshColor _meshColor;
-        [SerializeField] private GridCellLockView _gridCellLockView;
         
         private Color[] _normal;
         private Color _highlight;
 
+        [field: SerializeField] public CellLocker Locker { get; private set; }
         public Vector2Int PositionOnGrid { get; private set; }
         public HexagonStack Stack { get; private set; }
 
-        public bool IsOccupied => Stack != null || _isBlocked;
-        
-        private bool _isBlocked;
-                                  
-        private void Start() => 
+        public bool IsOccupied => Stack != null;
+        public bool IsLocked => Locker.IsLocked;
+
+        private void Start() =>
             DisableHighlight();
 
         public void InitializeColors(Color normal, Color highlight)
@@ -32,22 +31,16 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
             _normal = _meshColor.Colors;
         }
 
+        public void Lock(CellLock cellLock)
+        {
+            Locker.SetCellLock(cellLock);
+            Locker.Lock();
+        }
+
         public void InitializeGridPosition(Vector2Int gridPosition) =>
-        PositionOnGrid = gridPosition;
+            PositionOnGrid = gridPosition;
 
-        public void Block()
-        {
-            _isBlocked = true;
-            _gridCellLockView.Show();
-        }
-
-        public void Unblock()
-        {
-            _isBlocked = false;
-            _gridCellLockView.Hide();
-        }
-        
-        public void OccupyCell(HexagonStack stack) => 
+        public void OccupyCell(HexagonStack stack) =>
             Stack = stack;
 
         public void FreeCell()

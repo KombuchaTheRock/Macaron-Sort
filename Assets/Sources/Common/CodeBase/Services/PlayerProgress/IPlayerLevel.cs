@@ -10,5 +10,6 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
         int Score { get; }
         int MaxScore { get; }
         void AddScore(int addedScore);
+        event Action<int> LevelChanged;
     }
 }

@@ -2,6 +2,7 @@
 using Sources.Common.CodeBase.Services.Factories.GameFactory;
 using Sources.Common.CodeBase.Services.Factories.HexagonFactory;
 using Sources.Common.CodeBase.Services.PlayerProgress;
+using Sources.Common.CodeBase.Services.WindowService;
 using Sources.Features.HexagonSort.BoosterSystem.Activation;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
@@ -16,10 +17,15 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private readonly IGameFactory _gameFactory;
         private readonly IGameProgressService _progressService;
         private readonly IBoosterActivator _boosterActivator;
+        private SceneLoader _sceneLoader;
+        private IPauseService _pauseService;
 
         public ResetProgressState(IGameStateMachine stateMachine, IHexagonFactory hexagonFactory,
-            IGameFactory gameFactory, IGameProgressService progressService, IBoosterActivator boosterActivator)
+            IGameFactory gameFactory, IGameProgressService progressService, IBoosterActivator boosterActivator,
+            SceneLoader sceneLoader, IPauseService pauseService)
         {
+            _pauseService = pauseService;
+            _sceneLoader = sceneLoader;
             _stateMachine = stateMachine;
             _hexagonFactory = hexagonFactory;
             _gameFactory = gameFactory;
@@ -34,7 +40,12 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             ClearStacks();
             LoadOrInitializeNewProgress(newProgress);
 
-            _stateMachine.Enter<GameLoopState>();
+            _sceneLoader.Load(SceneNames.Bootstrap,
+                () =>
+                {
+                    _stateMachine.Enter<LoadLevelState, string>(SceneNames.Gameplay);
+                    _pauseService.Unpause();
+                });
         }
 
         public void Exit()
@@ -43,17 +54,22 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 
         private void LoadOrInitializeNewProgress(bool newProgress)
         {
-            if (newProgress)
-            {
-                _progressService.InitializeNewProgress();
+            _progressService.InitializeNewProgress();
 
-                _progressService.SavePersistentProgressAsync();
-                _progressService.SaveControlPointProgressAsync();
-            }
-            else
-                _progressService.PersistentProgressToControlPoint();
+            _progressService.SavePersistentProgressAsync();
+            _progressService.SaveControlPointProgressAsync();
+            
+            // if (newProgress)
+            // {
+            //     _progressService.InitializeNewProgress();
+            //
+            //     _progressService.SavePersistentProgressAsync();
+            //     _progressService.SaveControlPointProgressAsync();
+            // }
+            // else
+            //     _progressService.PersistentProgressToControlPoint();
 
-            _progressService.ApplyProgress();
+            // _progressService.ApplyProgress();
         }
 
         private void ClearStacks()

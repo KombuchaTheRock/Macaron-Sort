@@ -8,11 +8,24 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
     {
         public event Action<int> ScoreChanged;
         public event Action ControlPointAchieved;
+        public event Action<int> LevelChanged;
 
         private readonly IGameProgressService _gameProgressService;
         private readonly LevelProgressCalculator _levelProgressCalculator;
+        private int _level;
 
-        public int Level { get; private set; }
+        public int Level
+        {
+            get => _level;
+            private set
+            {
+                if (_level != value)
+                    LevelChanged?.Invoke(value);
+                    
+                _level = value;
+            }
+        }
+
         public int Score { get; private set; }
         public int MaxScore { get; private set; }
 

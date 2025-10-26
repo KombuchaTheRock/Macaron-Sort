@@ -10,13 +10,13 @@ using Random = UnityEngine.Random;
 
 namespace Sources.Features.HexagonSort.GridSystem.Scripts
 {
-    public class GridCellsDeleter
+    public class GridCellDeleteLogic
     {
         private HexagonGrid _hexagonGrid;
         private ICoroutineRunner _coroutineRunner;
         private Coroutine _deleteCellsRoutine;
 
-        public GridCellsDeleter(HexagonGrid hexagonGrid, ICoroutineRunner coroutineRunner)
+        public GridCellDeleteLogic(HexagonGrid hexagonGrid, ICoroutineRunner coroutineRunner)
         {
             _coroutineRunner = coroutineRunner;
             _hexagonGrid = hexagonGrid;
@@ -39,7 +39,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
                 else
                     break;
 
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.05f);
             }
 
             onCompleted?.Invoke();
@@ -49,22 +49,21 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         {
             List<Vector2Int> edgePositions = GridCellsUtility.GetEdgePositions(_hexagonGrid);
 
-            GridCell[] freeCells = _hexagonGrid.Cells
+            HashSet<GridCell> freeEdgeCells = _hexagonGrid.Cells
                 .Where(cell => IsFreeEdgeCell(cell, edgePositions))
-                .ToArray();
+                .ToHashSet();
 
-            if (freeCells.Length <= 0)
+            if (freeEdgeCells.Count <= 0)
                 return;
 
-            int i = 0;
-            while (i < freeCells.Length - 1)
+            while (freeEdgeCells.Count > 0)
             {
-                GridCell randomEdgeCell = freeCells[Random.Range(0, edgePositions.Count - 1)];
-
+                GridCell randomEdgeCell = freeEdgeCells.ToArray()[Random.Range(0, freeEdgeCells.Count - 1)];
                 Vector3Int positionOnGrid = new(randomEdgeCell.PositionOnGrid.x, randomEdgeCell.PositionOnGrid.y, 0);
-                if (_hexagonGrid.GridComponent.CellToWorld(positionOnGrid).magnitude <= 2)
+                
+                if (_hexagonGrid.GridComponent.CellToWorld(positionOnGrid).magnitude <= 1)
                 {
-                    i++;
+                    freeEdgeCells.Remove(randomEdgeCell);
                     continue;
                 }
 

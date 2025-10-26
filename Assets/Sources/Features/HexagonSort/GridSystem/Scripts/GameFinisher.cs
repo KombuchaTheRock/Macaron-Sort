@@ -47,7 +47,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 
         private void OnMergeFinished()
         {
-            int occupiedCellsCount = _hexagonGrid.Cells.Where(x => x.IsOccupied).ToList().Count;
+            int occupiedCellsCount = _hexagonGrid.Cells.Where(x => x.IsOccupied || x.IsLocked).ToList().Count;
 
             if (occupiedCellsCount >= _hexagonGrid.Cells.Count) 
                 _gameOverScreen.gameObject.SetActive(true);

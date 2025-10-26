@@ -19,3 +19,4 @@ MonoBehaviour:
   <PlayerLevelConfig>k__BackingField: {fileID: 11400000, guid: 6e95cf6496105f34ab76d96b2f7c79fe, type: 2}
   <StacksSpawnerConfig>k__BackingField: {fileID: 11400000, guid: bb39a74c23e533b4396886050bd78cb4, type: 2}
   <PlayerDataConfig>k__BackingField: {fileID: 11400000, guid: 20ee2669662bed6469b695d0acaf15aa, type: 2}
+  <GridModifierConfig>k__BackingField: {fileID: 11400000, guid: 671d8f0205e91b842bb50e3276ee9fa2, type: 2}

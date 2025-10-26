@@ -79,7 +79,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 
             GridCell targetCell = _draggingLogic.GetTargetCell();
 
-            if (targetCell?.IsOccupied == false)
+            if (targetCell is { IsOccupied: false, IsLocked: false })
             {
                 _placementLogic.PlaceOnGrid(_currentStack, targetCell);
 

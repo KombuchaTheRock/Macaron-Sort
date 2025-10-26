@@ -84,6 +84,23 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
             return edgePositions;
         }
+
+        public static bool TryGetRandomFreeCell(HexagonGrid grid, out GridCell gridCell)
+        {
+            GridCell[] freeCells = grid.Cells
+                .Where(cell => cell is { IsOccupied: false, IsLocked: false })
+                .ToArray();
+
+            if (freeCells.Length <= 0)
+            {
+                gridCell = null;
+                return false;
+            }
+
+            gridCell = freeCells[Random.Range(0, freeCells.Length - 1)];
+            
+            return true;
+        }
         
         private static bool IsAllCellsOnGrid(Vector2Int[] cells, HexagonGrid grid) =>
             cells.All(grid.IsCellOnGrid);

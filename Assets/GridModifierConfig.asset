@@ -12,20 +12,67 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a85b008b04c133b4190ee4a4df5fe2df, type: 3}
   m_Name: GridModifierConfig
   m_EditorClassIdentifier: 
-  <LevelForStart>k__BackingField: 5
-  <AddNewCellsAdder>k__BackingField: 0
-  <MinMaxAddedCellsCount>k__BackingField: {x: 5, y: 7}
-  <AddCellsDeleter>k__BackingField: 1
-  <MinMaxDeletedCellsCount>k__BackingField: {x: 3, y: 7}
-  <AddSimpleBlocker>k__BackingField: 1
-  <MinMaxSimpleBlockerCount>k__BackingField: {x: 2, y: 8}
-  <AddBlockerWithCondition>k__BackingField: 1
-  <BlockersWithCondition>k__BackingField:
-  - <HexagonType>k__BackingField: 0
-    <ScoreAmount>k__BackingField: 9
-  - <HexagonType>k__BackingField: 3
-    <ScoreAmount>k__BackingField: 26
-  - <HexagonType>k__BackingField: 3
-    <ScoreAmount>k__BackingField: 18
-  - <HexagonType>k__BackingField: 5
-    <ScoreAmount>k__BackingField: 10
+  <Modifiers>k__BackingField:
+  - <LevelForStart>k__BackingField: 2
+    <AddNewCellsAdder>k__BackingField: 1
+    <MinMaxAddedCellsCount>k__BackingField: {x: 3, y: 5}
+    <AddCellsDeleter>k__BackingField: 0
+    <MinMaxDeletedCellsCount>k__BackingField: {x: 2, y: 4}
+    <AddSimpleBlocker>k__BackingField: 0
+    <MinMaxSimpleBlockerCount>k__BackingField: {x: 3, y: 5}
+    <AddBlockerWithCondition>k__BackingField: 0
+    <BlockersWithCondition>k__BackingField: []
+  - <LevelForStart>k__BackingField: 3
+    <AddNewCellsAdder>k__BackingField: 0
+    <MinMaxAddedCellsCount>k__BackingField: {x: 0, y: 0}
+    <AddCellsDeleter>k__BackingField: 1
+    <MinMaxDeletedCellsCount>k__BackingField: {x: 2, y: 3}
+    <AddSimpleBlocker>k__BackingField: 0
+    <MinMaxSimpleBlockerCount>k__BackingField: {x: 2, y: 5}
+    <AddBlockerWithCondition>k__BackingField: 0
+    <BlockersWithCondition>k__BackingField: []
+  - <LevelForStart>k__BackingField: 4
+    <AddNewCellsAdder>k__BackingField: 0
+    <MinMaxAddedCellsCount>k__BackingField: {x: 0, y: 0}
+    <AddCellsDeleter>k__BackingField: 0
+    <MinMaxDeletedCellsCount>k__BackingField: {x: 0, y: 0}
+    <AddSimpleBlocker>k__BackingField: 1
+    <MinMaxSimpleBlockerCount>k__BackingField: {x: 1, y: 2}
+    <AddBlockerWithCondition>k__BackingField: 0
+    <BlockersWithCondition>k__BackingField: []
+  - <LevelForStart>k__BackingField: 5
+    <AddNewCellsAdder>k__BackingField: 1
+    <MinMaxAddedCellsCount>k__BackingField: {x: 1, y: 4}
+    <AddCellsDeleter>k__BackingField: 0
+    <MinMaxDeletedCellsCount>k__BackingField: {x: 0, y: 0}
+    <AddSimpleBlocker>k__BackingField: 0
+    <MinMaxSimpleBlockerCount>k__BackingField: {x: 1, y: 3}
+    <AddBlockerWithCondition>k__BackingField: 0
+    <BlockersWithCondition>k__BackingField: []
+  - <LevelForStart>k__BackingField: 6
+    <AddNewCellsAdder>k__BackingField: 0
+    <MinMaxAddedCellsCount>k__BackingField: {x: 1, y: 4}
+    <AddCellsDeleter>k__BackingField: 1
+    <MinMaxDeletedCellsCount>k__BackingField: {x: 1, y: 4}
+    <AddSimpleBlocker>k__BackingField: 0
+    <MinMaxSimpleBlockerCount>k__BackingField: {x: 1, y: 3}
+    <AddBlockerWithCondition>k__BackingField: 0
+    <BlockersWithCondition>k__BackingField: []
+  - <LevelForStart>k__BackingField: 7
+    <AddNewCellsAdder>k__BackingField: 0
+    <MinMaxAddedCellsCount>k__BackingField: {x: 1, y: 4}
+    <AddCellsDeleter>k__BackingField: 0
+    <MinMaxDeletedCellsCount>k__BackingField: {x: 1, y: 4}
+    <AddSimpleBlocker>k__BackingField: 1
+    <MinMaxSimpleBlockerCount>k__BackingField: {x: 1, y: 3}
+    <AddBlockerWithCondition>k__BackingField: 0
+    <BlockersWithCondition>k__BackingField: []
+  - <LevelForStart>k__BackingField: 8
+    <AddNewCellsAdder>k__BackingField: 1
+    <MinMaxAddedCellsCount>k__BackingField: {x: 1, y: 6}
+    <AddCellsDeleter>k__BackingField: 0
+    <MinMaxDeletedCellsCount>k__BackingField: {x: 1, y: 4}
+    <AddSimpleBlocker>k__BackingField: 1
+    <MinMaxSimpleBlockerCount>k__BackingField: {x: 1, y: 3}
+    <AddBlockerWithCondition>k__BackingField: 0
+    <BlockersWithCondition>k__BackingField: []

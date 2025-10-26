@@ -9,7 +9,7 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
         private IGameProgressService _gameProgressService;
 
         [Inject]
-        public void Construct(IGameProgressService gameProgressService) => 
+        public void Construct(IGameProgressService gameProgressService) =>
             _gameProgressService = gameProgressService;
 
         private void OnApplicationQuit() =>

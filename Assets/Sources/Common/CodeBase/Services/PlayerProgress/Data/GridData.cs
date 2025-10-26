@@ -16,7 +16,9 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress.Data
 
         public void UpdateGridData(HexagonGrid hexagonGrid)
         {
-            Cells = hexagonGrid.Cells.Select(cell => new CellData(cell.PositionOnGrid)).ToList();
+            Cells = hexagonGrid.Cells
+                .Select(cell => new CellData(cell))
+                .ToList();
         }
     }
 }

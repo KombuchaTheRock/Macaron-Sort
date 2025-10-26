@@ -11,9 +11,8 @@ using Random = UnityEngine.Random;
 
 namespace Sources.Features.HexagonSort.GridSystem.Scripts
 {
-    public class GridCellAdder
+    public class GridCellAddLogic
     {
-        private List<Vector2Int> _edgePositions = new();
         private Coroutine _addCellsRoutine;
         
         private readonly IGridGenerator _gridGenerator;
@@ -21,7 +20,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         private readonly HexagonGrid _hexagonGrid;
         private readonly ICoroutineRunner _coroutineRunner;
 
-        public GridCellAdder(IGridGenerator gridGenerator, IStaticDataService staticData,
+        public GridCellAddLogic(IGridGenerator gridGenerator, IStaticDataService staticData,
             ICoroutineRunner coroutineRunner, HexagonGrid hexagonGrid)
         {
             _staticData = staticData;
@@ -43,7 +42,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
             for (int i = 0; i < cellsToAddCount; i++)
             {
                 AddCellToRandomPosition();
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.05f);
             }
             
             onCompleted?.Invoke();
@@ -51,27 +50,39 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 
         private void AddCellToRandomPosition()
         {
-            Vector2Int randomPositionOnEdge = GetRandomPositionOnEdge();
+            HashSet<Vector2Int> edgePositions = GridCellsUtility.GetEdgePositions(_hexagonGrid).ToHashSet();
 
-            Vector3 worldPosition =
-                _hexagonGrid.GridComponent.CellToWorld(
-                    new Vector3Int(randomPositionOnEdge.x, randomPositionOnEdge.y, 0));
+            while (edgePositions.Count > 0)
+            {
+                Vector2Int randomPositionOnEdge = GetRandomPositionOnEdge(edgePositions.ToArray());
+                
+                Vector3 worldPosition =
+                    _hexagonGrid.GridComponent.CellToWorld(new Vector3Int(randomPositionOnEdge.x, randomPositionOnEdge.y, 0));
 
-            if (worldPosition.magnitude > 3)
-                return;
+                if (worldPosition.magnitude > 3)
+                {
+                    edgePositions.Remove(randomPositionOnEdge);
+                    continue;
+                }
             
+                AddNewCell(randomPositionOnEdge, worldPosition);
+                break;
+            }
+        }
+
+        private void AddNewCell(Vector2Int randomPositionOnEdge, Vector3 worldPosition)
+        {
             GridCell gridCell = _gridGenerator.GenerateGridCell(randomPositionOnEdge, worldPosition,
                 _staticData.GameConfig.GridConfig.CellConfig);
 
             _hexagonGrid.AddCell(gridCell.PositionOnGrid, gridCell);
         }
 
-        private Vector2Int GetRandomPositionOnEdge()
+        private Vector2Int GetRandomPositionOnEdge(Vector2Int[] edgePositions)
         {
-            _edgePositions = GridCellsUtility.GetEdgePositions(_hexagonGrid);
             List<Vector2Int> positionsOnEdge = new();
 
-            foreach (Vector2Int edgePosition in _edgePositions)
+            foreach (Vector2Int edgePosition in edgePositions)
             {
                 Vector2Int[] neighboursOnEdge = GridCellsUtility
                     .GetNeighbourPositions(edgePosition)

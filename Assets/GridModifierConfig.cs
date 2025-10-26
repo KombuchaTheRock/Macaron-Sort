@@ -7,6 +7,23 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "StaticData/GridModifierConfig", fileName = "GridModifierConfig", order = 0)]
 public class GridModifierConfig : ScriptableObject
 {
+    [field: SerializeField] public List<GridModifier> Modifiers { get; set; } = new();
+}
+
+[Serializable]
+public class CellBlockerWithCondition
+{
+    [field: SerializeField, BoxGroup,
+            Label("Hexagon Type"),]
+    public HexagonTileType HexagonType { get; private set; }
+
+    [field: SerializeField, Range(0, 100), BoxGroup]
+    public int ScoreAmount { get; private set; }
+}
+
+[Serializable]
+public class GridModifier
+{
     [field: SerializeField] public int LevelForStart { get; private set; }
 
     [field: SerializeField, Header("Modifiers")]
@@ -35,15 +52,4 @@ public class GridModifierConfig : ScriptableObject
 
     [field: SerializeField, ShowIf("AddBlockerWithCondition"), BoxGroup]
     public List<CellBlockerWithCondition> BlockersWithCondition { get; private set; }
-}
-
-[Serializable]
-public class CellBlockerWithCondition
-{
-    [field: SerializeField, BoxGroup,
-            Label("Hexagon Type"),]
-    public HexagonTileType HexagonType { get; private set; }
-
-    [field: SerializeField, Range(0, 100), BoxGroup]
-    public int ScoreAmount { get; private set; }
 }

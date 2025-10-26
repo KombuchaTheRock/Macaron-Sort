@@ -9,6 +9,8 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
     {
         [SerializeField] private HexagonGrid _hexagonGrid;
         [SerializeField] private GridModificator _gridModificator;
+        [SerializeField] private GridCellUnlocker _gridCellUnlocker;
+        
         private IGameProgressService _progressService;
         private IPlayerLevel _playerLevel;
 
@@ -41,12 +43,14 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         {
             _playerLevel.ControlPointAchieved += OnControlPointAchieved;
             _gridModificator.GridModified += OnGridModified;
+            _gridCellUnlocker.GridModified += OnGridModified;
         }
 
         private void CleanUp()
         {
+            _playerLevel.ControlPointAchieved -= OnControlPointAchieved;
             _gridModificator.GridModified -= OnGridModified;
-            _gridModificator.GridModified -= OnGridModified;
+            _gridCellUnlocker.GridModified -= OnGridModified;
         }
     }
 }

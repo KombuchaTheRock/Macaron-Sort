@@ -48,7 +48,9 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
         public void UpdateOccupiedCells()
         {
-            List<GridCell> occupiedCells = _hexagonGrid.Cells.Where(cell => cell.IsOccupied).ToList();
+            List<GridCell> occupiedCells = _hexagonGrid.Cells
+                .Where(cell => cell.IsOccupied)
+                .ToList();
 
             _updatedCells.AddRange(occupiedCells);
             _coroutineRunner.StartCoroutine(CheckUpdatedCellsRoutine());

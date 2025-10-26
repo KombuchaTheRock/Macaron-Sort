@@ -67,7 +67,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 
         private void PickCell(GridCell cell)
         {
-            if (cell.IsOccupied)
+            if (cell.IsOccupied || cell.IsLocked)
                 return;
 
             if (_lastCellUnderCursor != null && _lastCellUnderCursor == cell)
