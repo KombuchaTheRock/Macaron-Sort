@@ -9,11 +9,8 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
     {
         private Dictionary<Vector2Int, GridCell> _hexagonGrid = new();
 
-        public Grid GridComponent { get; private set; }
+        [field: SerializeField] public Grid GridComponent { get; private set; }
         public List<GridCell> Cells => _hexagonGrid.Values.ToList();
-
-        public void Initialize(Grid grid) =>
-            GridComponent = grid;
 
         public void AddCell(Vector2Int cell, GridCell gridCell) =>
             _hexagonGrid.Add(cell, gridCell);

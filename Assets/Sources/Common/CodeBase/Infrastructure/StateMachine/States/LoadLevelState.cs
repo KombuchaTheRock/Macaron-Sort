@@ -80,8 +80,8 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             List<CellData> cellData = _progressService.GameProgress.PersistentProgressData.WorldData.GridData.Cells;
             bool savedGridExists = cellData.Count > 0;
             
-            HexagonGrid hexagonGrid = savedGridExists ? _gridGenerator.GenerateSavedGrid(gridConfig.Grid, gridConfig.CellConfig, cellData) : 
-                _gridGenerator.GenerateNewGrid(gridConfig.Grid, gridConfig.Size, gridConfig.CellConfig);
+            HexagonGrid hexagonGrid = savedGridExists ? _gridGenerator.GenerateSavedGrid(gridConfig.CellConfig, cellData) : 
+                _gridGenerator.GenerateNewGrid(gridConfig.Size, gridConfig.CellConfig);
             
             return hexagonGrid;
         }

@@ -14,7 +14,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
     public class GridCellAddLogic
     {
         private Coroutine _addCellsRoutine;
-        
+
         private readonly IGridGenerator _gridGenerator;
         private readonly IStaticDataService _staticData;
         private readonly HexagonGrid _hexagonGrid;
@@ -31,10 +31,11 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 
         public void AddCellsToRandomPositions(int cellsToAddCount, Action onCompleted = null)
         {
-            if (_addCellsRoutine != null) 
+            if (_addCellsRoutine != null)
                 _coroutineRunner.StopCoroutine(_addCellsRoutine);
-            
-            _addCellsRoutine = _coroutineRunner.StartCoroutine(AddCellsToRandomPositionsRoutine(cellsToAddCount, onCompleted));
+
+            _addCellsRoutine =
+                _coroutineRunner.StartCoroutine(AddCellsToRandomPositionsRoutine(cellsToAddCount, onCompleted));
         }
 
         private IEnumerator AddCellsToRandomPositionsRoutine(int cellsToAddCount, Action onCompleted = null)
@@ -44,56 +45,27 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
                 AddCellToRandomPosition();
                 yield return new WaitForSeconds(0.05f);
             }
-            
+
             onCompleted?.Invoke();
         }
 
         private void AddCellToRandomPosition()
         {
-            HashSet<Vector2Int> edgePositions = GridCellsUtility.GetEdgePositions(_hexagonGrid).ToHashSet();
+            List<Vector2Int> edgePositions = GridCellsUtility.GetRandomPositionOnEdge(_hexagonGrid, 3);
 
-            while (edgePositions.Count > 0)
-            {
-                Vector2Int randomPositionOnEdge = GetRandomPositionOnEdge(edgePositions.ToArray());
-                
-                Vector3 worldPosition =
-                    _hexagonGrid.GridComponent.CellToWorld(new Vector3Int(randomPositionOnEdge.x, randomPositionOnEdge.y, 0));
-
-                if (worldPosition.magnitude > 3)
-                {
-                    edgePositions.Remove(randomPositionOnEdge);
-                    continue;
-                }
+            if (edgePositions.Count == 0)
+                return;
             
-                AddNewCell(randomPositionOnEdge, worldPosition);
-                break;
-            }
+            Vector2Int randomPositionOnEdge = edgePositions[Random.Range(0, edgePositions.Count - 1)];
+            AddNewCell(randomPositionOnEdge);
         }
 
-        private void AddNewCell(Vector2Int randomPositionOnEdge, Vector3 worldPosition)
+        private void AddNewCell(Vector2Int randomPositionOnEdge)
         {
-            GridCell gridCell = _gridGenerator.GenerateGridCell(randomPositionOnEdge, worldPosition,
+            GridCell gridCell = _gridGenerator.GenerateGridCell(randomPositionOnEdge,
                 _staticData.GameConfig.GridConfig.CellConfig);
 
             _hexagonGrid.AddCell(gridCell.PositionOnGrid, gridCell);
-        }
-
-        private Vector2Int GetRandomPositionOnEdge(Vector2Int[] edgePositions)
-        {
-            List<Vector2Int> positionsOnEdge = new();
-
-            foreach (Vector2Int edgePosition in edgePositions)
-            {
-                Vector2Int[] neighboursOnEdge = GridCellsUtility
-                    .GetNeighbourPositions(edgePosition)
-                    .Where(cell => _hexagonGrid.IsCellOnGrid(cell) == false)
-                    .ToArray();
-
-                if (neighboursOnEdge.Length <= 3)
-                    positionsOnEdge.AddRange(neighboursOnEdge);
-            }
-
-            return positionsOnEdge[Random.Range(0, positionsOnEdge.Count - 1)];
         }
     }
 }

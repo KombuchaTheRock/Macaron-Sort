@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 2808015782067599042}
   - component: {fileID: 5585936276582594858}
   - component: {fileID: -7544708982644789027}
+  - component: {fileID: 8421662111424790389}
   m_Layer: 0
   m_Name: GridRoot
   m_TagString: Untagged
@@ -67,6 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 694a3736d76741549f770e4ea2332c6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <GridComponent>k__BackingField: {fileID: 8421662111424790389}
 --- !u!114 &5982151839695361296
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,7 +146,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hexagonGrid: {fileID: 186360926803980998}
   _gridCellUnlocker: {fileID: -7544708982644789027}
-  _gizmosEdgeCellRadius: 0.1
   _cellsToAddCount: 10
   _cellsToDeleteCount: 0
 --- !u!114 &2808015782067599042
@@ -188,6 +189,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _hexagonGrid: {fileID: 186360926803980998}
+--- !u!156049354 &8421662111424790389
+Grid:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5789678530455995809}
+  m_Enabled: 1
+  m_CellSize: {x: 0.8660254, y: 1, z: 1}
+  m_CellGap: {x: 0, y: 0, z: 0}
+  m_CellLayout: 1
+  m_CellSwizzle: 1
 --- !u!1001 &6779319314712635058
 PrefabInstance:
   m_ObjectHideFlags: 0

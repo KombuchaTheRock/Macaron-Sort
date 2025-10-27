@@ -21,6 +21,9 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
         private IStackSelectionLogic _selectionLogic;
         private IStackPlacementLogic _placementLogic;
 
+        private HexagonStack _swapStack;
+        private GridCell _lastCellUnderStack;
+
         public GridCell InitialCell { get; private set; }
         public bool IsDragging { get; private set; }
 
@@ -66,14 +69,50 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
                 return;
 
             if (CanDrag)
+            {
                 _draggingLogic.Drag(_currentStack, CheckingRay);
+
+                if (_onGridSelectionEnabled && _draggingLogic.CellUnderStack != null)
+                    SwapStacks();
+            }
+        }
+
+        private void SwapStacks()
+        {
+            if (_draggingLogic.CellUnderStack == InitialCell)
+                return;
+
+            if (_lastCellUnderStack != null && _lastCellUnderStack != _draggingLogic.CellUnderStack)
+                SwapBack();
+
+            if (_draggingLogic.CellUnderStack.IsOccupied == false)
+                return;
+
+            Debug.Log("Swap");
+            
+            _lastCellUnderStack = _draggingLogic.CellUnderStack;
+            _swapStack = _draggingLogic.CellUnderStack.Stack;
+
+            _draggingLogic.CellUnderStack.FreeCell();
+            _placementLogic.PlaceOnGrid(_swapStack, InitialCell);
+        }
+
+        private void SwapBack()
+        {
+            Debug.Log("SwapBack");
+            
+            InitialCell.FreeCell();
+            _placementLogic.PlaceOnGrid(_swapStack, _lastCellUnderStack);
+
+            _lastCellUnderStack = null;
+            _swapStack = null;
         }
 
         private void OnCursorUp()
         {
             if (_isActive == false)
                 return;
-            
+
             if (_currentStack == null)
                 return;
 
@@ -84,20 +123,28 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
                 _placementLogic.PlaceOnGrid(_currentStack, targetCell);
 
                 StackPlaced?.Invoke(targetCell);
+
+                if (InitialCell != null && _lastCellUnderStack == null) 
+                    InitialCell.FreeCell();
             }
             else
             {
                 if (_onGridSelectionEnabled)
                 {
-                    _currentStack.transform.position = _currentStack.InitialPosition;
-                    _currentStack.DisableMovement();
+                    if (_lastCellUnderStack != null && _lastCellUnderStack != _draggingLogic.CellUnderStack)
+                        SwapBack();
+
+                    _placementLogic.PlaceOnGrid(_currentStack, InitialCell);
                 }
                 else
                     _placementLogic.ReturnToInitialPosition(_currentStack, _currentStack.InitialPosition);
             }
 
             _currentStack = null;
-
+            _lastCellUnderStack = null;
+            _swapStack = null;
+            InitialCell = null;
+            
             _draggingLogic.ResetCell();
             _selectionLogic.ResetSelection();
 
@@ -109,7 +156,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
         {
             if (_isActive == false)
                 return;
-            
+
             if (TrySelectStack(out HexagonStack stack, out GridCell cell) == false)
                 return;
 

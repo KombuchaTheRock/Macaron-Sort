@@ -4,6 +4,7 @@ using Sources.Common.CodeBase.Infrastructure.Utilities;
 using Sources.Common.CodeBase.Services.Factories.GameFactory;
 using Sources.Common.CodeBase.Services.PlayerProgress.Data;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
+using Sources.Features.HexagonSort.Merge.Scripts;
 using UnityEngine;
 
 namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
@@ -17,11 +18,11 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
         public GridGenerator(IGameFactory gameFactory) =>
             _factory = gameFactory;
 
-        public HexagonGrid GenerateNewGrid(Grid grid, int gridSize, CellConfig cellConfig)
+        public HexagonGrid GenerateNewGrid(int gridSize, CellConfig cellConfig)
         {
-            InitializeHexagonGrid(grid, cellConfig);
+            InitializeHexagonGrid(cellConfig);
 
-            List<GridCell> gridCells = GenerateNewGridCells(grid, gridSize, cellConfig);
+            List<GridCell> gridCells = GenerateNewGridCells(gridSize, cellConfig);
 
             foreach (GridCell cell in gridCells)
                 _hexagonGrid.AddCell(cell.PositionOnGrid, cell);
@@ -29,11 +30,11 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
             return _hexagonGrid;
         }
 
-        public HexagonGrid GenerateSavedGrid(Grid grid, CellConfig cellConfig, List<CellData> cellData)
+        public HexagonGrid GenerateSavedGrid(CellConfig cellConfig, List<CellData> cellData)
         {
-            InitializeHexagonGrid(grid, cellConfig);
+            InitializeHexagonGrid(cellConfig);
 
-            List<GridCell> gridCells = GenerateGridCellsFromData(grid, cellConfig, cellData);
+            List<GridCell> gridCells = GenerateGridCellsFromData(cellConfig, cellData);
 
             foreach (GridCell cell in gridCells)
                 _hexagonGrid.AddCell(cell.PositionOnGrid, cell);
@@ -41,35 +42,30 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
             return _hexagonGrid;
         }
 
-        private void InitializeHexagonGrid(Grid grid, CellConfig cellConfig)
+        private void InitializeHexagonGrid(CellConfig cellConfig)
         {
             _hexagonGrid = _factory.CreateHexagonGrid();
-            _hexagonGrid.Initialize(grid);
             _gridRoot = _hexagonGrid.transform;
 
-            ConfigureGridComponent(grid, cellConfig);
+            ConfigureGridComponent(_hexagonGrid.GridComponent, cellConfig);
         }
 
-        private List<GridCell> GenerateGridCellsFromData(Grid grid, CellConfig cellConfig, List<CellData> cellDataList)
+        private List<GridCell> GenerateGridCellsFromData(CellConfig cellConfig, List<CellData> cellDataList)
         {
             List<GridCell> gridCells = new();
 
             foreach (CellData cellData in cellDataList)
             {
-                Vector3 spawnPosition =
-                    grid.CellToWorld(new Vector3Int(cellData.PositionOnGrid.x, cellData.PositionOnGrid.y, 0));
-
-                GridCell gridCell = GenerateCellFromData(cellConfig, cellData, spawnPosition);
-
+                GridCell gridCell = GenerateCellFromData(cellConfig, cellData);
                 gridCells.Add(gridCell);
             }
 
             return gridCells;
         }
 
-        private GridCell GenerateCellFromData(CellConfig cellConfig, CellData cellData, Vector3 spawnPosition)
+        private GridCell GenerateCellFromData(CellConfig cellConfig, CellData cellData)
         {
-            GridCell gridCell = GenerateGridCell(cellData.PositionOnGrid, spawnPosition, cellConfig);
+            GridCell gridCell = GenerateGridCell(cellData.PositionOnGrid, cellConfig);
 
             if (cellData.IsLocked == false) 
                 return gridCell;
@@ -86,21 +82,21 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
             return gridCell;
         }
 
-        private List<GridCell> GenerateNewGridCells(Grid grid, int gridSize, CellConfig cellConfig)
+        private List<GridCell> GenerateNewGridCells(int gridSize, CellConfig cellConfig)
         {
             List<GridCell> gridCells = new();
 
             int negativeGridSize = -gridSize;
-            float maxGridRadius = grid.CellToWorld(Vector3Int.right).magnitude * gridSize;
+            float maxGridRadius = _hexagonGrid.GridComponent.CellToWorld(Vector3Int.right).magnitude * gridSize;
 
             for (int x = negativeGridSize; x <= gridSize; x++)
             {
                 for (int y = negativeGridSize; y <= gridSize; y++)
                 {
-                    if (IsPositionInRadius(grid, x, y, maxGridRadius, out Vector3 spawnPosition) == false)
+                    if (IsPositionInRadius(_hexagonGrid.GridComponent, x, y, maxGridRadius, out Vector3 spawnPosition) == false)
                         continue;
 
-                    GridCell cell = GenerateGridCell(new Vector2Int(x, y), spawnPosition, cellConfig);
+                    GridCell cell = GenerateGridCell(new Vector2Int(x, y), cellConfig);
                     gridCells.Add(cell);
                 }
             }
@@ -108,8 +104,13 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
             return gridCells;
         }
 
-        public GridCell GenerateGridCell(Vector2Int positionOnGrid, Vector3 worldPosition, CellConfig cellConfig)
+        public GridCell GenerateGridCell(Vector2Int positionOnGrid, CellConfig cellConfig)
         {
+            Vector3 localCellPosition = _hexagonGrid.GridComponent.CellToLocal(
+                new Vector3Int(positionOnGrid.x, positionOnGrid.y, 0));
+    
+            Vector3 worldPosition = _hexagonGrid.GridComponent.transform.TransformPoint(localCellPosition);
+            
             GridCell gridCell =
                 _factory.CreateGridCell(worldPosition, positionOnGrid, _gridRoot, cellConfig.CellColor,
                     cellConfig.CellHighlightColor);

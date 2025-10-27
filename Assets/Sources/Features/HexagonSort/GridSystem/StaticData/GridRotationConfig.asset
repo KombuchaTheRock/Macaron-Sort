@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GridRotationConfig
   m_EditorClassIdentifier: 
   <SnapAnchorAngle>k__BackingField: 60
-  <SnapThreshold>k__BackingField: 15
+  <SnapThreshold>k__BackingField: 30
   <SnapSpeed>k__BackingField: 5
   <ReturnSpeed>k__BackingField: 6
   <RotationSensitivity>k__BackingField: 7

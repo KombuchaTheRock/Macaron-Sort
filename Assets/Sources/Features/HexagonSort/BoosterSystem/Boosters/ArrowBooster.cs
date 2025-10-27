@@ -34,7 +34,7 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Boosters
             if (IsActive)
             {
                 _context.StackMover.DeactivateOnGridSelection();
-                _context.StackMover.InitialCell.FreeCell();
+                //_context.StackMover.InitialCell.FreeCell();
 
                 _context.GridRotator.enabled = true;
 

@@ -15,9 +15,10 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
         private Vector3 _dragHorizontalOffset;
         private LayerMask _draggingLayerMask;
         private StackMoverConfig _config;
-
-        private GridCell _lastCellUnderCursor;
-
+        private GridCell _lastTargetCell;
+        
+        public GridCell CellUnderStack {get; private set;}
+        
         public StackDraggingLogic(IStaticDataService staticData) =>
             _staticData = staticData;
 
@@ -44,7 +45,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
                 CheckLayerBy(groundCheckRay);
             }
         }
-
+        
         private void CheckLayerBy(Ray groundCheckRay)
         {
             int layer = RaycastUtils.GetLayerBy(groundCheckRay, out RaycastHit hit, _config.MaxRaycastDistance,
@@ -52,15 +53,19 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 
             if (layer == _config.GroundLayer)
             {
-                if (_lastCellUnderCursor == null)
+                CellUnderStack = null;
+                
+                if (_lastTargetCell == null)
                     return;
 
-                _lastCellUnderCursor.DisableHighlight();
-                _lastCellUnderCursor = null;
+                _lastTargetCell.DisableHighlight();
+                _lastTargetCell = null;
             }
             else if (layer == _config.GridLayer)
             {
                 GridCell cell = hit.collider.GetComponent<GridCell>();
+                
+                CellUnderStack = cell;
                 PickCell(cell);
             }
         }
@@ -70,19 +75,19 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
             if (cell.IsOccupied || cell.IsLocked)
                 return;
 
-            if (_lastCellUnderCursor != null && _lastCellUnderCursor == cell)
+            if (_lastTargetCell != null && _lastTargetCell == cell)
                 return;
 
             cell.EnableHighlight();
 
-            _lastCellUnderCursor?.DisableHighlight();
-            _lastCellUnderCursor = cell;
+            _lastTargetCell?.DisableHighlight();
+            _lastTargetCell = cell;
         }
 
         public GridCell GetTargetCell() =>
-            _lastCellUnderCursor;
+            _lastTargetCell;
 
         public void ResetCell() =>
-            _lastCellUnderCursor = null;
+            _lastTargetCell = null;
     }
 }

@@ -71,12 +71,6 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
             ChooseAndApplyModifier();
         }
 
-        private void OnMergeFinished()
-        {
-            ChooseAndApplyModifier();
-            _stackMerger.MergeFinished -= OnMergeFinished;
-        }
-
         private void ChooseAndApplyModifier()
         {
             int freeCellsCount = _hexagonGrid.Cells.Count(x => x is { IsOccupied: false, IsLocked: false });
@@ -117,13 +111,15 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
             return count;
         }
 
-        private void AddCells(int count)
+        [Button("AddCells")]
+        private void AddCells(int count = 1)
         {
             _gridCellsAddLogic.AddCellsToRandomPositions(count,
                 () => GridModified?.Invoke());
         }
 
-        private void RemoveCells(int count)
+        [Button("RemoveCells")]
+        private void RemoveCells(int count = 1)
         {
             _gridCellDeleteLogic.DeleteRandomEdgeFreeCells(count,
                 () => GridModified?.Invoke());

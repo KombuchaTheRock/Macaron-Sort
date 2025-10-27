@@ -7,7 +7,8 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
     public interface IStackDraggingLogic
     {
         void Drag(HexagonStack stack, Ray ray);
-        GridCell GetTargetCell();
         void ResetCell();
+        GridCell GetTargetCell();
+        GridCell CellUnderStack { get; }
     }
 }

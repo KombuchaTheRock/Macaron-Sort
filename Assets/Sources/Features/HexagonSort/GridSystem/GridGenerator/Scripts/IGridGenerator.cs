@@ -7,8 +7,8 @@ namespace Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts
 {
     public interface IGridGenerator
     {
-        public HexagonGrid GenerateNewGrid(Grid grid, int gridSize, CellConfig cellConfig);
-        GridCell GenerateGridCell(Vector2Int positionOnGrid, Vector3 worldPosition, CellConfig cellConfig);
-        HexagonGrid GenerateSavedGrid(Grid grid, CellConfig cellConfig, List<CellData> cellData);
+        public HexagonGrid GenerateNewGrid(int gridSize, CellConfig cellConfig);
+        GridCell GenerateGridCell(Vector2Int positionOnGrid, CellConfig cellConfig);
+        HexagonGrid GenerateSavedGrid(CellConfig cellConfig, List<CellData> cellData);
     }
 }
