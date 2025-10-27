@@ -9,6 +9,7 @@ using Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
 using Sources.Features.HexagonSort.StackCompleter;
+using UnityEngine;
 
 namespace Sources.Features.HexagonSort.BoosterSystem.Activation
 {
@@ -27,6 +28,7 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
 
         private IBooster _activeBooster;
         private BoosterWindow _currentBoosterWindow;
+        private CameraViewSwitcher _cameraViewSwitcher;
 
         public BoosterActivator(IStackMover stackMover, IStackSpawner stackSpawner, IStackCompleter stackCompleter,
             IBoosterCounter boosterCounter, IWindowService windowService)
@@ -57,6 +59,7 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
             _gridRotator = hexagonGrid.GetComponent<GridRotator>();
             _boosterPicker = boosterPicker;
 
+            _cameraViewSwitcher = Camera.main.GetComponent<CameraViewSwitcher>();
             _context.GridRotator = _gridRotator;
 
             SubscribeUpdates();
@@ -71,7 +74,6 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
                 booster.TryFinish();
         
             _stackSpawner.StopSpawn();
-            //_boosterPicker.LoadButtonsInteractable();
         }
 
         private void OnBoosterPicked(BoosterType boosterType)
@@ -82,7 +84,8 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
             if (_boosters[boosterType].TryActivate())
             {
                 _activeBooster = _boosters[boosterType];
-                //_boosterPicker.DisableButtons();
+                
+                _cameraViewSwitcher.ToBoosterTransform();
                 
                 switch (boosterType)
                 {
@@ -106,7 +109,8 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
                 _activeBooster = null;
                 _currentBoosterWindow.CloseButtonClicked -= OnCloseButtonClicked;
                 _currentBoosterWindow = null;
-                //_boosterPicker.LoadButtonsInteractable();
+                
+                _cameraViewSwitcher.ToDefaultTransform();
             }
         }
 
@@ -130,6 +134,8 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
             _currentBoosterWindow = null;
             
             _boosterPicker.LoadButtonsInteractable();
+            
+            _cameraViewSwitcher.ToDefaultTransform();
         }
 
         private void SubscribeUpdates()

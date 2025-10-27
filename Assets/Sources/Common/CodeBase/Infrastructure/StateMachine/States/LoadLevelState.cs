@@ -59,7 +59,6 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _factory.CreateInstanceRoot();
             _uiFactory.CreateUIRoot();
             
-            
             GameObject hud = _factory.CreateHUD();
             BoosterPicker boosterPicker = hud.GetComponentInChildren<BoosterPicker>();
             HexagonGrid hexagonGrid = GenerateGrid();
@@ -69,6 +68,8 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             boosterPicker.Initialize(hexagonGrid); 
             _boosterActivator.Initialize(boosterPicker, hexagonGrid);
             _stackMerger.Initialize(hexagonGrid);
+            
+            CameraUtility.UpdateCameraSize(hexagonGrid);
             
             _gameSettings.ApplySettings();
         }

@@ -33,7 +33,8 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         public event Action GridModified;
 
         [Inject]
-        private void Construct(IStaticDataService staticData, IGridGenerator gridGenerator, IPlayerLevel playerLevel, IStackMerger stackMerger)
+        private void Construct(IStaticDataService staticData, IGridGenerator gridGenerator, IPlayerLevel playerLevel,
+            IStackMerger stackMerger)
         {
             _stackMerger = stackMerger;
             _playerLevel = playerLevel;
@@ -65,9 +66,9 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 
         private void OnLevelChanged(int level)
         {
-            // if (_gridModifiers.TryGetValue(level, out GridModifier modifier) == false)
-            //     return;
-            
+            if (level % 5 > 0)
+                return;
+
             ChooseAndApplyModifier();
         }
 
@@ -77,25 +78,26 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
             float freeCellsPercentage = freeCellsCount / (float)_hexagonGrid.Cells.Count;
 
             Debug.Log($"FreeCellsCount: {freeCellsCount}\nFreeCellsPercentage: {freeCellsPercentage}");
-            
+
             switch (freeCellsPercentage)
             {
-                case <= 0.40f:
-                    ApplyCellModifier(AddCells, freeCellsCount, 0.15f, 0.25f);
+                case <= 0.5f:
+                    ApplyCellModifier(AddCells, freeCellsCount, 0.20f, 0.30f);
+                    break;
+                case > 0.90f:
+                    ApplyCellModifier(RemoveCells, freeCellsCount, 0.15f, 0.25f);
                     break;
                 case > 0.75f:
-                    ApplyCellModifier(RemoveCells, freeCellsCount, 0.15f, 0.25f);                    
-                    break;
-                case > 0.65f:
                     ApplyCellModifier(LockCellsByTileScore, freeCellsCount, 0.10f, 0.15f);
                     break;
-                case > 0.55f:
+                case > 0.65f:
                     ApplyCellModifier(LockCellsSimple, freeCellsCount, 0.10f, 0.15f);
                     break;
             }
         }
 
-        private void ApplyCellModifier(Action<int> modifier, int freeCellsCount, float minPercentage, float maxPercentage)
+        private void ApplyCellModifier(Action<int> modifier, int freeCellsCount, float minPercentage,
+            float maxPercentage)
         {
             int count = GetCellCountInRange(freeCellsCount, minPercentage, maxPercentage);
             Debug.Log($"Modifying {count} of {freeCellsCount} cells");
@@ -116,6 +118,8 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         {
             _gridCellsAddLogic.AddCellsToRandomPositions(count,
                 () => GridModified?.Invoke());
+
+            CameraUtility.UpdateCameraSize(_hexagonGrid);
         }
 
         [Button("RemoveCells")]
@@ -123,8 +127,10 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         {
             _gridCellDeleteLogic.DeleteRandomEdgeFreeCells(count,
                 () => GridModified?.Invoke());
+
+            CameraUtility.UpdateCameraSize(_hexagonGrid);
         }
-        
+
         [Button("BlockCellSimple")]
         private void LockCellsSimple(int count = 1)
         {

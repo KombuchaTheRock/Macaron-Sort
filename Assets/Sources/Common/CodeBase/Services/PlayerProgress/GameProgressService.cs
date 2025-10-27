@@ -65,7 +65,7 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
 
             GameProgress = new GameProgress(persistentProgressData, controlPointProgressData);
 
-            ProgressLoaded?.Invoke();
+            //ProgressLoaded?.Invoke();
         }
 
         public async UniTask<bool> SavedProgressExists()
@@ -89,6 +89,7 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
         {
             int level = controlPointProgressData.PlayerData.Level;
             int score = controlPointProgressData.PlayerData.Score;
+            
             IReadOnlyList<BoosterCount> boosters = controlPointProgressData.PlayerData.Boosters;
 
             PlayerData playerData = new(score, level, boosters.ToList());

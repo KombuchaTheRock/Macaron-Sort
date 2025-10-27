@@ -54,23 +54,14 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 
         private void LoadOrInitializeNewProgress(bool newProgress)
         {
-            _progressService.InitializeNewProgress();
+            if (newProgress)
+                _progressService.InitializeNewProgress();
+            else
+                _progressService.PersistentProgressToControlPoint();
 
             _progressService.SavePersistentProgressAsync();
             _progressService.SaveControlPointProgressAsync();
-            
-            // if (newProgress)
-            // {
-            //     _progressService.InitializeNewProgress();
-            //
-            //     _progressService.SavePersistentProgressAsync();
-            //     _progressService.SaveControlPointProgressAsync();
-            // }
-            // else
-            //     _progressService.PersistentProgressToControlPoint();
-
-            // _progressService.ApplyProgress();
-        }
+         }
 
         private void ClearStacks()
         {
@@ -80,6 +71,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             foreach (HexagonStack stack in _hexagonFactory.Stacks.Where(stack => stack != null))
                 Object.Destroy(stack.gameObject);
 
+            _gameFactory.ProgressReaders.Clear();
             _hexagonFactory.SettingsReaders.Clear();
             _hexagonFactory.Stacks.Clear();
         }

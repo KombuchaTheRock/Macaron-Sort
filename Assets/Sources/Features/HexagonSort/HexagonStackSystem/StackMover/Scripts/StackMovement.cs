@@ -38,7 +38,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 
         public Tween RemoveAnimation(Action onCompleted = null, Ease ease = Ease.Unset)
         {
-            Vector3 pointOutsideScreen = Camera.main.ViewportToWorldPoint(new Vector3(-0.1f, 0.6f, 0));
+            Vector3 pointOutsideScreen = Camera.main.ViewportToWorldPoint(new Vector3(-0.1f, 0.4f, 0));
             Vector3 endPosition = new(pointOutsideScreen.x, transform.position.y, pointOutsideScreen.z);
 
             TweenerCore<Vector3, Vector3, VectorOptions> removeAnimation = MoveAnimation(transform.position,

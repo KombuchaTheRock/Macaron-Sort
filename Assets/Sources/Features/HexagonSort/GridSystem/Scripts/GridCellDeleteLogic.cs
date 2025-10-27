@@ -2,12 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Cysharp.Threading.Tasks;
 using Sources.Common.CodeBase.Infrastructure;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Sources.Features.HexagonSort.GridSystem.Scripts
 {
@@ -68,31 +66,6 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
             
             GridCell gridCell = _hexagonGrid.Cells.FirstOrDefault(x => x.PositionOnGrid == cellWithMaxMagnitude);
             _hexagonGrid.RemoveCell(gridCell);
-
-            // HashSet<GridCell> freeEdgeCells = _hexagonGrid.Cells
-            //     .Where(cell => IsFreeEdgeCell(cell, edgePositions))
-            //     .ToHashSet();
-            //
-            // if (freeEdgeCells.Count <= 0)
-            //     return;
-            //
-            // while (freeEdgeCells.Count > 0)
-            // {
-            //     GridCell randomEdgeCell = freeEdgeCells.ToArray()[Random.Range(0, freeEdgeCells.Count - 1)];
-            //     Vector3Int positionOnGrid = new(randomEdgeCell.PositionOnGrid.x, randomEdgeCell.PositionOnGrid.y, 0);
-            //
-            //     if (_hexagonGrid.GridComponent.CellToWorld(positionOnGrid).magnitude <= 1)
-            //     {
-            //         freeEdgeCells.Remove(randomEdgeCell);
-            //         continue;
-            //     }
-            //
-            //     _hexagonGrid.RemoveCell(randomEdgeCell);
-            //     break;
-            // }
         }
-
-        private static bool IsFreeEdgeCell(GridCell cell, List<Vector2Int> edgePositions) =>
-            cell.IsOccupied == false && edgePositions.Contains(cell.PositionOnGrid);
     }
 }
