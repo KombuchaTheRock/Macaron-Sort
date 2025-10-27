@@ -7,7 +7,7 @@ namespace Sources.Features.HexagonSort.StackCompleter
 {
     public interface IStackCompletionLogic
     {
-        event Action<int> StackCompleted;
+        public event Action<HexagonStackScore> StackCompleted;
         event Action DeleteAnimationCompleted;
     
         IEnumerator CompleteStackRoutine(HexagonStack stack, GridCell gridCell);

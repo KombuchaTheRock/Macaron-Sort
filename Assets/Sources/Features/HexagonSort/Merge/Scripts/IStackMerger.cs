@@ -1,5 +1,6 @@
 ﻿using System;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
+using Sources.Features.HexagonSort.StackCompleter;
 
 namespace Sources.Features.HexagonSort.Merge.Scripts
 {
@@ -7,7 +8,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
     {
         event Action MergeAnimationCompleted;
         event Action HexagonDeleteAnimationCompleted;
-        event Action<int> StackCompleted;
+        public event Action<HexagonStackScore> StackCompleted;
         event Action MergeStarted;
         event Action MergeFinished;
         bool IsMerging { get; }

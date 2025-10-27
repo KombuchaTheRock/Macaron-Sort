@@ -6,6 +6,7 @@ using Sources.Common.CodeBase.Infrastructure;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
+using Sources.Features.HexagonSort.StackCompleter;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
     {
         public event Action MergeAnimationCompleted;
         public event Action HexagonDeleteAnimationCompleted;
-        public event Action<int> StackCompleted;
+        public event Action<HexagonStackScore> StackCompleted;
         public event Action MergeStarted;
         public event Action MergeFinished;
 
@@ -56,8 +57,8 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             _coroutineRunner.StartCoroutine(CheckUpdatedCellsRoutine());
         }
 
-        private void OnStackCompleted(int score) =>
-            StackCompleted?.Invoke(score);
+        private void OnStackCompleted(HexagonStackScore stackScore) =>
+            StackCompleted?.Invoke(stackScore);
 
         private void OnStackPlaced(GridCell cell)
         {

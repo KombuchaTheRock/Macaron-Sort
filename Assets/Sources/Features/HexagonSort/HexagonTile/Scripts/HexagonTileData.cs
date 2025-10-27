@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Sources.Features.HexagonSort.HexagonTile.Scripts
 {
@@ -8,5 +9,6 @@ namespace Sources.Features.HexagonSort.HexagonTile.Scripts
         public HexagonTileType TileType;
         public Hexagon HexagonPrefab;
         public int ScoreAmount;
+        public Material HexagonMaterial;
     }
 }

@@ -21,6 +21,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             float initialY = mergeCandidate.Stack.Hexagons[^1].transform.position.y + offsetBetweenTiles;
 
             Sequence overallSequence = DOTween.Sequence();
+            overallSequence.SetLink(mergeCandidate.Stack.gameObject);
 
             float delay = 0.2f;
 

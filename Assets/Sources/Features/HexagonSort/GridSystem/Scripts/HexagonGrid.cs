@@ -21,7 +21,9 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
         public void RemoveCell(GridCell gridCell)
         {
             _hexagonGrid.Remove(gridCell.PositionOnGrid);
-            Destroy(gridCell.gameObject);
+            
+            gridCell.gameObject.SetActive(false);
+            Destroy(gridCell.gameObject, 10f);
         }
 
         public bool IsCellOnGrid(Vector2Int cell) =>

@@ -1,9 +1,11 @@
 using System;
 using Sources.Common.CodeBase.Services.PlayerProgress.Data;
-using UnityEngine;
 
-public class SimpleCellLock : CellLock
+public class SimpleCellLock : CellLock, IComparable<SimpleCellLock>
 {
+    private static int _nextId = 1;
+    private readonly int _uniqueId;
+    
     public event Action<int> StackToUnlockCountChanged;
     
     private int _completedStacksToUnlock;
@@ -24,13 +26,15 @@ public class SimpleCellLock : CellLock
 
     public SimpleCellLock(int completedStacksToUnlock)
     {
+        _uniqueId = _nextId++;
         CompletedStacksToUnlock = completedStacksToUnlock;
     }
 
+    public override CellLockData ToData() => 
+        new SimpleCellLockData(CompletedStacksToUnlock);
+
     public void DecreaseCompletedStacksToUnlock()
     {
-        Debug.Log("DecreaseCompletedStacksToUnlock");
-
         if (CompletedStacksToUnlock <= 0)
             return;
 
@@ -39,7 +43,18 @@ public class SimpleCellLock : CellLock
         if (CompletedStacksToUnlock <= 0)
             Unlock();
     }
+    
+    public int CompareTo(SimpleCellLock other)
+    {
+        if (ReferenceEquals(this, other))
+            return 0;
 
-    public override CellLockData ToData() => 
-        new SimpleCellLockData(CompletedStacksToUnlock);
+        if (CompletedStacksToUnlock == other.CompletedStacksToUnlock)
+            return _uniqueId.CompareTo(other._uniqueId);
+
+        if (CompletedStacksToUnlock < other.CompletedStacksToUnlock)
+            return -1;
+
+        return 1;
+    }
 }

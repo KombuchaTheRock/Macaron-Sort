@@ -6,6 +6,7 @@ using Sources.Common.CodeBase.Infrastructure;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
+using Sources.Features.HexagonSort.StackCompleter;
 
 namespace Sources.Features.HexagonSort.Merge.Scripts
 {
@@ -13,7 +14,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
     {
         public event Action MergeAnimationCompleted;
         public event Action HexagonDeleteAnimationCompleted;
-        public event Action<int> StackCompleted;
+        public event Action<HexagonStackScore> StackCompleted;
 
         private readonly ICoroutineRunner _coroutineRunner;
         private readonly HexagonGrid _hexagonGrid;
@@ -162,8 +163,8 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
         private void OnMergeAnimationCompleted() =>
             MergeAnimationCompleted?.Invoke();
 
-        private void OnStackCompleted(int score) =>
-            StackCompleted?.Invoke(score);
+        private void OnStackCompleted(HexagonStackScore stackScore) =>
+            StackCompleted?.Invoke(stackScore);
 
         private class MergeContext
         {

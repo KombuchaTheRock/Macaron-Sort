@@ -5,6 +5,7 @@ using System.Linq;
 using DG.Tweening;
 using Sources.Features.HexagonSort.HexagonStackSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
+using Sources.Features.HexagonSort.StackCompleter;
 using TMPro;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -13,7 +14,7 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 {
     public class StackCompletion
     {
-        public event Action<int> StackCompleted;
+        public event Action<HexagonStackScore> StackCompleted;
         public event Action DeleteAnimationCompleted;
 
         private readonly GameplayAnimations _gameplayAnimations;
@@ -30,6 +31,8 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             if (CanComplete(mergeCandidate.Stack, out List<Hexagon> similarHexagons) == false)
                 yield break;
 
+            HexagonTileType topHexagonTileType = mergeCandidate.Stack.TopHexagon.TileType;
+            
             Tween deleteAnimation = DeleteAnimation(similarHexagons);
             yield return deleteAnimation.WaitForCompletion();
 
@@ -37,11 +40,14 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             StackCompletePopUp(mergeCandidate);
 
             DeleteHexagons(mergeCandidate.Stack, similarHexagons);
-            
-            if (mergeCandidate.Stack.Hexagons.Count <= 0)
-                DeleteStack(mergeCandidate);
 
-            StackCompleted?.Invoke(score);
+            if (mergeCandidate.Stack.Hexagons.Count <= 0)
+            {
+                DeleteStack(mergeCandidate);
+                
+            }
+
+            StackCompleted?.Invoke(new HexagonStackScore(topHexagonTileType, score));
         }
 
         private bool CanComplete(HexagonStack stack, out List<Hexagon> similarHexagons)

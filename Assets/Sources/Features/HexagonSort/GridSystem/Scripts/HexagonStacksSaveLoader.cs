@@ -89,7 +89,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
             _stackCompleter.StackCompleted += OnStackCompleted;
         }
 
-        private void OnStackCompleted(int score) => 
+        private void OnStackCompleted(HexagonStackScore stackScore) => 
             UpdateGridPersistentData();
 
         private void CleanUp()

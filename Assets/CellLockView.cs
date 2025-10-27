@@ -1,11 +1,7 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class CellLockView : MonoBehaviour
+public abstract class CellLockView : MonoBehaviour
 {
-    private void Awake() => 
-        Hide();
-
     public void Show() => 
         gameObject.SetActive(true);
 

@@ -11,7 +11,7 @@ namespace Sources.Features.HexagonSort.StackCompleter
 {
     public class StackCompleter : IDisposable, IStackCompleter
     {
-        public event Action<int> StackCompleted;
+        public event Action<HexagonStackScore> StackCompleted;
         public event Action DeleteAnimationCompleted;
 
         private readonly IStackSelectionLogic _stackSelectionLogic;
@@ -61,8 +61,8 @@ namespace Sources.Features.HexagonSort.StackCompleter
         private void OnDeleteAnimationCompleted() =>
             DeleteAnimationCompleted?.Invoke();
 
-        private void OnStackCompleted(int score) =>
-            StackCompleted?.Invoke(score);
+        private void OnStackCompleted(HexagonStackScore stackScore) =>
+            StackCompleted?.Invoke(stackScore);
 
         private void OnCursorDown()
         {

@@ -31,7 +31,7 @@ namespace Sources.Common.CodeBase.Services.Factories.HexagonFactory
 
         public Hexagon CreateHexagon(Vector3 position, HexagonTileType tileType, Transform parent)
         {
-            HexagonTileData hexagonTileData = _staticData.ForHexagonTle(tileType);
+            HexagonTileData hexagonTileData = _staticData.ForHexagonTile(tileType);
             Hexagon hexagonPrefab = hexagonTileData.HexagonPrefab;
             Hexagon hexagon = Instantiate<Hexagon>(hexagonPrefab.gameObject, position, parent);
 

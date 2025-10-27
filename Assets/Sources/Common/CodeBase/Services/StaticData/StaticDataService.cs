@@ -52,7 +52,7 @@ namespace Sources.Common.CodeBase.Services.StaticData
         public HexagonStackConfig ForHexagonStack(HexagonStackTemplate gridTemplate) =>
             _stackStaticData.GetValueOrDefault(gridTemplate);
 
-        public HexagonTileData ForHexagonTle(HexagonTileType tileType) =>
+        public HexagonTileData ForHexagonTile(HexagonTileType tileType) =>
             _hexagonTileStaticData.GetValueOrDefault(tileType);
     }
 }

@@ -8,8 +8,13 @@ public class CellLockViewShower : MonoBehaviour
     [SerializeField] private SimpleCellLockView _simpleCellLockView;
     [SerializeField] private TileScoreCellLockView _tileScoreCellLockView;
     
-    private void Awake() => 
+    private void Awake()
+    {
+        _simpleCellLockView.Hide();
+        _tileScoreCellLockView.Hide();
+        
         SubscribeUpdates();
+    }
 
     private void OnDestroy() => 
         CleanUp();
@@ -19,11 +24,11 @@ public class CellLockViewShower : MonoBehaviour
         switch (obj)
         {
             case SimpleCellLock simpleCellLock:
-                _simpleCellLockView.Initialize(simpleCellLock);
+                _simpleCellLockView.SetCellLock(simpleCellLock);
                 _simpleCellLockView.Show();
                 break;
             case TileScoreCellLock tileScoreCellLock:
-                _tileScoreCellLockView.Initialize(tileScoreCellLock);
+                _tileScoreCellLockView.SetCellLock(tileScoreCellLock);
                 _tileScoreCellLockView.Show();
                 break;
             default:

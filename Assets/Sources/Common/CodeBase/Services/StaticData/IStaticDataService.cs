@@ -11,7 +11,7 @@ namespace Sources.Common.CodeBase.Services.StaticData
         HexagonStackConfig ForHexagonStack(HexagonStackTemplate stackTemplate);
         GameConfig GameConfig { get; }
         SoundsStaticData SoundsData { get; }
-        HexagonTileData ForHexagonTle(HexagonTileType tileType);
+        HexagonTileData ForHexagonTile(HexagonTileType tileType);
         WindowConfig ForWindow(WindowID windowID);
     }
 }

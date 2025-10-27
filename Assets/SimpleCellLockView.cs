@@ -7,7 +7,7 @@ public class SimpleCellLockView : CellLockView
     
     private SimpleCellLock _simpleCellLock;
 
-    public void Initialize(SimpleCellLock simpleCellLock)
+    public void SetCellLock(SimpleCellLock simpleCellLock)
     {
         if (_simpleCellLock != null) 
             CleanUp();

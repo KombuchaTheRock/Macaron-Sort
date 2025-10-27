@@ -8,5 +8,11 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress.Data
     {
         public int ScoreToUnlock;
         public HexagonTileType TileType;
+
+        public TileScoreCellLockData(HexagonTileType tileType, int scoreToUnlock)
+        {
+            ScoreToUnlock = scoreToUnlock;
+            TileType = tileType;
+        }
     }
 }

@@ -16,7 +16,7 @@ namespace Sources.Features.HexagonSort.StackCompleter
 {
     public class StackCompletionLogic : IStackCompletionLogic
     {
-        public event Action<int> StackCompleted;
+        public event Action<HexagonStackScore> StackCompleted;
         public event Action DeleteAnimationCompleted;
     
         private readonly ICoroutineRunner _coroutineRunner;
@@ -25,6 +25,8 @@ namespace Sources.Features.HexagonSort.StackCompleter
 
         public IEnumerator CompleteStackRoutine(HexagonStack stack, GridCell gridCell)
         {
+            HexagonTileType topHexagonTileType = stack.TopHexagon.TileType;
+            
             Tween deleteAnimation = DeleteAnimation(stack.Hexagons.ToList());
             yield return deleteAnimation.WaitForCompletion();
 
@@ -33,7 +35,7 @@ namespace Sources.Features.HexagonSort.StackCompleter
             StackCompletePopUp(stack, gridCell);
             DeleteStack(stack, gridCell);
 
-            StackCompleted?.Invoke(score);
+            StackCompleted?.Invoke(new HexagonStackScore(topHexagonTileType, score));
         }
 
         private void DeleteStack(HexagonStack stack, GridCell gridCell)

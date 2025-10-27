@@ -38,7 +38,7 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             _stackCompleter.StackCompleted -= OnStackCompleted;
         }
 
-        private void OnStackCompleted(int score) => 
-            _playerLevel.AddScore(score);
+        private void OnStackCompleted(HexagonStackScore stackScore) => 
+            _playerLevel.AddScore(stackScore.Score);
     }
 }

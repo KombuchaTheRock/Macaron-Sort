@@ -16,18 +16,24 @@ MonoBehaviour:
   - TileType: 0
     HexagonPrefab: {fileID: 450927700611805717, guid: 86b28dcaf6cc86c42baea23ca900b8e3, type: 3}
     ScoreAmount: 10
+    HexagonMaterial: {fileID: 2100000, guid: 67a5c02ee0e195a45aba94fef8cf4a18, type: 2}
   - TileType: 1
     HexagonPrefab: {fileID: 450927700611805717, guid: 8b50e144101021047b4523abaf0a9015, type: 3}
     ScoreAmount: 10
+    HexagonMaterial: {fileID: 2100000, guid: d7228353671939a43934b3f2c7e3a5d3, type: 2}
   - TileType: 2
     HexagonPrefab: {fileID: 450927700611805717, guid: 0af643538d9213a46a8c095db9a2422f, type: 3}
     ScoreAmount: 10
+    HexagonMaterial: {fileID: 2100000, guid: c4c118b0842772c46bf3bca5fc420471, type: 2}
   - TileType: 5
     HexagonPrefab: {fileID: 450927700611805717, guid: 4a7c4988409089446973355ad30e7f07, type: 3}
     ScoreAmount: 10
+    HexagonMaterial: {fileID: 2100000, guid: 5be5788ac09f07744bdd26d4675a9ec4, type: 2}
   - TileType: 3
     HexagonPrefab: {fileID: 450927700611805717, guid: 561297de6441b2b4face773467d68012, type: 3}
     ScoreAmount: 10
+    HexagonMaterial: {fileID: 2100000, guid: accdb1f1fe195a345b55ff2ada7f3941, type: 2}
   - TileType: 4
     HexagonPrefab: {fileID: 450927700611805717, guid: 0547dd53203602544be58a65132a14da, type: 3}
     ScoreAmount: 10
+    HexagonMaterial: {fileID: 2100000, guid: 2dd7d6422fff11143982a85d6bf2e6ec, type: 2}

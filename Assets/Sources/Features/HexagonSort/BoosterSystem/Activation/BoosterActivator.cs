@@ -113,7 +113,7 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
         private void OnStackPlaced(GridCell gridCell) => 
             FinishBooster(BoosterType.ArrowBooster);
 
-        private void OnStackCompleted(int score) => 
+        private void OnStackCompleted(HexagonStackScore stackScore) => 
             FinishBooster(BoosterType.RocketBooster);
 
         private void OnStacksSpawned() => 

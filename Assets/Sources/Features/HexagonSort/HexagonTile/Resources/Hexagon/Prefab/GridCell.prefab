@@ -19,7 +19,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8706160706869665401
 Transform:
   m_ObjectHideFlags: 0
@@ -120,8 +120,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6556ff1a44cccfa479ea2e1a71df99b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _scoreToUnlock: {fileID: 0}
-  _hexagonSprite: {fileID: 0}
+  _scoreToUnlock: {fileID: 2826982687522729831}
+  _hexagonSprite: {fileID: 5772220373707135808}
 --- !u!1 &3836638970162854861
 GameObject:
   m_ObjectHideFlags: 0
@@ -963,7 +963,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cellLocker: {fileID: 6458836046960390484}
   _simpleCellLockView: {fileID: 4684458947355011416}
-  _tileScoreCellLockView: {fileID: 0}
+  _tileScoreCellLockView: {fileID: 454300382527911711}
 --- !u!114 &6458836046960390484
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -83,7 +83,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.Scripts
             _scaleAnimation = _text.transform.DOScale(to, 0.1f)
                 .From(from)
                 .SetEase(Ease.InOutSine)
-                .SetLink(_text.gameObject)
+                .SetLink(gameObject)
                 .OnComplete(() => onCompleted?.Invoke())
                 .Play();
         }

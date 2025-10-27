@@ -24,24 +24,6 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
             return similarHexagons;
         }
 
-        public static bool CheckForMonoType(HexagonStack stack, HexagonTileType topTileType)
-        {
-            bool isMonoType = true;
-
-            for (int i = stack.Hexagons.Count - 1; i >= 0; i--)
-            {
-                Hexagon hexagon = stack.Hexagons[i];
-
-                if (hexagon.TileType == topTileType)
-                    continue;
-
-                isMonoType = false;
-                break;
-            }
-
-            return isMonoType;
-        }
-        
         public static int CalculateScore(List<Hexagon> hexagons) =>
             hexagons.Sum(hexagon => hexagon.Score);
     }
