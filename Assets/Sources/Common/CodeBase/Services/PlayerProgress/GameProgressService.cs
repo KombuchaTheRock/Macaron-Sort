@@ -61,11 +61,14 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
         public void PersistentProgressToControlPoint()
         {
             ControlPointProgressData controlPointProgressData = GameProgress.ControlPointProgressData;
-            PersistentProgressData persistentProgressData = ResetPersistentTo(controlPointProgressData);
+            PersistentProgressData persistentProgressData = controlPointProgressData
+                .CloneTo<PersistentProgressData>();
+
+            //ResetPersistentTo(controlPointProgressData);
 
             GameProgress = new GameProgress(persistentProgressData, controlPointProgressData);
 
-            //ProgressLoaded?.Invoke();
+            ProgressLoaded?.Invoke();
         }
 
         public async UniTask<bool> SavedProgressExists()
@@ -89,7 +92,7 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
         {
             int level = controlPointProgressData.PlayerData.Level;
             int score = controlPointProgressData.PlayerData.Score;
-            
+
             IReadOnlyList<BoosterCount> boosters = controlPointProgressData.PlayerData.Boosters;
 
             PlayerData playerData = new(score, level, boosters.ToList());
@@ -97,10 +100,10 @@ namespace Sources.Common.CodeBase.Services.PlayerProgress
             List<PlacedStackData> stacksOnGrid = controlPointProgressData.WorldData.StacksData.StacksOnGrid.ToList();
             List<FreeStackDataData> freeStacks = controlPointProgressData.WorldData.StacksData.FreeStacks.ToList();
             List<CellData> cellData = controlPointProgressData.WorldData.GridData.Cells.ToList();
-            
+
             StacksData stacksData = new(stacksOnGrid, freeStacks);
             GridData gridData = new(cellData);
-            
+
             WorldData worldData = new(stacksData, gridData);
 
             PersistentProgressData persistentProgressData =

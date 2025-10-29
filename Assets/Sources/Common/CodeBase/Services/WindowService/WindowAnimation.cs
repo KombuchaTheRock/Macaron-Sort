@@ -15,7 +15,7 @@ namespace Sources.Common.CodeBase.Services.WindowService
         {
             image.DOFade(to, _duration)
                 .From(from)
-                .SetLink(gameObject)
+                .SetLink(image.gameObject)
                 .SetUpdate(true)
                 .OnComplete(() => onCompleted?.Invoke())
                 .Play();
@@ -26,7 +26,7 @@ namespace Sources.Common.CodeBase.Services.WindowService
         {
             text.DOFade(to, _duration)
                 .From(from)
-                .SetLink(gameObject)
+                .SetLink(text.gameObject)
                 .SetUpdate(true)
                 .OnComplete(() => onCompleted?.Invoke())
                 .Play();

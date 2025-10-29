@@ -64,7 +64,10 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
         public static Vector2Int[] GetNeighbourPositions(Vector2Int center)
         {
             Vector2Int[] offsets = IsCellInEvenRow(center) ? _offsetsForEvenRow : _offsetsForOddRow;
-            return offsets.Select(offset => center + offset).ToArray();
+            
+            return offsets
+                .Select(offset => center + offset)
+                .ToArray();
         }
 
         private static bool IsCellInEvenRow(Vector2Int center) =>
@@ -84,6 +87,9 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
             return edgePositions;
         }
+
+        public static List<GridCell> GetFreeCells(HexagonGrid grid) => 
+            grid.Cells.Where(cell => cell.IsOccupied == false && cell.IsLocked == false).ToList();
 
         public static List<Vector2Int> GetRandomPositionOnEdge(HexagonGrid grid, float maxMagnitude)
         {
@@ -129,17 +135,5 @@ namespace Sources.Features.HexagonSort.Merge.Scripts
 
         private static bool IsAllCellsOnGrid(Vector2Int[] cells, HexagonGrid grid) =>
             cells.All(grid.IsCellOnGrid);
-        
-        public static Vector3 CellToWorldWithRotation(Grid grid, Vector3Int cellPosition)
-        {
-            Vector3 localPosition = grid.CellToLocal(cellPosition);
-            return grid.transform.TransformPoint(localPosition);
-        }
-
-        public static Vector3Int WorldToCellWithRotation(Grid grid, Vector3 worldPosition)
-        {
-            Vector3 localPosition = grid.transform.InverseTransformPoint(worldPosition);
-            return grid.LocalToCell(localPosition);
-        }
     }
 }

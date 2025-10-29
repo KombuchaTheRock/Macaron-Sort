@@ -30,6 +30,11 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private readonly Vector3[] _spawnPositions;
         private readonly float _delayBetweenStacks;
 
+        
+        public bool IsSpawning { get; set; }
+        
+        private bool GeneratedStacksExists => _generatedStacks is { Count: > 0 };
+
         public StackSpawner(IStackMover stackMover, IStackGenerator stackGenerator, IStaticDataService staticData,
             IHexagonFactory hexagonFactory, ICoroutineRunner coroutineRunner)
         {
@@ -57,6 +62,21 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
 
         public void Dispose() =>
             CleanUp();
+
+        public void ShowGeneratedStacks() => 
+            SetStacksActivity(true);
+
+        public void HideGeneratedStacks() => 
+            SetStacksActivity(false);
+
+        private void SetStacksActivity(bool active)
+        {
+            if (GeneratedStacksExists == false) 
+                return;
+            
+            foreach (HexagonStack stack in _generatedStacks)
+                stack.gameObject.SetActive(active);
+        }
 
         public void SpawnNewStacks()
         {
@@ -102,6 +122,8 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         private IEnumerator SpawnStacksRoutine(Vector3[] spawnPositions, HexagonStackConfig stackConfig,
             float delayBetweenStacks, Action<List<HexagonStack>> onStacksGenerated = null)
         {
+            IsSpawning = true;
+            
             if (_generatedStacks.Count > 0)
                 yield return _coroutineRunner.StartCoroutine(DeleteGeneratedStacks(delayBetweenStacks));
 
@@ -118,12 +140,15 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
             onStacksGenerated?.Invoke(generatedStacks);
         }
 
+        
+
         private void OnStacksGenerated(List<HexagonStack> stacks)
         {
             _stackGenerateRoutine = null;
             _generatedStacks = stacks;
             
             StacksSpawned?.Invoke();
+            IsSpawning = false;
         }
     }
 }

@@ -66,9 +66,6 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 
         private void OnLevelChanged(int level)
         {
-            if (level % 5 > 0)
-                return;
-
             ChooseAndApplyModifier();
         }
 
@@ -82,15 +79,19 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
             switch (freeCellsPercentage)
             {
                 case <= 0.5f:
+                    Debug.Log("ADD_CELLS");
                     ApplyCellModifier(AddCells, freeCellsCount, 0.20f, 0.30f);
                     break;
                 case > 0.90f:
+                    Debug.Log("REMOVE_CELLS");
                     ApplyCellModifier(RemoveCells, freeCellsCount, 0.15f, 0.25f);
                     break;
                 case > 0.75f:
+                    Debug.Log("BLOCK_WITH_CONSTRAINT");
                     ApplyCellModifier(LockCellsByTileScore, freeCellsCount, 0.10f, 0.15f);
                     break;
                 case > 0.65f:
+                    Debug.Log("BLOCK_SIMPLE");
                     ApplyCellModifier(LockCellsSimple, freeCellsCount, 0.10f, 0.15f);
                     break;
             }

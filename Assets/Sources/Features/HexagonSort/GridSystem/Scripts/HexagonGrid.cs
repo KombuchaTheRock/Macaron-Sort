@@ -20,7 +20,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
             _hexagonGrid.Remove(gridCell.PositionOnGrid);
             
             gridCell.gameObject.SetActive(false);
-            Destroy(gridCell.gameObject, 10f);
+            Destroy(gridCell.gameObject, 0f);
         }
 
         public bool IsCellOnGrid(Vector2Int cell) =>

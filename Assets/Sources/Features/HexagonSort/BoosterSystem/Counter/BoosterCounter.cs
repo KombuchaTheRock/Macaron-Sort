@@ -4,6 +4,7 @@ using System.Linq;
 using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Common.CodeBase.Services.PlayerProgress.Data;
 using Sources.Features.HexagonSort.BoosterSystem.Activation;
+using UnityEngine;
 
 namespace Sources.Features.HexagonSort.BoosterSystem.Counter
 {
@@ -62,6 +63,8 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Counter
 
         private void OnProgressLoaded()
         {
+            Debug.Log("OnProgressLoaded");
+            Debug.Log($"BoosterCount: {BoostersCount.Count}");
             IReadOnlyList<BoosterCount> playerDataBoosters = _gameProgressService
                 .GameProgress.PersistentProgressData.PlayerData.Boosters;
         
@@ -77,10 +80,13 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Counter
 
         private void OnControlPointAchieved()
         {
-            // AddBoosterAmount(BoosterType.ArrowBooster, 5);
-            // AddBoosterAmount(BoosterType.RocketBooster, 5);
-            // AddBoosterAmount(BoosterType.ReverseBooster, 5);
-        
+            if (_playerLevel.Level == 1)
+                return;
+            
+            AddBoosterAmount(BoosterType.ArrowBooster, 5);
+            AddBoosterAmount(BoosterType.RocketBooster, 5);
+            AddBoosterAmount(BoosterType.ReverseBooster, 5);
+            
             UpdateBoosterControlPointData();
         }
 

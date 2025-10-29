@@ -8,6 +8,7 @@ using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.GridRotator.Scripts;
 using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts;
+using Sources.Features.HexagonSort.Merge.Scripts;
 using Sources.Features.HexagonSort.StackCompleter;
 using UnityEngine;
 
@@ -24,27 +25,28 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
         private readonly IStackSpawner _stackSpawner;
         private readonly IStackCompleter _stackCompleter;
         private readonly IWindowService _windowService;
+        private readonly IStackMerger _stackMerger;
         private readonly BoosterContext _context;
 
         private IBooster _activeBooster;
         private BoosterWindow _currentBoosterWindow;
-        private CameraViewSwitcher _cameraViewSwitcher;
 
         public BoosterActivator(IStackMover stackMover, IStackSpawner stackSpawner, IStackCompleter stackCompleter,
-            IBoosterCounter boosterCounter, IWindowService windowService)
+            IBoosterCounter boosterCounter, IWindowService windowService, IStackMerger stackMerger)
         {
             _context = new BoosterContext
             {
                 StackMover = stackMover,
                 StackSpawner = stackSpawner,
                 StackCompleter = stackCompleter,
-                BoosterCounter = boosterCounter
+                BoosterCounter = boosterCounter,
             };
 
             _stackMover = stackMover;
             _stackSpawner = stackSpawner;
             _stackCompleter = stackCompleter;
             _windowService = windowService;
+            _stackMerger = stackMerger;
 
             _boosters = new Dictionary<BoosterType, IBooster>
             {
@@ -59,7 +61,7 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
             _gridRotator = hexagonGrid.GetComponent<GridRotator>();
             _boosterPicker = boosterPicker;
 
-            _cameraViewSwitcher = Camera.main.GetComponent<CameraViewSwitcher>();
+
             _context.GridRotator = _gridRotator;
 
             SubscribeUpdates();
@@ -70,23 +72,21 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
 
         public void Reset()
         {
-            foreach (IBooster booster in _boosters.Values) 
+            foreach (IBooster booster in _boosters.Values)
                 booster.TryFinish();
-        
+
             _stackSpawner.StopSpawn();
         }
 
         private void OnBoosterPicked(BoosterType boosterType)
         {
-            if (_activeBooster != null)
+            if (_activeBooster != null || _stackMerger.IsMerging || _stackSpawner.IsSpawning)
                 return;
 
             if (_boosters[boosterType].TryActivate())
             {
                 _activeBooster = _boosters[boosterType];
-                
-                _cameraViewSwitcher.ToBoosterTransform();
-                
+
                 switch (boosterType)
                 {
                     case BoosterType.RocketBooster:
@@ -109,39 +109,35 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
                 _activeBooster = null;
                 _currentBoosterWindow.CloseButtonClicked -= OnCloseButtonClicked;
                 _currentBoosterWindow = null;
-                
-                _cameraViewSwitcher.ToDefaultTransform();
             }
         }
 
-        private void OnStackPlaced(GridCell gridCell) => 
+        private void OnStackMoved() => 
             FinishBooster(BoosterType.ArrowBooster);
 
-        private void OnStackCompleted(HexagonStackScore stackScore) => 
+        private void OnStackCompleted(HexagonStackScore stackScore) =>
             FinishBooster(BoosterType.RocketBooster);
 
-        private void OnStacksSpawned() => 
+        private void OnStacksSpawned() =>
             FinishBooster(BoosterType.ReverseBooster);
 
         private void FinishBooster(BoosterType boosterType)
         {
-            if (_currentBoosterWindow != null) 
+            if (_currentBoosterWindow != null)
                 _currentBoosterWindow.CloseWindow();
-            
+
             _boosters[boosterType].TryFinish();
-            
+
             _activeBooster = null;
             _currentBoosterWindow = null;
-            
+
             _boosterPicker.LoadButtonsInteractable();
-            
-            _cameraViewSwitcher.ToDefaultTransform();
         }
 
         private void SubscribeUpdates()
         {
             _stackCompleter.StackCompleted += OnStackCompleted;
-            _stackMover.StackPlaced += OnStackPlaced;
+            _stackMover.StackMoved += OnStackMoved;
             _stackSpawner.StacksSpawned += OnStacksSpawned;
 
             _boosterPicker.BoosterPicked += OnBoosterPicked;
@@ -150,12 +146,12 @@ namespace Sources.Features.HexagonSort.BoosterSystem.Activation
         private void CleanUp()
         {
             _stackCompleter.StackCompleted -= OnStackCompleted;
-            _stackMover.StackPlaced -= OnStackPlaced;
+            _stackMover.StackMoved -= OnStackMoved;
             _stackSpawner.StacksSpawned -= OnStacksSpawned;
-        
+
             _boosterPicker.BoosterPicked -= OnBoosterPicked;
 
-            if (_currentBoosterWindow != null) 
+            if (_currentBoosterWindow != null)
                 _currentBoosterWindow.CloseButtonClicked -= OnCloseButtonClicked;
         }
     }

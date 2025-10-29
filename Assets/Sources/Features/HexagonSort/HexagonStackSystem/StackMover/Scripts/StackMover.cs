@@ -13,6 +13,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
         public event Action DragStarted;
         public event Action DragFinished;
         public event Action<GridCell> StackPlaced;
+        public event Action StackMoved;
 
         private HexagonStack _currentStack;
 
@@ -79,7 +80,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
 
         private void SwapStacks()
         {
-            if (_draggingLogic.CellUnderStack == InitialCell)
+            if (_draggingLogic.CellUnderStack == InitialCell && _swapStack == null)
                 return;
 
             if (_lastCellUnderStack != null && _lastCellUnderStack != _draggingLogic.CellUnderStack)
@@ -89,7 +90,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
                 return;
 
             Debug.Log("Swap");
-            
+
             _lastCellUnderStack = _draggingLogic.CellUnderStack;
             _swapStack = _draggingLogic.CellUnderStack.Stack;
 
@@ -100,7 +101,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
         private void SwapBack()
         {
             Debug.Log("SwapBack");
-            
+
             InitialCell.FreeCell();
             _placementLogic.PlaceOnGrid(_swapStack, _lastCellUnderStack);
 
@@ -122,9 +123,21 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
             {
                 _placementLogic.PlaceOnGrid(_currentStack, targetCell);
 
-                StackPlaced?.Invoke(targetCell);
+                if (_onGridSelectionEnabled == false) 
+                    StackPlaced?.Invoke(targetCell);
 
-                if (InitialCell != null && _lastCellUnderStack == null) 
+               
+                
+                if (_onGridSelectionEnabled && InitialCell.Stack != _currentStack)
+                {
+                    StackMoved?.Invoke();
+                    StackPlaced?.Invoke(targetCell);
+                    
+                    if (InitialCell != null) 
+                        StackPlaced?.Invoke(InitialCell);
+                }
+
+                if (_onGridSelectionEnabled && _swapStack == null)
                     InitialCell.FreeCell();
             }
             else
@@ -144,7 +157,7 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
             _lastCellUnderStack = null;
             _swapStack = null;
             InitialCell = null;
-            
+
             _draggingLogic.ResetCell();
             _selectionLogic.ResetSelection();
 

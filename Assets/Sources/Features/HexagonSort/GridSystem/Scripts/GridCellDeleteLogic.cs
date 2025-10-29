@@ -46,9 +46,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 
         private void DeleteRandomEdgeFreeCell()
         {
-            List<Vector2Int> edgePositions = GridCellsUtility.GetEdgePositions(_hexagonGrid);
-
-            Vector2Int cellWithMaxMagnitude = edgePositions
+            HashSet<Vector2Int> edgePositions = GridCellsUtility.GetEdgePositions(_hexagonGrid)
                 .Where(pos =>
                 {
                     Vector3 worldPos = _hexagonGrid.GridComponent.GetCellCenterWorld(new Vector3Int(pos.x, pos.y, 0));
@@ -59,13 +57,39 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
                     Vector3 worldPos = _hexagonGrid.GridComponent.GetCellCenterWorld(new Vector3Int(pos.x, pos.y, 0));
                     return worldPos.magnitude;
                 })
-                .FirstOrDefault();
+                .ToHashSet();
 
-            if (cellWithMaxMagnitude == default) 
-                return;
-            
-            GridCell gridCell = _hexagonGrid.Cells.FirstOrDefault(x => x.PositionOnGrid == cellWithMaxMagnitude);
-            _hexagonGrid.RemoveCell(gridCell);
+            while (edgePositions.Count > 0)
+            {
+                Vector2Int cellWithMaxMagnitude = edgePositions
+                    .FirstOrDefault();
+
+                Vector2Int[] neighbours = GridCellsUtility
+                    .GetNeighbourPositions(cellWithMaxMagnitude)
+                    .Where(_hexagonGrid.IsCellOnGrid)
+                    .ToArray();
+
+                if (neighbours.Length < 3)
+                {
+                    foreach (Vector2Int neighbour in neighbours)
+                        edgePositions.Remove(neighbour);
+
+                    edgePositions.Remove(cellWithMaxMagnitude);
+                    continue;
+                }
+
+                if (_hexagonGrid.TryGetCell(cellWithMaxMagnitude, out GridCell cell) == false) 
+                    continue;
+                
+                if (cell.IsOccupied || cell.IsLocked)
+                {
+                    edgePositions.Remove(cellWithMaxMagnitude);
+                    continue;
+                }
+
+                _hexagonGrid.RemoveCell(cell);
+                break;
+            }
         }
     }
 }

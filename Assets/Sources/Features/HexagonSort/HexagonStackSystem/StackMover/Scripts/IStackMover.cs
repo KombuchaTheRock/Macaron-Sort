@@ -14,5 +14,6 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
         void DeactivateOnGridSelection();
         void Activate();
         void Deactivate();
+        event Action StackMoved;
     }
 }

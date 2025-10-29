@@ -7,5 +7,8 @@ namespace Sources.Common.CodeBase.Infrastructure.StateMachine.States
         void SpawnNewStacks();
         void StopSpawn();
         event Action StacksSpawned;
+        void ShowGeneratedStacks();
+        void HideGeneratedStacks();
+        bool IsSpawning { get; set; }
     }
 }

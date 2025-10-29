@@ -49,7 +49,7 @@ namespace Sources.Features.UI.Scripts
             onCompleted?.Invoke();
         }
 
-        private void OnDisable() => 
-            _postProcessVolume.enabled = false;
+         private void OnDisable() => 
+             StopAllCoroutines();
     }
 }

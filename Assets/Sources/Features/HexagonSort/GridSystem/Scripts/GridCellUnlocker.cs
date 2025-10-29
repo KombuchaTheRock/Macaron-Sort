@@ -64,13 +64,22 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
 
         private void UpdateCellLocks(HexagonStackScore stackScore)
         {
+            bool wasModified = false;
+
             if (_simpleLockedCells.Count > 0)
+            {
                 UpdateSimpleCellLocks();
+                wasModified = true;
+            }
 
             if (_tileScoreCellLocks.Count > 0)
+            {
                 UpdateTileScoreCellLocks(stackScore);
+                wasModified = true;
+            }
 
-            GridModified?.Invoke();
+            if (wasModified) 
+                GridModified?.Invoke();
         }
 
         private void UpdateTileScoreCellLocks(HexagonStackScore stackScore)
