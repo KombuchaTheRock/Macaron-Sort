@@ -4,6 +4,7 @@ using System.Linq;
 using Sources.Common.CodeBase.Infrastructure.Extensions;
 using Sources.Common.CodeBase.Services.PlayerProgress;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.GridSystem.GridModificator.Scripts.CellLock;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
 using Sources.Features.HexagonSort.StackCompleter;

@@ -126,19 +126,21 @@ namespace Sources.Features.HexagonSort.HexagonStackSystem.StackMover.Scripts
                 if (_onGridSelectionEnabled == false) 
                     StackPlaced?.Invoke(targetCell);
 
-               
-                
                 if (_onGridSelectionEnabled && InitialCell.Stack != _currentStack)
                 {
+                    Debug.Log("InitialCell stack is not current stack");
                     StackMoved?.Invoke();
                     StackPlaced?.Invoke(targetCell);
                     
-                    if (InitialCell != null) 
+                    if (InitialCell.Stack != null) 
                         StackPlaced?.Invoke(InitialCell);
                 }
 
                 if (_onGridSelectionEnabled && _swapStack == null)
+                {
                     InitialCell.FreeCell();
+                    StackMoved?.Invoke();
+                }
             }
             else
             {

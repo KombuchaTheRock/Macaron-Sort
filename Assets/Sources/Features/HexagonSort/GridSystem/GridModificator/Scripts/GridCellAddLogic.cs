@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Sources.Common.CodeBase.Infrastructure;
 using Sources.Common.CodeBase.Services.StaticData;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Sources.Features.HexagonSort.GridSystem.Scripts
+namespace Sources.Features.HexagonSort.GridSystem.GridModificator.Scripts
 {
     public class GridCellAddLogic
     {

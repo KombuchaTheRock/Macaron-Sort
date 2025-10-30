@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Sources.Common.CodeBase.Infrastructure;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.GridSystem.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
 using UnityEngine;
 
-namespace Sources.Features.HexagonSort.GridSystem.Scripts
+namespace Sources.Features.HexagonSort.GridSystem.GridModificator.Scripts
 {
     public class GridCellDeleteLogic
     {

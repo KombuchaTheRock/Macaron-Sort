@@ -1,0 +1,68 @@
+using System;
+using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
+using UnityEngine;
+
+namespace Sources.Features.HexagonSort.GridSystem.GridModificator.Scripts.CellLock
+{
+    public class CellLockViewShower : MonoBehaviour
+    {
+        [SerializeField] private CellLocker _cellLocker;
+        [SerializeField] private SimpleCellLockView _simpleCellLockView;
+        [SerializeField] private TileScoreCellLockView _tileScoreCellLockView;
+    
+        private void Awake()
+        {
+            _simpleCellLockView.Hide();
+            _tileScoreCellLockView.Hide();
+        
+            SubscribeUpdates();
+        }
+
+        private void OnDestroy() => 
+            CleanUp();
+
+        private void OnCellLocked(CellLock obj)
+        {
+            switch (obj)
+            {
+                case SimpleCellLock simpleCellLock:
+                    _simpleCellLockView.SetCellLock(simpleCellLock);
+                    _simpleCellLockView.Show();
+                    break;
+                case TileScoreCellLock tileScoreCellLock:
+                    _tileScoreCellLockView.SetCellLock(tileScoreCellLock);
+                    _tileScoreCellLockView.Show();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(obj));
+            }
+        }
+
+        private void OnCellUnlocked(CellLock obj)
+        {
+            switch (obj)
+            {
+                case SimpleCellLock simpleCellLock:
+                    _simpleCellLockView.Hide();
+                    break;
+                case TileScoreCellLock tileScoreCellLock:
+                    _tileScoreCellLockView.Hide();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(obj));
+            }
+        }
+
+        private void SubscribeUpdates()
+        {
+            _cellLocker.Locked += OnCellLocked;
+            _cellLocker.Unlocked += OnCellUnlocked;
+        }
+
+        private void CleanUp()
+        {
+            _cellLocker.Locked -= OnCellLocked;
+            _cellLocker.Unlocked -= OnCellUnlocked;
+        }
+    }
+}

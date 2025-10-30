@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Sources.Common.CodeBase.Infrastructure;
 using Sources.Common.CodeBase.Infrastructure.Extensions;
 using Sources.Features.HexagonSort.GridSystem.GridGenerator.Scripts;
+using Sources.Features.HexagonSort.GridSystem.GridModificator.Scripts.CellLock;
 using Sources.Features.HexagonSort.HexagonTile.Scripts;
 using Sources.Features.HexagonSort.Merge.Scripts;
 using UnityEngine;

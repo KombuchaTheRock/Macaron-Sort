@@ -8,7 +8,7 @@ namespace Sources.Features.HexagonSort.GridSystem.Scripts
     public class HexagonGridSaver : MonoBehaviour
     {
         [SerializeField] private HexagonGrid _hexagonGrid;
-        [SerializeField] private GridModificator _gridModificator;
+        [SerializeField] private GridModificator.Scripts.GridModificator _gridModificator;
         [SerializeField] private GridCellUnlocker _gridCellUnlocker;
         
         private IGameProgressService _progressService;
